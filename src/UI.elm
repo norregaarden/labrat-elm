@@ -1,4 +1,4 @@
-module UI exposing (appLayout, spilTitel, s, sf, bltr, p, appButton, showWhen, showListWhen)
+module UI exposing (appLayout, spilTitel, s, sf, bltr, p, appButton, smallAppButton, showWhen, showListWhen)
 
 import UIColor exposing (..)
 import Element exposing (..)
@@ -33,7 +33,8 @@ header = row [padding (s -2), width fill, Border.widthEach (bltr 1 0 0 0)]
     [ link [] {url = "/", label = labratlogo} |> el [width shrink]
     , row [paddingXY (s -1) 0, width fill]
         [ text "DATA" |> el [width (fillPortion 1), Font.center, Font.size (s 3)]
-        , text "LOG" |> el [width (fillPortion 1), Font.center, Font.size (s 3)]
+        --, text "LOG" |> el [width (fillPortion 1), Font.center, Font.size (s 3)]
+        , link [width (fillPortion 1), Font.center, Font.size (s 3)] {url = "/log/string", label = text "LOG"}
         , text "PLAY" |> el [width (fillPortion 1), Font.center, Font.size (s 3)]
         ]
     ]
@@ -73,6 +74,23 @@ appButton msg label =
         , Font.color white
         , Font.extraBold
         , Font.size (s 3)
+        , Background.color orangeLight
+        , Border.rounded (s -1)
+        , Element.focused
+            [ Background.color blue ]
+        ]
+        { onPress = Just msg
+        , label = text label |> el [centerX]
+        }
+
+smallAppButton msg label =
+    Input.button
+        [ padding (s 1)
+        , pointer
+        , width (minimum (s 9) shrink)
+        , Font.color white
+        , Font.extraBold
+        , Font.size (s 2)
         , Background.color orangeLight
         , Border.rounded (s -1)
         , Element.focused

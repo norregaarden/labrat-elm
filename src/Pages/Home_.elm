@@ -2,7 +2,7 @@ module Pages.Home_ exposing (view)
 
 -- elm-spa server
 
-import Element exposing (Element, el, link, text)
+import Element exposing (Element, el, link, pointer, text)
 import Element.Font as Font
 import UI exposing (s)
 import View exposing (View)

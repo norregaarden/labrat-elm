@@ -2,20 +2,12 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="cb0bc1af-3e41-474b-9c00-89c9b54afe7c" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/psyapp.iml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/elm.json" beforeDir="false" afterPath="$PROJECT_DIR$/elm.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Dutter.elm" beforeDir="false" afterPath="$PROJECT_DIR$/src/Dutter.elm" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/public/index.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Pages/Home_.elm" beforeDir="false" afterPath="$PROJECT_DIR$/src/Pages/Home_.elm" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Pages/Spil/Blink.elm" beforeDir="false" afterPath="$PROJECT_DIR$/src/Pages/Spil/Blink.elm" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Pages/Spil/Dut.elm" beforeDir="false" afterPath="$PROJECT_DIR$/src/Pages/Spil/Dut.elm" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Pages/Log/Dtype_.elm" beforeDir="false" afterPath="$PROJECT_DIR$/src/Pages/Log/Dtype_.elm" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Pages/Spil/Tid.elm" beforeDir="false" afterPath="$PROJECT_DIR$/src/Pages/Spil/Tid.elm" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/UI.elm" beforeDir="false" afterPath="$PROJECT_DIR$/src/UI.elm" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/UIColor.elm" beforeDir="false" afterPath="$PROJECT_DIR$/src/UIColor.elm" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/workspace.code-workspace" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -47,6 +39,9 @@
     </file-type-list>
   </component>
   <component name="ProjectId" id="1u4zGcJell2puziH9ex0DEOXGUN" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="1" id="Add" />
+  </component>
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
@@ -56,10 +51,14 @@
     <property name="ASKED_SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/src" />
     <property name="org.elm.workspace.PROJECT_DISCOVERY" value="true" />
+    <property name="settings.editor.selected.configurable" value="preferences.sourceCode.Elm" />
   </component>
   <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src" />
+    </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/src/Pages/Spil" />
     </key>

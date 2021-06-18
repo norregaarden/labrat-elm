@@ -95,7 +95,7 @@ vis model =
 
         noget =
             [ "How long is " ++ fromInt burde ++" seconds?" |> p |> el [Font.size (s 3)]
-            , column [padding (s 1), spacing (s 1), Font.size (s 1), width fill] indhold
+            , column [padding (s 1), spacing (s 1), Font.size (s 1)] indhold
             ]
 
         sekunder = (difference model |> toFloat)/1000
@@ -103,14 +103,15 @@ vis model =
 
 
     in
-    noget ++ List.singleton (column [spacing (s 1), paddingXY (s 1) (s 4)]
-         ([ Round.round 3 sekunder ++ " seconds passed."
-         , "You were off by "
-         , Round.round 3 forbi ++ " seconds."
-         ]
-         |> List.map (p)
-         |> List.map (el [width fill])
-         |> showListWhen model.færdig))
+        noget ++ List.singleton (column [spacing (s 1), paddingXY 0 (s 4)]
+             ([ Round.round 3 sekunder ++ " seconds passed."
+             , "You were off by "
+             , Round.round 3 forbi ++ " seconds."
+             ]
+             |> List.map (p)
+             |> List.map (el [width fill])
+             |> showListWhen model.færdig))
+          |> List.map (el [centerX])
 
 
 view : Model -> View Msg
