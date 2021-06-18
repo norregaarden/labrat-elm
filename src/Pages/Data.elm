@@ -1,11 +1,9 @@
-module Pages.Spil.Blink exposing (Model, Msg, page)
+module Pages.Data exposing (Model, Msg, page)
 
-import Element exposing (Element, el, fill, image, padding, width)
-import Gen.Params.Blink exposing (Params)
+import Gen.Params.Data exposing (Params)
 import Page
 import Request
 import Shared
-import UI
 import View exposing (View)
 
 
@@ -59,21 +57,7 @@ subscriptions model =
 
 -- VIEW
 
-vis : Model -> List (Element Msg)
-vis model =
-    billede "noegenhat" |> el [padding 40] |> List.singleton
-
 
 view : Model -> View Msg
 view model =
-    { title = "Spil: Blink"
-    , body = vis model |> UI.appLayout
-    }
-
-
-
--- VIEW helpers
-
-billede : String -> Element msg
-billede navn =
-    image [width fill] { src = "/images/" ++ navn ++ ".svg", description = "" }
+    View.placeholder "Data"

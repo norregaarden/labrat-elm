@@ -1,20 +1,39 @@
 module Pages.Spil.Tid exposing (Model, Msg, page)
 
-import Element exposing (Element, column, el, layout, padding, paddingXY, paragraph, pointer, spacing, text)
-import Element.Background as Background
-import Element.Events exposing (onClick)
+import Element exposing (Element, centerX, column, el, fill, padding, paddingXY, spacing, text, width)
 import Element.Font as Font
-import Element.Input as Input
 import Gen.Params.Tid exposing (Params)
 import Page
 import Request
+import Round
 import Shared
-import String exposing (fromFloat, fromInt)
+import String exposing (fromInt)
 import Task
 import Time
-import UI exposing (appButton, opacityFromBool, p)
+import UI exposing (appButton, p, s, showListWhen, showWhen, spilTitel)
 import View exposing (View)
 
+-- SETTINGS
+
+burde = 10 -- sekunder
+
+
+-- MODEL
+
+type alias Model =
+    { start : Int
+    , slut : Int
+    , igang : Bool
+    , færdig : Bool
+    }
+
+
+init : ( Model, Cmd Msg )
+init =
+    ( Model 0 0 False False, Cmd.none )
+
+
+-- BOILERPLATE
 
 page : Shared.Model -> Request.With Params -> Page.With Model Msg
 page shared req =
@@ -26,26 +45,7 @@ page shared req =
         }
 
 
-
--- INIT
-
-
-type alias Model =
-    { burde : Int
-    , start : Int
-    , slut : Int
-    , igang : Bool
-    }
-
-
-init : ( Model, Cmd Msg )
-init =
-    ( Model 10 0 0 False, Cmd.none )
-
-
-
 -- UPDATE
-
 
 type Msg
     = Startklik
@@ -58,7 +58,7 @@ update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         Startklik ->
-            ( { model | igang = True }, Task.perform Start Time.now )
+            ( { model | igang = True, færdig = False }, Task.perform Start Time.now )
 
         Start tid ->
             ( { model | start = Time.posixToMillis tid }, Cmd.none )
@@ -67,12 +67,11 @@ update msg model =
             ( { model | igang = False }, Task.perform Slut Time.now )
 
         Slut tid ->
-            ( { model | slut = Time.posixToMillis tid }, Cmd.none )
+            ( { model | slut = Time.posixToMillis tid, færdig = True }, Cmd.none )
 
 
 
 -- SUBSCRIPTIONS
-
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
@@ -86,36 +85,37 @@ vis model =
     let
         indhold =
             if (not model.igang) then
-                [ text "Tryk START når du er klar."
-                , text ""
-                , (appButton Startklik "START") -- el [ onClick Startklik, pointer ]
+                [ p "Press START when you're ready."
+                , (appButton Startklik "START") |> el [centerX, padding (s 4)]
                 ]
             else
-                [ "Tryk STOP når du tror der er gået " ++ fromInt model.burde ++ " sekunder" |> p
-                , (appButton Slutklik "STOP") -- el [ onClick Slutklik, pointer ]
+                [ p ("Press STOP when you believe " ++ fromInt burde ++ " seconds have passed")
+                , (appButton Slutklik "STOP") |> el [] |> el [centerX, padding (s 1)]
                 ]
 
         noget =
-            [ text <| "Hvor lang tid er " ++ fromInt model.burde ++" sekunder?"
-            , column [padding 16, spacing 16] indhold
+            [ "How long is " ++ fromInt burde ++" seconds?" |> p |> el [Font.size (s 3)]
+            , column [padding (s 1), spacing (s 1), Font.size (s 1), width fill] indhold
             ]
 
-    in
-    noget ++
-         [ text ""
-         , difference model |> fromInt |> text
-         , text ""
+        sekunder = (difference model |> toFloat)/1000
+        forbi = sekunder - burde
 
-         --, fromInt model.start |> text
-         --, fromInt model.slut |> text
+
+    in
+    noget ++ List.singleton (column [spacing (s 1), paddingXY (s 1) (s 4)]
+         ([ Round.round 3 sekunder ++ " seconds passed."
+         , "You were off by "
+         , Round.round 3 forbi ++ " seconds."
          ]
-         |> List.map (el [])
-         |> column [ paddingXY 32 64, spacing 32 ]
+         |> List.map (p)
+         |> List.map (el [width fill])
+         |> showListWhen model.færdig))
 
 
 view : Model -> View Msg
 view model =
-    { title = "Spil - Tid | lab rat"
+    { title = spilTitel (fromInt burde ++ " seconds")
     , body = vis model |> UI.appLayout
     }
 

@@ -1,16 +1,15 @@
 module Dutter exposing (Dut, Farve, Form, alleDutter, enDut, svgDut)
 
 -- 4xFarver x 4xFormer = 16
---import Color exposing (Color)
 
 import Color exposing (..)
-import String exposing (fromFloat, fromInt)
+import String exposing (fromInt)
 import Svg exposing (..)
 import Svg.Attributes exposing (..)
 
 
 enDut =
-    ( Grøn, Cirkel )
+    ( Grøn, Sekskant )
 
 
 dutBredde =
@@ -74,12 +73,8 @@ alleDutter =
     List.concatMap (\x -> List.map (\y -> ( x, y )) alleFormer) alleFarver
 
 
-svgDut størrelse dut =
-    let
-        str =
-            String.fromFloat størrelse
-    in
-    svg [ width str, height str, viewBox dutViewbox ]
+svgDut dut =
+    svg [ viewBox dutViewbox, width "100%", height "100%" ]
         [ tegnDut dut ]
 
 
@@ -88,7 +83,6 @@ tegnDut ( farve, form ) =
     let
         rgb =
             toCssString (tegnFarve farve)
-
         --col = "rgba(" ++ fromFloat rgb.red ++ "," ++ fromFloat rgb.green ++ "," ++ fromFloat rgb.blue ++ "," ++ fromFloat rgb.alpha ++ ")"
     in
     case form of
