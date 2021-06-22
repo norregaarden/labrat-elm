@@ -6,6 +6,7 @@ import Element exposing (Element, el, link, pointer, text)
 import Element.Font as Font
 import UI exposing (s)
 import View exposing (View)
+import Gen.Route as Route exposing (Route)
 
 
 -- MODEL
@@ -24,9 +25,9 @@ vis: List (Element msg)
 vis =
     el [Font.size (s 1)] (text "Try a game :") ::
     List.map (\l -> link [Font.size (s 3)] l)
-        [ {url = "/spil/dut", label = text "dut"}
-        , {url = "/spil/tid", label = text "tid"}
-        , {url = "/spil/blink", label = text "blink"} ]
+        [ {url = Route.toHref Route.Spil__Dut, label = text "dut"}
+        , {url = Route.toHref Route.Spil__Tid, label = text "tid"}
+        , {url = Route.toHref Route.Spil__Blink, label = text "blink"} ]
 
 
 view : View msg

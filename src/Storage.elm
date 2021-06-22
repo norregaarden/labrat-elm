@@ -1,41 +1,46 @@
 port module Storage exposing (..)
 
 import Dict exposing (Dict)
-import Json.Decode as Json
-import Json.Encode as Encode
+import Json.Decode as D
+import Json.Decode.Extra exposing (dict2)
+import Json.Encode as E
 import String exposing (fromInt)
+--import Time
+import Log exposing (Data(..), Weight(..))
 import Time
 
-
-port save : Json.Value -> Cmd msg
-port load : (Json.Value -> msg) -> Sub msg
+port save : D.Value -> Cmd msg
+port load : (D.Value -> msg) -> Sub msg
 
 
 -- MODEL
-
+{-
 type alias Logtype =
   { thenote : String }
 
 type alias Log =
   Dict String Logtype
+-}
 
 type alias Person =
-  { age : Int
-  , height : Int -- cm
-  , weight : Int -- kg
+  { years : Int
+  , cm : Int
+  , kg : Int
   }
+
+--type alias Tid = Time.Posix
 
 type alias Storage =
   { person : Person
   , sometext : String
-  , log : Log
+  , log : Dict Int Data
   }
 
 initial : Storage
 initial =
   { person = Person 0 0 0
-  , log = Dict.fromList []
   , sometext = "davdav"
+  , log = Dict.empty
   }
 
 
@@ -66,6 +71,11 @@ logsometext str storage =
     |> toJson
     |> save
 
+logData : Int -> Data -> Storage -> Cmd msg
+logData tidms data storage =
+  { storage | log = Dict.insert tidms data storage.log }
+    |> toJson
+    |> save
 
 -- SUBSCRIBE
 
@@ -76,37 +86,74 @@ onChange fromStorage =
 
 -- Converting to JSON
 
-toJson : Storage -> Json.Value
+toJson : Storage -> E.Value
 toJson storage =
-    Encode.object
-        [ ("person", Encode.object
-          [ ("age", Encode.int storage.person.age)
-          , ("height", Encode.int storage.person.height)
-          , ("weight", Encode.int storage.person.weight)
+    E.object
+        [ ("person", E.object
+          [ ("years", E.int storage.person.years)
+          , ("cm", E.int storage.person.cm)
+          , ("kg", E.int storage.person.kg)
           ])
-        , ("sometext", Encode.string storage.sometext)
+        , ("sometext", E.string storage.sometext)
 
         -- log encoding kan gøres bedre
-        , ( "log", Encode.dict identity (\x -> Encode.object [("thenote", Encode.string x.thenote)]) storage.log )
+        , ( "log", E.dict String.fromInt encodeData storage.log )
         ]
 
 
+encodeData : Data -> E.Value
+encodeData data =
+  case data of
+    TempC c ->
+      E.object [( "TempC", E.int c )]
+    HR hr ->
+      E.object [( "HR", E.int hr )]
+    BP high low ->
+      E.object [( "BP", E.object [("high", E.int high), ("low", E.int low)] )]
+    Musing text ->
+      E.object [( "Musing", E.string text )]
+    Intox drug weight ->
+      E.object [( "Intox", E.object [("drug", E.string drug), encodeWeight weight] )]
+
+encodeWeight : Weight -> (String, E.Value)
+encodeWeight weight =
+  case weight of
+    Microgram ug ->
+      ("microgram", E.int ug)
+    Milligram mg ->
+      ("milligram", E.int mg)
+    Gram g ->
+      ("gram", E.int g)
+
+--(\x -> E.object [("thenote", E.string x.thenote)])
+
 -- Converting from JSON
 
-fromJson : Json.Value -> Storage
+fromJson : D.Value -> Storage
 fromJson value =
     value
-        |> Json.decodeValue decoder
+        |> D.decodeValue decoder
         |> Result.withDefault initial
 
-decoder : Json.Decoder Storage
+decoder : D.Decoder Storage
 decoder =
-    Json.map3 Storage
-      (Json.field "person" (Json.map3 Person (Json.field "age" Json.int) (Json.field "height" Json.int) (Json.field "weight" Json.int)))
-      (Json.field "sometext" Json.string)
-      (Json.field "log" (Json.dict logtypeDecoder))
+    D.map3 Storage
+      (D.field "person" personDecoder)
+      (D.field "sometext" D.string)
+      (D.field "log" (dict2 D.int dictDataDecoder ))
 
-logtypeDecoder : Json.Decoder Logtype
-logtypeDecoder =
-  Json.map Logtype
-    (Json.field "thenote" Json.string)
+personDecoder : D.Decoder Person
+personDecoder =
+  (D.map3 Person (D.field "years" D.int) (D.field "cm" D.int) (D.field "kg" D.int))
+
+dictDataDecoder : D.Decoder Data
+dictDataDecoder =
+  D.oneOf
+    [ (D.field "HR" (D.map HR D.int))
+    ]
+
+--listDataDecoder : D.Decoder (List Data)
+--listDataDecoder =
+--  D.map List
+--    (D.field "thenote" D.string)
+--

@@ -1,7 +1,7 @@
-module Pages.Data exposing (Model, Msg, page)
+module Pages.Play exposing (Model, Msg, page)
 
-import Element exposing (paragraph, text)
-import Gen.Params.Data exposing (Params)
+import Element exposing (text)
+import Gen.Params.Play exposing (Params)
 import Page
 import Request
 import Shared
@@ -14,7 +14,7 @@ page shared req =
     Page.element
         { init = init
         , update = update
-        , view = view shared
+        , view = view
         , subscriptions = subscriptions
         }
 
@@ -60,8 +60,8 @@ subscriptions model =
 -- VIEW
 
 
-view : Shared.Model -> Model -> View Msg
-view shared model =
-  { title = "data | lab rat"
-  , body = [paragraph [] [text (Debug.toString shared.storage)]] |> UI.appLayout
+view : Model -> View Msg
+view model =
+  { title = "play | lab rat"
+  , body = [text "Play"] |> UI.appLayout
   }

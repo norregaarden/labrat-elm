@@ -8,19 +8,23 @@ module Shared exposing
     )
 
 import Json.Decode as Json
+import Log exposing (Data)
 import Request exposing (Request)
 import Storage exposing (Storage)
+import Task
+import Time
 
 type alias Flags =
     Json.Value
 
-
 type alias Model =
-    { storage : Storage }
+    { storage : Storage
+    }
 
 
 type Msg
     = StorageUpdated Storage
+
 
 
 init : Request -> Flags -> ( Model, Cmd Msg )
@@ -33,7 +37,6 @@ update _ msg model =
     case msg of
         StorageUpdated storage ->
             ( { model | storage = storage }, Cmd.none )
-
 
 subscriptions : Request -> Model -> Sub Msg
 subscriptions _ _ =

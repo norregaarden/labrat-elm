@@ -1,4 +1,10 @@
-module UI exposing (appLayout, spilTitel, s, sf, bltr, p, appButton, smallAppButton, showWhen, showListWhen)
+module UI exposing
+  ( appLayout
+  , spilTitel, s, sf, bltr, p
+  , appButton, smallAppButton
+  , smallAppButtonDisabled
+  , showWhen, showListWhen
+  )
 
 import UIColor exposing (..)
 import Element exposing (..)
@@ -7,6 +13,7 @@ import Element.Border as Border
 import Element.Font as Font
 import Element.Input as Input
 import Html exposing (Html)
+import Gen.Route as Route exposing (Route)
 
 ---- SETTINGS ----
 
@@ -29,13 +36,17 @@ appLayout pageContent =
 
 ---- SHARED VIEW ----
 
+headerLinkAttributes =
+  [width (fillPortion 1), Font.center, Font.size (s 3)]
+
 header = row [padding (s -2), width fill, Border.widthEach (bltr 1 0 0 0)]
-    [ link [] {url = "/", label = labratlogo} |> el [width shrink]
+    [ routeLink labratlogo Route.Home_ [] |> el [width shrink]
     , row [paddingXY (s -1) 0, width fill]
-        [ text "DATA" |> el [width (fillPortion 1), Font.center, Font.size (s 3)]
+        [ routeLink (text "DATA") Route.Data headerLinkAttributes
         --, text "LOG" |> el [width (fillPortion 1), Font.center, Font.size (s 3)]
-        , link [width (fillPortion 1), Font.center, Font.size (s 3)] {url = "/log/string", label = text "LOG"}
-        , text "PLAY" |> el [width (fillPortion 1), Font.center, Font.size (s 3)]
+        --, link [width (fillPortion 1), Font.center, Font.size (s 3)] {url = "/log/string", label = text "LOG"}
+        , routeLink (text "LOG") Route.LogChoose headerLinkAttributes
+        , routeLink (text "PLAY") Route.Play headerLinkAttributes
         ]
     ]
 
@@ -99,6 +110,26 @@ smallAppButton msg label =
         { onPress = Just msg
         , label = text label |> el [centerX]
         }
+
+smallAppButtonDisabled label =
+    Input.button
+        [ padding (s 1)
+        , pointer
+        , width (minimum (s 9) shrink)
+        , Font.color white
+        , Font.extraBold
+        , Font.size (s 2)
+        , Background.color red
+        , Border.rounded (s -1)
+        , Element.focused
+            [ Background.color red ]
+        ]
+        { onPress = Nothing
+        , label = text label |> el [centerX]
+        }
+
+routeLink label route attributes =
+  link attributes { url = Route.toHref route, label = label }
 
 -- not used anymore
 --opacityFromBool : Bool -> Element msg -> Element msg
