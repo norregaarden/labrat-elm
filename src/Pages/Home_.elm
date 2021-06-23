@@ -33,5 +33,5 @@ vis =
 view : View msg
 view =
     { title = "lab rat - cognitive tests for humans"
-    , body = vis |> UI.appLayout
+    , body = vis
     }

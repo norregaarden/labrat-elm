@@ -63,5 +63,5 @@ subscriptions model =
 view : Shared.Model -> Model -> View Msg
 view shared model =
   { title = "data | lab rat"
-  , body = [paragraph [] [text (Debug.toString shared.storage)]] |> UI.appLayout
+  , body = [paragraph [] [text (Debug.toString shared.storage)]]
   }

@@ -117,7 +117,7 @@ vis model =
 view : Model -> View Msg
 view model =
     { title = spilTitel (fromInt burde ++ " seconds")
-    , body = vis model |> UI.appLayout
+    , body = vis model
     }
 
 

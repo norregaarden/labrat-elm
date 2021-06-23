@@ -142,7 +142,6 @@ view model =
             , dutterView model
             ]
         ++ [dataView model]
-        |> UI.appLayout
     }
 
 topView model =

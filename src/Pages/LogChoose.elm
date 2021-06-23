@@ -76,5 +76,5 @@ view storage model =
         |> column [centerX, spacing (s 2)]
   in
     { title = "log | lab rat"
-    , body = [body] |> UI.appLayout
+    , body = [body]
     }

@@ -63,5 +63,5 @@ subscriptions model =
 view : Model -> View Msg
 view model =
   { title = "play | lab rat"
-  , body = [text "Play"] |> UI.appLayout
+  , body = [text "Play"]
   }

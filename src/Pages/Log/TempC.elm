@@ -112,5 +112,5 @@ view _ model =
       ]
   in
     { title = "log | lab rat"
-    , body = body |> UI.appLayout
+    , body = body
     }

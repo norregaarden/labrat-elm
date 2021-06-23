@@ -67,7 +67,7 @@ vis model =
 view : Model -> View Msg
 view model =
     { title = "Spil: Blink"
-    , body = vis model |> UI.appLayout
+    , body = vis model
     }
 
 

@@ -42,19 +42,19 @@ spilTitel titel = "Play: " ++ titel ++ " | lab rat"
 
 ---- APP ----
 
-appLayout: List (Element msg) -> List (Html msg)
-appLayout pageContent =
-    [header] ++ [column [paddingXY (s 2) (s 6), spacing (s 2), width fill] pageContent] ++  footer
+appLayout: Route -> List (Element msg) -> List (Html msg)
+appLayout headerRoute pageContent =
+    [header headerRoute] ++ [column [paddingXY (s 2) (s 6), spacing (s 2), width fill] pageContent] ++  footer
     |> column [width fill, height fill]
     |> layout [font, Background.color beige] |> List.singleton
 
 
 ---- SHARED VIEW ----
 
-headerLink string route =
+headerLink string route r =
   let
     bg =
-      if route == Route.LogChoose then
+      if route == r then
         [Background.color beige]
       else
         []
@@ -67,7 +67,7 @@ headerLink string route =
   in
     routeLink (routeText string) route (headerLinkAttributes)
 
-header = row
+header r = row
   [ paddingXY (s -2) 0
   , width fill
   --, Border.widthEach (bltr 1 0 0 0)
@@ -75,9 +75,9 @@ header = row
   ]
     [ routeLink labratlogo Route.Home_ [] |> el [width shrink, paddingXY 0 (s -3)]
     , row [paddingXY (s -1) 0, width fill, height fill, spacing -1]
-      [ headerLink "DATA" Route.Data
-      , headerLink "LOG" Route.LogChoose
-      , headerLink "PLAY" Route.Play
+      [ headerLink "DATA" Route.Data r
+      , headerLink "LOG" Route.LogChoose r
+      , headerLink "PLAY" Route.Play r
       ]
     ]
 
