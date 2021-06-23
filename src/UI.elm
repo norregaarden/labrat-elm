@@ -1,11 +1,13 @@
 module UI exposing
   ( appLayout
-  , spilTitel, s, sf, bltr, p
+  , spilTitel, s, sf, bltr, p, h
   , appButton, smallAppButton
   , smallAppButtonDisabled
+  , flatFillButton
   , showWhen, showListWhen
   )
 
+import Element.Region as Region
 import UIColor exposing (..)
 import Element exposing (..)
 import Element.Background as Background
@@ -17,7 +19,20 @@ import Gen.Route as Route exposing (Route)
 
 ---- SETTINGS ----
 
-font = Font.family [Font.typeface "Cutive Mono", Font.monospace]
+font =
+  Font.family [Font.typeface "Cutive Mono", Font.monospace]
+
+buttonShadow =
+  Border.shadow
+   { offset = ( 0.5, 0.5 )
+   , size = 0.0001
+   , blur = 3
+   , color = black
+   }
+
+buttonFontShadow =
+
+  Font.shadow { offset = ( 0.1, 0.1 ), blur = 0.1, color = black}
 
 
 ---- META ----
@@ -29,28 +44,52 @@ spilTitel titel = "Play: " ++ titel ++ " | lab rat"
 
 appLayout: List (Element msg) -> List (Html msg)
 appLayout pageContent =
-    [header] ++ [column [paddingXY (s 2) (s 5), spacing (s 2), width fill] pageContent] ++  footer
+    [header] ++ [column [paddingXY (s 2) (s 6), spacing (s 2), width fill] pageContent] ++  footer
     |> column [width fill, height fill]
-    |> layout [font] |> List.singleton
+    |> layout [font, Background.color beige] |> List.singleton
 
 
 ---- SHARED VIEW ----
 
-headerLinkAttributes =
-  [width (fillPortion 1), Font.center, Font.size (s 3)]
+headerLink string route =
+  let
+    bg =
+      if route == Route.LogChoose then
+        [Background.color beige]
+      else
+        []
 
-header = row [padding (s -2), width fill, Border.widthEach (bltr 1 0 0 0)]
-    [ routeLink labratlogo Route.Home_ [] |> el [width shrink]
-    , row [paddingXY (s -1) 0, width fill]
-        [ routeLink (text "DATA") Route.Data headerLinkAttributes
-        --, text "LOG" |> el [width (fillPortion 1), Font.center, Font.size (s 3)]
-        --, link [width (fillPortion 1), Font.center, Font.size (s 3)] {url = "/log/string", label = text "LOG"}
-        , routeLink (text "LOG") Route.LogChoose headerLinkAttributes
-        , routeLink (text "PLAY") Route.Play headerLinkAttributes
-        ]
+    headerLinkAttributes =
+      bg ++ [width (fillPortion 1), Font.center, Font.size (s 3), height fill]
+
+    routeText txt
+      = (text txt |> el [centerY, centerX])
+  in
+    routeLink (routeText string) route (headerLinkAttributes)
+
+header = row
+  [ paddingXY (s -2) 0
+  , width fill
+  --, Border.widthEach (bltr 1 0 0 0)
+  , Background.color (rgba 1 1 1 0.666)
+  ]
+    [ routeLink labratlogo Route.Home_ [] |> el [width shrink, paddingXY 0 (s -3)]
+    , row [paddingXY (s -1) 0, width fill, height fill, spacing -1]
+      [ headerLink "DATA" Route.Data
+      , headerLink "LOG" Route.LogChoose
+      , headerLink "PLAY" Route.Play
+      ]
     ]
 
-labratlogo = column [Font.size (s 2), Font.color white, Background.color black] [text "lab", text "rat"]
+labratlogo =
+  column
+    [ Font.size (s 1)
+    , Font.color white
+    , Background.color blue
+    , padding (s -3)
+    , Border.rounded (s -1)
+    ]
+    [text "lab", text "rat"]
 
 footer = []
 
@@ -77,16 +116,20 @@ bltr b l t r =
 p : String -> Element msg
 p str = paragraph [] [text str]
 
+h : Int -> String -> Element msg
+h n str = paragraph [Region.heading n, Font.size (s 4)] [text str]
+
 appButton msg label =
     Input.button
-        [ padding (s 3)
-        , pointer
+        [ paddingXY (s 4) (s 2)
         , width (minimum (s 11) shrink)
         , Font.color white
         , Font.extraBold
-        , Font.size (s 3)
+        , Font.size (s 4)
         , Background.color orangeLight
         , Border.rounded (s -1)
+        , buttonShadow
+        , buttonFontShadow
         , Element.focused
             [ Background.color blue ]
         ]
@@ -96,9 +139,26 @@ appButton msg label =
 
 smallAppButton msg label =
     Input.button
-        [ padding (s 1)
-        , pointer
+        [ paddingXY (s 2) (s 0)
         , width (minimum (s 9) shrink)
+        , Font.color white
+        , Font.extraBold
+        , Font.size (s 2)
+        , Background.color orangeLight
+        , Border.rounded (s -1)
+        , Element.focused
+            [ Background.color blue ]
+        , buttonShadow
+        , buttonFontShadow
+        ]
+        { onPress = Just msg
+        , label = text label |> el [centerX]
+        }
+
+flatFillButton msg label =
+    Input.button
+        [ paddingXY (s 2) (s 0)
+        , width fill
         , Font.color white
         , Font.extraBold
         , Font.size (s 2)
@@ -114,13 +174,12 @@ smallAppButton msg label =
 smallAppButtonDisabled label =
     Input.button
         [ padding (s 1)
-        , pointer
         , width (minimum (s 9) shrink)
         , Font.color white
         , Font.extraBold
         , Font.size (s 2)
         , Background.color red
-        , Border.rounded (s -1)
+        , Border.rounded 0
         , Element.focused
             [ Background.color red ]
         ]
@@ -129,7 +188,7 @@ smallAppButtonDisabled label =
         }
 
 routeLink label route attributes =
-  link attributes { url = Route.toHref route, label = label }
+    link attributes { url = Route.toHref route, label = label }
 
 -- not used anymore
 --opacityFromBool : Bool -> Element msg -> Element msg

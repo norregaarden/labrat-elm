@@ -77,6 +77,7 @@ logData tidms data storage =
     |> toJson
     |> save
 
+
 -- SUBSCRIBE
 
 onChange : (Storage -> msg) -> Sub msg
@@ -95,9 +96,7 @@ toJson storage =
           , ("kg", E.int storage.person.kg)
           ])
         , ("sometext", E.string storage.sometext)
-
-        -- log encoding kan gøres bedre
-        , ( "log", E.dict String.fromInt encodeData storage.log )
+        , ("log", E.dict String.fromInt encodeData storage.log)
         ]
 
 
@@ -150,6 +149,7 @@ dictDataDecoder : D.Decoder Data
 dictDataDecoder =
   D.oneOf
     [ (D.field "HR" (D.map HR D.int))
+    , (D.field "TempC" (D.map TempC D.int))
     ]
 
 --listDataDecoder : D.Decoder (List Data)

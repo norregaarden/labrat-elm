@@ -1,4 +1,4 @@
-module Pages.Log.TempC exposing (Model, Msg, page)
+module Pages.Log.HR exposing (Model, Msg, page)
 
 import Element exposing (alignBottom, column, el, row, spacing, text)
 import Element.Border as Border
@@ -43,7 +43,7 @@ type alias Model =
 
 init : ( Model, Cmd Msg )
 init =
-  ( Model 38 True
+  ( Model 70 True
   , Cmd.none
   )
 
@@ -66,12 +66,12 @@ update storage msg model =
     SavedInput ->
       ( model, Task.perform LogDataTid Time.now )
     LogDataTid tid ->
-      ( model, Storage.logData (Time.posixToMillis tid) (TempC model.input) storage )
+      ( model, Storage.logData (Time.posixToMillis tid) (HR model.input) storage )
 
 
 
 isValid input =
-  if input >= 30 && input <= 45 then
+  if input >= 30 && input <= 300 then
     True
   else
     False
@@ -89,14 +89,14 @@ intForm model =
     validationText =
       case model.validated of
         True -> ""
-        False -> "Enter a value between 30 and 45."
+        False -> "Enter a value between 30 and 300."
   in
-  h 1 "Temperature"
+  h 1 "Heart rate"
   :: row [spacing (s 2)]
     [ Input.text [Border.color orangeLight, Font.size (s 3)]
-      { label = Input.labelAbove [] (text "celsius" |> el [Font.size (s 1)])
+      { label = Input.labelAbove [] (text "beats per minute" |> el [Font.size (s 1)])
       , onChange = \unsafeInput -> Maybe.withDefault 0 (String.toInt unsafeInput) |> ChangedInput
-      , placeholder = Just (Input.placeholder [] (text "celsius"))
+      , placeholder = Just (Input.placeholder [] (text "bpm"))
       , text = model.input |> String.fromInt
       }
     , submitButton "log" |> el [alignBottom]

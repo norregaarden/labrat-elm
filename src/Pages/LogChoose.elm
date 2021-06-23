@@ -1,12 +1,12 @@
 module Pages.LogChoose exposing (Model, Msg, page)
 
-import Element exposing (none)
+import Element exposing (centerX, column, none, padding, spacing)
 import Gen.Route as Route exposing (Route)
 import Page
 import Request exposing (Request)
 import Shared
 import Storage exposing (Storage)
-import UI exposing (appButton)
+import UI exposing (appButton, s, smallAppButton, flatFillButton)
 import View exposing (View)
 
 
@@ -39,7 +39,10 @@ init = ( {}, Cmd.none )
 type alias LogRoute = (String, Route)
 
 logRoutes : List LogRoute
-logRoutes = [("TempC", Route.Log__TempC)]
+logRoutes =
+  [ ("Temperature", Route.Log__TempC)
+  , ("Heart rate", Route.Log__HR)
+  ]
 
 
 -- UPDATE
@@ -64,11 +67,14 @@ view : Storage -> Model -> View Msg
 view storage model =
   let
     dtButton (t, r) =
-      appButton (ChosenDataType (t, r)) t
+      --smallAppButton (ChosenDataType (t, r)) t
+      flatFillButton (ChosenDataType (t, r)) t
 
     body =
       logRoutes |> List.map dtButton
+        --|> column [spacing (s 2)]
+        |> column [centerX, spacing (s 2)]
   in
     { title = "log | lab rat"
-    , body = body |> UI.appLayout
+    , body = [body] |> UI.appLayout
     }

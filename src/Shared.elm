@@ -13,6 +13,7 @@ import Request exposing (Request)
 import Storage exposing (Storage)
 import Task
 import Time
+import Gen.Route as Route
 
 type alias Flags =
     Json.Value
@@ -33,10 +34,12 @@ init _ flags =
 
 
 update : Request -> Msg -> Model -> ( Model, Cmd Msg )
-update _ msg model =
+update req msg model =
     case msg of
         StorageUpdated storage ->
-            ( { model | storage = storage }, Cmd.none )
+            ( { model | storage = storage }
+            , Request.pushRoute Route.Data req
+            )
 
 subscriptions : Request -> Model -> Sub Msg
 subscriptions _ _ =

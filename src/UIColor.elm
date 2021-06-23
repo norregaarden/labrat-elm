@@ -22,7 +22,7 @@ green =
 bluegreen =
     rgb255 148 210 189
 
-colorMedium =
+beige =
     rgb255 233 216 166
 
 orangeLight =
