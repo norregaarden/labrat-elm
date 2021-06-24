@@ -1,17 +1,22 @@
 module Pages.Play exposing (Model, Msg, page)
 
-import Element exposing (text)
+import Effect exposing (Effect)
+import Random
+import Random.List
+import Spil exposing (..)
+import Element exposing (centerX, column, text)
 import Gen.Params.Play exposing (Params)
 import Page
 import Request
 import Shared
-import UI
+import UI exposing (..)
 import View exposing (View)
+import Gen.Route as Route
 
 
 page : Shared.Model -> Request.With Params -> Page.With Model Msg
 page shared req =
-    Page.element
+    Page.advanced
         { init = init
         , update = update
         , view = view
@@ -27,24 +32,33 @@ type alias Model =
     {}
 
 
-init : ( Model, Cmd Msg )
+init : ( Model, Effect Msg )
 init =
-    ( {}, Cmd.none )
-
-
+    ( {}
+    , Effect.none
+    )
 
 -- UPDATE
 
 
 type Msg
-    = ReplaceMe
+    = PlayClick
+    | PlayList (List Spil)
 
 
-update : Msg -> Model -> ( Model, Cmd Msg )
+update : Msg -> Model -> ( Model, Effect Msg )
 update msg model =
     case msg of
-        ReplaceMe ->
-            ( model, Cmd.none )
+        PlayClick ->
+            ( model
+            , Effect.fromCmd <|
+                Random.generate PlayList (Random.List.shuffle Spil.alleSpil)
+            )
+        PlayList list ->
+            ( model
+            , Effect.fromShared <|
+                Shared.Play list
+            )
 
 
 
@@ -63,5 +77,9 @@ subscriptions model =
 view : Model -> View Msg
 view model =
   { title = "play | lab rat"
-  , body = [text "Play"]
+  , body =
+    column [centerX]
+      [ appButton PlayClick "Play"
+      ]
+    |> List.singleton
   }

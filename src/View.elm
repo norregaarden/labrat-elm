@@ -35,9 +35,6 @@ map fn view =
 toBrowserDocument : Url -> View msg -> Browser.Document msg
 toBrowserDocument url view =
     let
-      route = Route.fromUrl url
-      log1 = Debug.log "her" route
-      log2 = Debug.log "der" url
       headerRoute =
         if String.slice 1 4 url.path == "log" then
           Route.LogChoose

@@ -129,7 +129,8 @@ view : Model -> Browser.Document Msg
 view model =
     Pages.view model.page model.shared model.url model.key
         |> View.map Page
-        |> View.toBrowserDocument model.url
+        --|> View.toBrowserDocument
+        |> View.toBrowserDocument model.url -- HERE it was changed
 
 
 

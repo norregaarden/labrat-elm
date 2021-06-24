@@ -5,7 +5,7 @@ import Gen.Params.Data exposing (Params)
 import Page
 import Request
 import Shared
-import UI
+import UI exposing (p)
 import View exposing (View)
 
 
@@ -63,5 +63,8 @@ subscriptions model =
 view : Shared.Model -> Model -> View Msg
 view shared model =
   { title = "data | lab rat"
-  , body = [paragraph [] [text (Debug.toString shared.storage)]]
+  , body =
+      [ p (Debug.toString shared.playing)
+      , p (Debug.toString shared.storage)
+      ]
   }
