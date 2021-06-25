@@ -18,19 +18,13 @@ import Log exposing (Data(..))
 
 page : Shared.Model -> Request -> Page.With Model Msg
 page shared req =
-    Page.element
-        { init = init
-        , update = update shared.storage
-        , view = view shared.storage
-        , subscriptions = \_ -> Sub.none
-        }
+  Page.element
+    { init = init
+    , update = update shared.storage
+    , view = view shared.storage
+    , subscriptions = \_ -> Sub.none
+    }
 
--- SUBSCRIPTIONS
-{-
-subscriptions : Model -> Sub Msg
-subscriptions model =
-    Sub.none
--}
 
 
 -- MODEL
@@ -111,6 +105,6 @@ view _ model =
       [ intForm model |> el [Font.size (s 2)]
       ]
   in
-    { title = "log | lab rat"
-    , body = body
-    }
+  { title = "log | lab rat"
+  , body = body
+  }

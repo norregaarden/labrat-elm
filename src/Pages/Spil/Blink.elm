@@ -5,18 +5,17 @@ import Gen.Params.Blink exposing (Params)
 import Page
 import Request
 import Shared
-import UI
 import View exposing (View)
 
 
 page : Shared.Model -> Request.With Params -> Page.With Model Msg
 page shared req =
-    Page.element
-        { init = init
-        , update = update
-        , view = view
-        , subscriptions = subscriptions
-        }
+  Page.element
+    { init = init
+    , update = update
+    , view = view
+    , subscriptions = subscriptions
+    }
 
 
 
@@ -24,12 +23,12 @@ page shared req =
 
 
 type alias Model =
-    {}
+  {}
 
 
 init : ( Model, Cmd Msg )
 init =
-    ( {}, Cmd.none )
+  ( {}, Cmd.none )
 
 
 
@@ -42,9 +41,9 @@ type Msg
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
-    case msg of
-        ReplaceMe ->
-            ( model, Cmd.none )
+  case msg of
+    ReplaceMe ->
+      ( model, Cmd.none )
 
 
 
@@ -53,7 +52,7 @@ update msg model =
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
-    Sub.none
+  Sub.none
 
 
 
@@ -61,14 +60,14 @@ subscriptions model =
 
 vis : Model -> List (Element Msg)
 vis model =
-    billede "noegenhat" |> el [padding 40] |> List.singleton
+  billede "noegenhat" |> el [padding 40] |> List.singleton
 
 
 view : Model -> View Msg
 view model =
-    { title = "Spil: Blink"
-    , body = vis model
-    }
+  { title = "Spil: Blink"
+  , body = vis model
+  }
 
 
 
@@ -76,4 +75,4 @@ view model =
 
 billede : String -> Element msg
 billede navn =
-    image [width fill] { src = "/images/" ++ navn ++ ".svg", description = "" }
+  image [width fill] { src = "/images/" ++ navn ++ ".svg", description = "" }

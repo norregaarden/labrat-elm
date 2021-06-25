@@ -6,14 +6,14 @@ import Gen.Route as Route
 -- Bruges i Shared.elm
 
 type Spil
-  = Dut
-  | Tid
+    = Dut
+    | Tid
 
 alleSpil = [Dut, Tid] -- games
 
 type Score
-  = DutScore Score_Dut
-  | TidScore Score_Tid
+    = DutScore Score_Dut
+    | TidScore Score_Tid
 
 type alias Scores =
   { dut : Maybe Score_Dut

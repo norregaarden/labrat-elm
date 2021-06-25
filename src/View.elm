@@ -8,45 +8,45 @@ import UI exposing (..)
 
 
 type alias View msg =
-    { title : String
-    , body : List (Element msg)
-    }
+  { title : String
+  , body : List (Element msg)
+  }
 
 
 placeholder : String -> View msg
 placeholder str =
-    { title = str
-    , body = [ Element.text str ]
-    }
+  { title = str
+  , body = [ Element.text str ]
+  }
 
 
 none : View msg
 none =
-    placeholder ""
+  placeholder ""
 
 
 map : (a -> b) -> View a -> View b
 map fn view =
-    { title = view.title
-    , body = List.map (Element.map fn) view.body
-    }
+  { title = view.title
+  , body = List.map (Element.map fn) view.body
+  }
 
 
 toBrowserDocument : Url -> View msg -> Browser.Document msg
 toBrowserDocument url view =
-    let
-      headerRoute =
-        if String.slice 1 4 url.path == "log" then
-          Route.LogChoose
-        else if String.slice 1 5 url.path == "data" then
-          Route.Data
-        else if String.slice 1 5 url.path == "play" then
-          Route.Play
-        else if String.slice 1 5 url.path == "spil" then
-          Route.Play
-        else
-          Route.Home_
-    in
-    { title = view.title
-    , body = UI.appLayout headerRoute view.body
-    }
+  let
+    headerRoute =
+      if String.slice 1 4 url.path == "log" then
+        Route.LogChoose
+      else if String.slice 1 5 url.path == "data" then
+        Route.Data
+      else if String.slice 1 5 url.path == "play" then
+        Route.Play
+      else if String.slice 1 5 url.path == "spil" then
+        Route.Play
+      else
+        Route.Home_
+  in
+  { title = view.title
+  , body = UI.appLayout headerRoute view.body
+  }

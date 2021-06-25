@@ -9,39 +9,39 @@ import Svg.Attributes exposing (..)
 
 
 enDut =
-    ( Grøn, Sekskant )
+  ( Grøn, Sekskant )
 
 
 dutBredde =
-    100
+  100
 
 
 dutHøjde =
-    dutBredde
+  dutBredde
 
 
 dutCentrum =
-    50
+  50
 
 
 dutBreddeStr =
-    fromInt dutBredde
+  fromInt dutBredde
 
 
 dutHøjdeStr =
-    fromInt dutHøjde
+  fromInt dutHøjde
 
 
 dutCentrumStr =
-    fromInt dutCentrum
+  fromInt dutCentrum
 
 
 dutViewbox =
-    "0 0 " ++ dutBreddeStr ++ " " ++ dutHøjdeStr
+  "0 0 " ++ dutBreddeStr ++ " " ++ dutHøjdeStr
 
 
 type alias Dut =
-    ( Farve, Form )
+  ( Farve, Form )
 
 
 type Form
@@ -53,7 +53,7 @@ type Form
 
 alleFormer : List Form
 alleFormer =
-    [ Trekant, Firkant, Sekskant, Cirkel ]
+  [ Trekant, Firkant, Sekskant, Cirkel ]
 
 
 type Farve
@@ -65,51 +65,50 @@ type Farve
 
 alleFarver : List Farve
 alleFarver =
-    [ Rød, Gul, Grøn, Blå ]
+  [ Rød, Gul, Grøn, Blå ]
 
 
 alleDutter : List Dut
 alleDutter =
-    List.concatMap (\x -> List.map (\y -> ( x, y )) alleFormer) alleFarver
+  List.concatMap (\x -> List.map (\y -> ( x, y )) alleFormer) alleFarver
 
 
 svgDut dut =
-    svg [ viewBox dutViewbox, width "100%", height "100%" ]
-        [ tegnDut dut ]
+  svg [ viewBox dutViewbox, width "100%", height "100%" ]
+    [ tegnDut dut ]
 
 
 tegnDut : Dut -> Svg msg
 tegnDut ( farve, form ) =
-    let
-        rgb =
-            toCssString (tegnFarve farve)
-        --col = "rgba(" ++ fromFloat rgb.red ++ "," ++ fromFloat rgb.green ++ "," ++ fromFloat rgb.blue ++ "," ++ fromFloat rgb.alpha ++ ")"
-    in
-    case form of
-        Trekant ->
-            polygon [ points "50,0 0,100 100,100", fill rgb ] []
+  let
+    rgb =
+      toCssString (tegnFarve farve)
+  in
+  case form of
+    Trekant ->
+      polygon [ points "50,0 0,100 100,100", fill rgb ] []
 
-        Firkant ->
-            rect [ x "0", y "0", width "100", height "100", fill rgb ] []
+    Firkant ->
+      rect [ x "0", y "0", width "100", height "100", fill rgb ] []
 
-        Sekskant ->
-            polygon [ points "29,0 71,0 100,50 71,100 29,100 0,50", fill rgb ] []
+    Sekskant ->
+      polygon [ points "29,0 71,0 100,50 71,100 29,100 0,50", fill rgb ] []
 
-        Cirkel ->
-            circle [ cx dutCentrumStr, cy dutCentrumStr, r dutCentrumStr, fill rgb ] []
+    Cirkel ->
+      circle [ cx dutCentrumStr, cy dutCentrumStr, r dutCentrumStr, fill rgb ] []
 
 
 tegnFarve : Farve -> Color
 tegnFarve f =
-    case f of
-        Rød ->
-            darkRed
+  case f of
+    Rød ->
+      darkRed
 
-        Gul ->
-            darkYellow
+    Gul ->
+      darkYellow
 
-        Grøn ->
-            darkGreen
+    Grøn ->
+      darkGreen
 
-        Blå ->
-            darkBlue
+    Blå ->
+      darkBlue

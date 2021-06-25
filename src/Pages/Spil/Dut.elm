@@ -35,38 +35,38 @@ runder = 10
 -- INIT
 
 type alias Model =
-    { udvalgtDut : Dut
-    , dutterne : List Dut
-    , igang : Bool
-    , tidspunkt : Int
-    , klikket : List ( Bool, Int )
-    , færdig : Bool
-    }
+  { udvalgtDut : Dut
+  , dutterne : List Dut
+  , igang : Bool
+  , tidspunkt : Int
+  , klikket : List ( Bool, Int )
+  , færdig : Bool
+  }
 
 
 init : ( Model, Effect Msg )
 init =
-    ( { udvalgtDut = enDut
-      , dutterne = []
-      , igang = False
-      , tidspunkt = 0
-      , klikket = []
-      , færdig = False
-      }
-    , Effect.none
-    )
+  ( { udvalgtDut = enDut
+    , dutterne = []
+    , igang = False
+    , tidspunkt = 0
+    , klikket = []
+    , færdig = False
+    }
+  , Effect.none
+  )
 
 
 -- PAGE
 
 page : Shared.Model -> Request.With Params -> Page.With Model Msg
 page shared req =
-    Page.advanced
-        { init = init
-        , update = update
-        , view = view
-        , subscriptions = subscriptions
-        }
+  Page.advanced
+    { init = init
+    , update = update
+    , view = view
+    , subscriptions = \_ -> Sub.none
+    }
 
 
 
@@ -82,51 +82,52 @@ type Msg
     | Gem Bool Time.Posix
     | Videre
 
+
 update : Msg -> Model -> ( Model, Effect Msg )
 update msg model =
-    let
-        bland =
-            R.generate Blandet (shuffle alleDutter)
+  let
+    bland =
+      R.generate Blandet (shuffle alleDutter)
 
-        udvælg =
-            R.generate Udvælg (choose alleDutter)
-    in
-    case msg of
-        Begynd ->
-            ( { model | igang = True, færdig = False }, Effect.fromCmd bland )
+    udvælg =
+      R.generate Udvælg (choose alleDutter)
+  in
+  case msg of
+    Begynd ->
+      ( { model | igang = True, færdig = False }, Effect.fromCmd bland )
 
-        Blandet liste ->
-            ( { model | dutterne = liste }, Effect.fromCmd udvælg )
+    Blandet liste ->
+      ( { model | dutterne = liste }, Effect.fromCmd udvælg )
 
-        Udvælg whatevs ->
-            ( { model | udvalgtDut = fixDut whatevs }, Effect.fromCmd <| Task.perform Start Time.now )
+    Udvælg whatevs ->
+      ( { model | udvalgtDut = fixDut whatevs }, Effect.fromCmd <| Task.perform Start Time.now )
 
-        Start tid ->
-            ( { model | tidspunkt = Time.posixToMillis tid }, Effect.none )
+    Start tid ->
+      ( { model | tidspunkt = Time.posixToMillis tid }, Effect.none )
 
-        Klik dut ->
-            if dut == model.udvalgtDut then
-                ( model, Effect.fromCmd <| Task.perform (Gem True) Time.now )
-            else ( model, Effect.fromCmd <| Task.perform (Gem False) Time.now )
+    Klik dut ->
+      if dut == model.udvalgtDut then
+        ( model, Effect.fromCmd <| Task.perform (Gem True) Time.now )
+      else ( model, Effect.fromCmd <| Task.perform (Gem False) Time.now )
 
-        Gem bål tid ->
-            let
-                deltaTid = Time.posixToMillis tid - model.tidspunkt
-                nyKlikket = ( bål, deltaTid ) :: model.klikket
-                alleRunder = (List.length nyKlikket == runder)
+    Gem bål tid ->
+      let
+        deltaTid = Time.posixToMillis tid - model.tidspunkt
+        nyKlikket = ( bål, deltaTid ) :: model.klikket
+        alleRunder = (List.length nyKlikket == runder)
 
-                effect =
-                  if alleRunder then
-                    Effect.none
-                  else
-                    Effect.fromCmd bland
-            in
-            ( { model | klikket = nyKlikket, igang = (not alleRunder), færdig = alleRunder }, effect )
+        effect =
+          if alleRunder then
+            Effect.none
+          else
+            Effect.fromCmd bland
+      in
+      ( { model | klikket = nyKlikket, igang = (not alleRunder), færdig = alleRunder }, effect )
 
-        Videre ->
-            ( model
-            , score model |> DutScore |> Shared.SpilScore |> Effect.fromShared
-            )
+    Videre ->
+      ( model
+      , score model |> DutScore |> Shared.SpilScore |> Effect.fromShared
+      )
 
 score model =
   let
@@ -149,86 +150,80 @@ score model =
 
 fixDut : ( Maybe Dut, List Dut ) -> Dut
 fixDut ( maybeDut, _ ) =
-    case maybeDut of
-        Nothing -> enDut
-        Just dut -> dut
-
-
--- SUBSCRIPTIONS
-
-subscriptions : Model -> Sub Msg
-subscriptions model =
-    Sub.none
+  case maybeDut of
+    Nothing -> enDut
+    Just dut -> dut
 
 
 
 -- VIEW
 
 topView model =
-    if model.igang then
-        svgDut model.udvalgtDut |> html
-        |> el [width (maximum (s 11) fill), paddingEach (bltr (s 3) (s 3) 0 (s 3))]
-        |> el [Border.widthEach (bltr 2 0 0 0)]
-    else
-        column []
-            [ p "Test your reaction time" |> el [Font.size (s 3)]
-            , column [padding (s 1), spacing (s 1), Font.size (s 1)]
-                [ p "Match shape and color." |> el []
-                , p (fromInt runder ++ " rounds.") |> el []
-                ]
-            ]
+  if model.igang then
+    svgDut model.udvalgtDut |> html
+    |> el [width (maximum (s 11) fill), paddingEach (bltr (s 3) (s 3) 0 (s 3))]
+    |> el [Border.widthEach (bltr 2 0 0 0)]
+  else
+    column []
+      [ p "Test your reaction time" |> el [Font.size (s 3)]
+      , column [padding (s 1), spacing (s 1), Font.size (s 1)]
+        [ p "Match shape and color." |> el []
+        , p (fromInt runder ++ " rounds.") |> el []
+        ]
+      ]
 
 buttonView model =
     showWhen (not model.igang && not model.færdig) (appButton Begynd "BEGIN")
 
 dataView model =
-    let
-      scr = score model
-      meanString = Round.round 3 <| toFloat scr.mean / 1000
-      spreadString = Round.round 3 <| toFloat scr.spread / 1000
-    in
-        [ row [width fill, spaceEvenly]
-            [ "Correct :" |> text |> el [width (fillPortion 1)]
-            , fromInt scr.correct ++ " / " ++ fromInt runder |> text |> el [width (fillPortion 1), Font.alignRight]
-            ]
-        , row [width fill, spaceEvenly]
-            [ "Average :" |> text |> el [width (fillPortion 1)]
-            , meanString ++ " s" |> text |> el [width (fillPortion 1), Font.alignRight]
-            ]
-        , row [width fill, spaceEvenly]
-            [ "Spread  :" |> text |> el [width (fillPortion 1)]
-            , spreadString ++ " s" |> text |> el [width (fillPortion 1), Font.alignRight]
-            ]
-        , row [width fill]
-          [ appButton Videre "Gem" |> el [centerX, padding (s 2)]
-          ]
-        ]
-        |> column [padding (s 3), spacing (s 3), width fill]
+  let
+    scr = score model
+    meanString = Round.round 3 <| toFloat scr.mean / 1000
+    spreadString = Round.round 3 <| toFloat scr.spread / 1000
+  in
+  [ row [width fill, spaceEvenly]
+    [ "Correct :" |> text |> el [width (fillPortion 1)]
+    , fromInt scr.correct ++ " / " ++ fromInt runder |> text |> el [width (fillPortion 1), Font.alignRight]
+    ]
+  , row [width fill, spaceEvenly]
+    [ "Average :" |> text |> el [width (fillPortion 1)]
+    , meanString ++ " s" |> text |> el [width (fillPortion 1), Font.alignRight]
+    ]
+  , row [width fill, spaceEvenly]
+    [ "Spread  :" |> text |> el [width (fillPortion 1)]
+    , spreadString ++ " s" |> text |> el [width (fillPortion 1), Font.alignRight]
+    ]
+  , row [width fill]
+    [ appButton Videre "Gem" |> el [centerX, padding (s 2)]
+    ]
+  ]
+  |> column [padding (s 3), spacing (s 3), width fill]
+
 
 dutterView model =
-    let
-        dutterRow dutter =
-            List.map (el [width (fillPortion 1)]) dutter |> row [spacing (s 2), width fill, height fill]
+  let
+    dutterRow dutter =
+      List.map (el [width (fillPortion 1)]) dutter |> row [spacing (s 2), width fill, height fill]
 
-        dutterWrapped dutter =
-            if List.length dutter > 0 then
-                dutterRow (List.take 4 dutter) :: dutterWrapped (List.drop 4 dutter)
-            else []
+    dutterWrapped dutter =
+      if List.length dutter > 0 then
+        dutterRow (List.take 4 dutter) :: dutterWrapped (List.drop 4 dutter)
+      else []
 
-        huskDutten dut =
-            svgDut dut |> html |> el [ onClick (Klik dut) ]
-    in
-        dutterWrapped (List.map huskDutten model.dutterne)
-        |> column [ spacing (s 2), paddingEach (bltr (s 2) (s 2) 0 (s 2)), width fill, height fill ]
+    huskDutten dut =
+      svgDut dut |> html |> el [ onClick (Klik dut) ]
+  in
+  dutterWrapped (List.map huskDutten model.dutterne)
+  |> column [ spacing (s 2), paddingEach (bltr (s 2) (s 2) 0 (s 2)), width fill, height fill ]
 
 view : Model -> View Msg
 view model =
-    { title = spilTitel "Shapes and colors"
-    , body =
-        List.map (\e -> el [ centerX ] e)
-            [ topView model
-            , buttonView model
-            , dutterView model |> showWhen model.igang
-            ]
-        ++ [dataView model |> showWhen model.færdig]
-    }
+  { title = spilTitel "Shapes and colors"
+  , body =
+    List.map (\e -> el [ centerX ] e)
+      [ topView model
+      , buttonView model
+      , dutterView model |> showWhen model.igang
+      ]
+    ++ [dataView model |> showWhen model.færdig]
+  }

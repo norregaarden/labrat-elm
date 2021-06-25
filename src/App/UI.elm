@@ -23,7 +23,7 @@ font =
   Font.family [Font.typeface "Cutive Mono", Font.monospace]
 
 buttonShadow =
-  Border.shadow
+ Border.shadow
    { offset = ( 0.5, 0.5 )
    , size = 0.0001
    , blur = 3
@@ -31,7 +31,6 @@ buttonShadow =
    }
 
 buttonFontShadow =
-
   Font.shadow { offset = ( 0.1, 0.1 ), blur = 0.1, color = black}
 
 
@@ -44,9 +43,9 @@ spilTitel titel = "Play: " ++ titel ++ " | lab rat"
 
 appLayout: Route -> List (Element msg) -> List (Html msg)
 appLayout headerRoute pageContent =
-    [header headerRoute] ++ [column [paddingXY (s 2) (s 6), spacing (s 2), width fill] pageContent] ++  footer
-    |> column [width fill, height fill]
-    |> layout [font, Background.color beige] |> List.singleton
+  [header headerRoute] ++ [column [paddingXY (s 2) (s 6), spacing (s 2), width fill] pageContent] ++  footer
+  |> column [width fill, height fill]
+  |> layout [font, Background.color beige] |> List.singleton
 
 
 ---- SHARED VIEW ----
@@ -65,7 +64,7 @@ headerLink string route r =
     routeText txt
       = (text txt |> el [centerY, centerX])
   in
-    routeLink (routeText string) route (headerLinkAttributes)
+  routeLink (routeText string) route (headerLinkAttributes)
 
 header r = row
   [ paddingXY (s -2) 0
@@ -106,11 +105,11 @@ sf = Element.modular 16 1.25
 -- for e.g. Border.widthEach, paddingEach?
 bltr : Int -> Int -> Int -> Int -> { bottom : Int, left : Int, right : Int, top : Int}
 bltr b l t r =
-    { bottom = b
-    , left = l
-    , top = t
-    , right = r
-    }
+  { bottom = b
+  , left = l
+  , top = t
+  , right = r
+  }
 
 -- text wrapping
 p : String -> Element msg
@@ -120,91 +119,83 @@ h : Int -> String -> Element msg
 h n str = paragraph [Region.heading n, Font.size (s 4)] [text str]
 
 appButton msg label =
-    Input.button
-        [ paddingXY (s 4) (s 2)
-        , width (minimum (s 11) shrink)
-        , Font.color white
-        , Font.extraBold
-        , Font.size (s 4)
-        , Background.color orangeLight
-        , Border.rounded (s -1)
-        , buttonShadow
-        , buttonFontShadow
-        , Element.focused
-            [ Background.color blue ]
-        ]
-        { onPress = Just msg
-        , label = text label |> el [centerX]
-        }
+  Input.button
+    [ paddingXY (s 4) (s 2)
+    , width (minimum (s 11) shrink)
+    , Font.color white
+    , Font.extraBold
+    , Font.size (s 4)
+    , Background.color orangeLight
+    , Border.rounded (s -1)
+    , buttonShadow
+    , buttonFontShadow
+    , Element.focused
+      [ Background.color blue ]
+    ]
+    { onPress = Just msg
+    , label = text label |> el [centerX]
+    }
 
 smallAppButton msg label =
-    Input.button
-        [ paddingXY (s 2) (s 0)
-        , width (minimum (s 9) shrink)
-        , Font.color white
-        , Font.extraBold
-        , Font.size (s 2)
-        , Background.color orangeLight
-        , Border.rounded (s -1)
-        , Element.focused
-            [ Background.color blue ]
-        , buttonShadow
-        , buttonFontShadow
-        ]
-        { onPress = Just msg
-        , label = text label |> el [centerX]
-        }
+  Input.button
+    [ paddingXY (s 2) (s 0)
+    , width (minimum (s 9) shrink)
+    , Font.color white
+    , Font.extraBold
+    , Font.size (s 2)
+    , Background.color orangeLight
+    , Border.rounded (s -1)
+    , Element.focused
+        [ Background.color blue ]
+    , buttonShadow
+    , buttonFontShadow
+    ]
+    { onPress = Just msg
+    , label = text label |> el [centerX]
+    }
 
 flatFillButton msg label =
-    Input.button
-        [ paddingXY (s 2) (s 0)
-        , width fill
-        , Font.color white
-        , Font.extraBold
-        , Font.size (s 2)
-        , Background.color orangeLight
-        , Border.rounded (s -1)
-        , Element.focused
-            [ Background.color blue ]
-        ]
-        { onPress = Just msg
-        , label = text label |> el [centerX]
-        }
+  Input.button
+    [ paddingXY (s 2) (s 0)
+    , width fill
+    , Font.color white
+    , Font.extraBold
+    , Font.size (s 2)
+    , Background.color orangeLight
+    , Border.rounded (s -1)
+    , Element.focused
+        [ Background.color blue ]
+    ]
+    { onPress = Just msg
+    , label = text label |> el [centerX]
+    }
 
 smallAppButtonDisabled label =
-    Input.button
-        [ padding (s 1)
-        , width (minimum (s 9) shrink)
-        , Font.color white
-        , Font.extraBold
-        , Font.size (s 2)
-        , Background.color red
-        , Border.rounded 0
-        , Element.focused
-            [ Background.color red ]
-        ]
-        { onPress = Nothing
-        , label = text label |> el [centerX]
-        }
+  Input.button
+    [ padding (s 1)
+    , width (minimum (s 9) shrink)
+    , Font.color white
+    , Font.extraBold
+    , Font.size (s 2)
+    , Background.color red
+    , Border.rounded 0
+    , Element.focused
+        [ Background.color red ]
+    ]
+    { onPress = Nothing
+    , label = text label |> el [centerX]
+    }
 
 routeLink label route attributes =
-    link attributes { url = Route.toHref route, label = label }
-
--- not used anymore
---opacityFromBool : Bool -> Element msg -> Element msg
-opacityFromBool from content =
-    if from then
-        el [transparent False, alpha 0.4321] content
-    else
-        el [] content
+  link attributes { url = Route.toHref route, label = label }
 
 -- conditional display
 showWhen : Bool -> Element msg -> Element msg
 showWhen should show =
-    if should then show
-    else none
+  if should then show
+  else none
 
 showListWhen : Bool -> List (Element msg) -> List (Element msg)
 showListWhen should show =
-    if should then show
-    else []
+  if should then show
+  else []

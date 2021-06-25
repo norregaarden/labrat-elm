@@ -12,19 +12,13 @@ import View exposing (View)
 
 page : Shared.Model -> Request -> Page.With Model Msg
 page shared request =
-    Page.element
-        { init = init
-        , update = update request
-        , view = view shared.storage
-        , subscriptions = \_ -> Sub.none
-        }
+  Page.element
+    { init = init
+    , update = update request
+    , view = view shared.storage
+    , subscriptions = \_ -> Sub.none
+    }
 
--- SUBSCRIPTIONS
-{-
-subscriptions : Model -> Sub Msg
-subscriptions model =
-    Sub.none
--}
 
 
 -- MODEL
@@ -67,12 +61,10 @@ view : Storage -> Model -> View Msg
 view storage model =
   let
     dtButton (t, r) =
-      --smallAppButton (ChosenDataType (t, r)) t
       flatFillButton (ChosenDataType (t, r)) t
 
     body =
       logRoutes |> List.map dtButton
-        --|> column [spacing (s 2)]
         |> column [centerX, spacing (s 2)]
   in
     { title = "log | lab rat"

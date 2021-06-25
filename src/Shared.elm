@@ -17,15 +17,15 @@ import Gen.Route as Route
 import Spil exposing (..)
 
 type alias Flags =
-    Json.Value
+  Json.Value
 
 type alias Model =
-    { storage : Storage
-    , playing :
-      { scores : Spil.Scores
-      , games : List Spil
-      }
+  { storage : Storage
+  , playing :
+    { scores : Spil.Scores
+    , games : List Spil
     }
+  }
 
 
 type Msg
@@ -38,9 +38,9 @@ type Msg
 
 init : Request -> Flags -> ( Model, Cmd Msg )
 init _ flags =
-    ( { storage = Storage.fromJson flags
-      , playing = init_playing
-    }, Cmd.none )
+  ( { storage = Storage.fromJson flags
+    , playing = init_playing
+  }, Cmd.none )
 
 init_playing =
   { scores = Spil.Scores Nothing Nothing
@@ -79,7 +79,6 @@ update req msg model =
               Request.pushRoute (Spil.spilRoute spil) req
             [] ->
               Task.perform SaveScores Time.now
-              --Request.pushRoute Route.Data req
       in
         ( {model | playing = newPlaying }, command )
 
@@ -92,5 +91,4 @@ update req msg model =
 
 subscriptions : Request -> Model -> Sub Msg
 subscriptions _ _ =
-    --Sub.none
-    Storage.onChange StorageUpdated
+  Storage.onChange StorageUpdated

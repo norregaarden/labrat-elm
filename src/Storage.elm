@@ -20,7 +20,6 @@ type alias Person =
   , kg : Int
   }
 
---type alias Tid = Time.Posix
 
 type alias Storage =
   { person : Person
@@ -28,6 +27,7 @@ type alias Storage =
   , log : Dict Int Data
   , playlog : Dict Int Scores
   }
+
 
 initial : Storage
 initial =
@@ -39,18 +39,6 @@ initial =
 
 
 -- UPDATE
-
-newLog : Int -> String -> Storage -> Cmd msg
-newLog tid str storage =
-    storage
-        |> toJson
-        |> save
-
-delLog : Storage -> Cmd msg
-delLog storage =
-    storage
-        |> toJson
-        |> save
 
 editPerson : Person -> Storage -> Cmd msg
 editPerson person storage =
@@ -81,7 +69,7 @@ logScores tidms scores storage =
 
 onChange : (Storage -> msg) -> Sub msg
 onChange fromStorage =
-    load (\json -> fromJson json |> fromStorage)
+  load (\json -> fromJson json |> fromStorage)
 
 
 ---------------------
@@ -89,16 +77,16 @@ onChange fromStorage =
 
 toJson : Storage -> E.Value
 toJson storage =
-    E.object
-        [ ("person", E.object
-          [ ("years", E.int storage.person.years)
-          , ("cm", E.int storage.person.cm)
-          , ("kg", E.int storage.person.kg)
-          ])
-        , ("sometext", E.string storage.sometext)
-        , ("log", E.dict String.fromInt encodeData storage.log)
-        , ("playlog", E.dict String.fromInt encodeScores storage.playlog)
-        ]
+  E.object
+    [ ("person", E.object
+      [ ("years", E.int storage.person.years)
+      , ("cm", E.int storage.person.cm)
+      , ("kg", E.int storage.person.kg)
+      ])
+    , ("sometext", E.string storage.sometext)
+    , ("log", E.dict String.fromInt encodeData storage.log)
+    , ("playlog", E.dict String.fromInt encodeScores storage.playlog)
+    ]
 
 
 -- encode LOG
@@ -170,17 +158,17 @@ encodeScore score =
 
 fromJson : D.Value -> Storage
 fromJson value =
-    value
-        |> D.decodeValue decoder
-        |> Result.withDefault initial
+  value
+    |> D.decodeValue decoder
+    |> Result.withDefault initial
 
 decoder : D.Decoder Storage
 decoder =
-    D.map4 Storage
-      (D.field "person" personDecoder)
-      (D.field "sometext" D.string)
-      (D.field "log" (Dextra.dict2 D.int dictDataDecoder ))
-      (D.field "playlog" (Dextra.dict2 D.int dictScoresDecoder ))
+  D.map4 Storage
+    (D.field "person" personDecoder)
+    (D.field "sometext" D.string)
+    (D.field "log" (Dextra.dict2 D.int dictDataDecoder ))
+    (D.field "playlog" (Dextra.dict2 D.int dictScoresDecoder ))
 
 personDecoder : D.Decoder Person
 personDecoder =

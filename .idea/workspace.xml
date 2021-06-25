@@ -6,10 +6,24 @@
   <component name="ChangeListManager">
     <list default="true" id="cb0bc1af-3e41-474b-9c00-89c9b54afe7c" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/App/Dutter.elm" beforeDir="false" afterPath="$PROJECT_DIR$/src/App/Dutter.elm" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/App/Log.elm" beforeDir="false" afterPath="$PROJECT_DIR$/src/App/Log.elm" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/App/Spil.elm" beforeDir="false" afterPath="$PROJECT_DIR$/src/App/Spil.elm" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/App/UI.elm" beforeDir="false" afterPath="$PROJECT_DIR$/src/App/UI.elm" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/App/UIColor.elm" beforeDir="false" afterPath="$PROJECT_DIR$/src/App/UIColor.elm" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Pages/Data.elm" beforeDir="false" afterPath="$PROJECT_DIR$/src/Pages/Data.elm" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Pages/Home_.elm" beforeDir="false" afterPath="$PROJECT_DIR$/src/Pages/Home_.elm" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Pages/Log/HR.elm" beforeDir="false" afterPath="$PROJECT_DIR$/src/Pages/Log/HR.elm" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Pages/Log/TempC.elm" beforeDir="false" afterPath="$PROJECT_DIR$/src/Pages/Log/TempC.elm" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Pages/LogChoose.elm" beforeDir="false" afterPath="$PROJECT_DIR$/src/Pages/LogChoose.elm" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Pages/Play.elm" beforeDir="false" afterPath="$PROJECT_DIR$/src/Pages/Play.elm" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Pages/Spil/Blink.elm" beforeDir="false" afterPath="$PROJECT_DIR$/src/Pages/Spil/Blink.elm" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Pages/Spil/Dut.elm" beforeDir="false" afterPath="$PROJECT_DIR$/src/Pages/Spil/Dut.elm" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Pages/Spil/Tid.elm" beforeDir="false" afterPath="$PROJECT_DIR$/src/Pages/Spil/Tid.elm" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Pages/Spil/Vend.elm" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Shared.elm" beforeDir="false" afterPath="$PROJECT_DIR$/src/Shared.elm" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Storage.elm" beforeDir="false" afterPath="$PROJECT_DIR$/src/Storage.elm" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/View.elm" beforeDir="false" afterPath="$PROJECT_DIR$/src/View.elm" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
