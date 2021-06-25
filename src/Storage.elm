@@ -2,25 +2,17 @@ port module Storage exposing (..)
 
 import Dict exposing (Dict)
 import Json.Decode as D
-import Json.Decode.Extra exposing (dict2)
+import Json.Decode.Extra as Dextra
 import Json.Encode as E
-import String exposing (fromInt)
---import Time
+import Json.Encode.Extra as Eextra
 import Log exposing (Data(..), Weight(..))
-import Time
+import Spil exposing (Score(..), Scores)
 
 port save : D.Value -> Cmd msg
 port load : (D.Value -> msg) -> Sub msg
 
 
 -- MODEL
-{-
-type alias Logtype =
-  { thenote : String }
-
-type alias Log =
-  Dict String Logtype
--}
 
 type alias Person =
   { years : Int
@@ -34,6 +26,7 @@ type alias Storage =
   { person : Person
   , sometext : String
   , log : Dict Int Data
+  , playlog : Dict Int Scores
   }
 
 initial : Storage
@@ -41,6 +34,7 @@ initial =
   { person = Person 0 0 0
   , sometext = "davdav"
   , log = Dict.empty
+  , playlog = Dict.empty
   }
 
 
@@ -48,7 +42,6 @@ initial =
 
 newLog : Int -> String -> Storage -> Cmd msg
 newLog tid str storage =
-    --{ storage | log = Dict.insert tid str storage.log}
     storage
         |> toJson
         |> save
@@ -77,6 +70,12 @@ logData tidms data storage =
     |> toJson
     |> save
 
+logScores : Int -> Scores -> Storage -> Cmd msg
+logScores tidms scores storage =
+  { storage | playlog = Dict.insert tidms scores storage.playlog }
+    |> toJson
+    |> save
+
 
 -- SUBSCRIBE
 
@@ -85,6 +84,7 @@ onChange fromStorage =
     load (\json -> fromJson json |> fromStorage)
 
 
+---------------------
 -- Converting to JSON
 
 toJson : Storage -> E.Value
@@ -97,8 +97,11 @@ toJson storage =
           ])
         , ("sometext", E.string storage.sometext)
         , ("log", E.dict String.fromInt encodeData storage.log)
+        , ("playlog", E.dict String.fromInt encodeScores storage.playlog)
         ]
 
+
+-- encode LOG
 
 encodeData : Data -> E.Value
 encodeData data =
@@ -124,8 +127,45 @@ encodeWeight weight =
     Gram g ->
       ("gram", E.int g)
 
---(\x -> E.object [("thenote", E.string x.thenote)])
 
+-- encode PLAY
+
+encodeScores : Scores -> E.Value
+encodeScores scores =
+  let
+    dutEncode =
+      case scores.dut of
+        Just s -> encodeScore (DutScore s)
+        Nothing -> E.null
+    tidEncode =
+      case scores.tid of
+        Just s -> encodeScore (TidScore s)
+        Nothing -> E.null
+  in
+  E.object
+    [ ("dut", dutEncode )
+    , ("tid", tidEncode )
+    ]
+
+encodeScore : Score -> E.Value
+encodeScore score =
+  case score of
+    DutScore s ->
+      E.object
+        [ ("mean", E.int s.mean)
+        , ("spread", E.int s.spread)
+        , ("correct", E.int s.correct)
+        , ("rounds", E.int s.rounds)
+        ]
+
+    TidScore s ->
+      E.object
+        [ ("burde", E.int s.burde)
+        , ("faktisk", E.int s.faktisk)
+        ]
+
+
+-----------------------
 -- Converting from JSON
 
 fromJson : D.Value -> Storage
@@ -136,10 +176,11 @@ fromJson value =
 
 decoder : D.Decoder Storage
 decoder =
-    D.map3 Storage
+    D.map4 Storage
       (D.field "person" personDecoder)
       (D.field "sometext" D.string)
-      (D.field "log" (dict2 D.int dictDataDecoder ))
+      (D.field "log" (Dextra.dict2 D.int dictDataDecoder ))
+      (D.field "playlog" (Dextra.dict2 D.int dictScoresDecoder ))
 
 personDecoder : D.Decoder Person
 personDecoder =
@@ -152,8 +193,22 @@ dictDataDecoder =
     , (D.field "TempC" (D.map TempC D.int))
     ]
 
---listDataDecoder : D.Decoder (List Data)
---listDataDecoder =
---  D.map List
---    (D.field "thenote" D.string)
---
+dictScoresDecoder : D.Decoder Scores
+dictScoresDecoder =
+  D.map2 Scores
+    (D.field "dut" (D.nullable scoreDutDecoder))
+    (D.field "tid" (D.nullable scoreTidDecoder))
+
+scoreDutDecoder : D.Decoder Spil.Score_Dut
+scoreDutDecoder =
+  D.map4 Spil.Score_Dut
+    (D.field "mean" D.int)
+    (D.field "spread" D.int)
+    (D.field "correct" D.int)
+    (D.field "rounds" D.int)
+
+scoreTidDecoder : D.Decoder Spil.Score_Tid
+scoreTidDecoder =
+  D.map2 Spil.Score_Tid
+    (D.field "burde" D.int)
+    (D.field "faktisk" D.int)

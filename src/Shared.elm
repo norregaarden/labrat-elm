@@ -32,17 +32,20 @@ type Msg
     = StorageUpdated Storage
     | Play (List Spil)
     | SpilScore Spil.Score
+    | SaveScores Time.Posix
 
 
 
 init : Request -> Flags -> ( Model, Cmd Msg )
 init _ flags =
     ( { storage = Storage.fromJson flags
-      , playing =
-        { scores = Spil.Scores Nothing Nothing
-        , games = []
-        }
+      , playing = init_playing
     }, Cmd.none )
+
+init_playing =
+  { scores = Spil.Scores Nothing Nothing
+  , games = []
+  }
 
 
 update : Request -> Msg -> Model -> ( Model, Cmd Msg )
@@ -75,9 +78,17 @@ update req msg model =
             spil::list ->
               Request.pushRoute (Spil.spilRoute spil) req
             [] ->
-              Request.pushRoute Route.Data req
+              Task.perform SaveScores Time.now
+              --Request.pushRoute Route.Data req
       in
         ( {model | playing = newPlaying }, command )
+
+    SaveScores tid ->
+      ( { model | playing = init_playing }
+      , Storage.logScores (Time.posixToMillis tid) (model.playing.scores) model.storage
+      )
+
+
 
 subscriptions : Request -> Model -> Sub Msg
 subscriptions _ _ =

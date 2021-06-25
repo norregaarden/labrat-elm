@@ -64,7 +64,9 @@ view : Shared.Model -> Model -> View Msg
 view shared model =
   { title = "data | lab rat"
   , body =
-      [ p (Debug.toString shared.playing)
+      [ text "shared.playing"
+      , p (Debug.toString shared.playing)
+      , text "shared.storage"
       , p (Debug.toString shared.storage)
       ]
   }
