@@ -5,7 +5,7 @@ import Json.Decode as D
 import Json.Decode.Extra as Dextra
 import Json.Encode as E
 import Json.Encode.Extra as Eextra
-import Log exposing (Data(..), Weight(..))
+import Log exposing (Data(..), Weight(..), WeightUnit(..))
 import Spil exposing (Score(..), Scores)
 
 port save : D.Value -> Cmd msg
@@ -102,18 +102,16 @@ encodeData data =
       E.object [( "BP", E.object [("high", E.int high), ("low", E.int low)] )]
     Musing text ->
       E.object [( "Musing", E.string text )]
-    Intox drug weight ->
+{-    Intox drug weight ->
       E.object [( "Intox", E.object [("drug", E.string drug), encodeWeight weight] )]
 
 encodeWeight : Weight -> (String, E.Value)
 encodeWeight weight =
   case weight of
-    Microgram ug ->
+    Weight Microgram ug ->
       ("microgram", E.int ug)
-    Milligram mg ->
-      ("milligram", E.int mg)
-    Gram g ->
-      ("gram", E.int g)
+    Weight Milligram mg ->
+      ("milligram", E.int mg)-}
 
 
 -- encode PLAY

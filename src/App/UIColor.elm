@@ -10,6 +10,9 @@ import Element exposing (rgb255)
 black =
   rgb255 0 0 0
 
+gray =
+  rgb255 100 100 100
+
 white =
   rgb255 255 255 255
 

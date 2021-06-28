@@ -9,6 +9,7 @@
     "elm-version": "0.19.1",
     "dependencies": {
         "direct": {
+            "PaackEng/elm-ui-dropdown": "3.1.1",
             "avh4/elm-color": "1.0.0",
             "dillonkearns/elm-graphql": "5.0.5",
             "elm/browser": "1.0.2",

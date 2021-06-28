@@ -165,7 +165,7 @@ topView model =
     |> el [Border.widthEach (bltr 2 0 0 0)]
   else
     column []
-      [ p "Test your reaction time" |> el [Font.size (s 3)]
+      [ p "Test visual search time" |> el [Font.size (s 3)]
       , column [padding (s 1), spacing (s 1), Font.size (s 1)]
         [ p "Match shape and color." |> el []
         , p (fromInt runder ++ " rounds.") |> el []

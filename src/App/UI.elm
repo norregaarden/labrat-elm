@@ -3,7 +3,7 @@ module UI exposing
   , spilTitel, s, sf, bltr, p, h
   , appButton, smallAppButton
   , smallAppButtonDisabled
-  , flatFillButton
+  , flatFillButton, grayFillButton
   , showWhen, showListWhen
   )
 
@@ -116,7 +116,7 @@ p : String -> Element msg
 p str = paragraph [] [text str]
 
 h : Int -> String -> Element msg
-h n str = paragraph [Region.heading n, Font.size (s 4)] [text str]
+h n str = paragraph [Region.heading n, Font.size (s (5-n))] [text str]
 
 appButton msg label =
   Input.button
@@ -163,8 +163,22 @@ flatFillButton msg label =
     , Font.size (s 2)
     , Background.color orangeLight
     , Border.rounded (s -1)
-    , Element.focused
-        [ Background.color blue ]
+    --, Element.focused [ Background.color blue ]
+    ]
+    { onPress = Just msg
+    , label = text label |> el [centerX]
+    }
+
+grayFillButton msg label =
+  Input.button
+    [ paddingXY (s 2) (s 0)
+    , width fill
+    , Font.color white
+    , Font.extraBold
+    , Font.size (s 2)
+    , Background.color gray
+    , Border.rounded (s -1)
+    --, Element.focused [ Background.color blue ]
     ]
     { onPress = Just msg
     , label = text label |> el [centerX]
