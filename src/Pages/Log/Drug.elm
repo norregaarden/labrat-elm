@@ -363,7 +363,7 @@ makeRequest firstInput =
     thirdInput = String.filter (\c -> c == ' ' |> not) secondInput
     fourthInput = String.filter (\c -> c == '-' |> not) thirdInput
     input = String.trim fourthInput
-    log = Debug.log "input" input
+    --log = Debug.log "input" input
   in
   if input == "" then
     Cmd.none

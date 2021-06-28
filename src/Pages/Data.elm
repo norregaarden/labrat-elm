@@ -56,8 +56,8 @@ view shared model =
   { title = "data | lab rat"
   , body =
     [ text "shared.playing"
-    , p (Debug.toString shared.playing)
+    --, p (Debug.toString shared.playing)
     , text "shared.storage"
-    , p (Debug.toString shared.storage)
+    --, p (Debug.toString shared.storage)
     ]
   }
