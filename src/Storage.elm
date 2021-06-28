@@ -5,7 +5,7 @@ import Json.Decode as D
 import Json.Decode.Extra as Dextra
 import Json.Encode as E
 import Json.Encode.Extra as Eextra
-import Log exposing (Data(..), Weight(..), WeightUnit(..))
+import Log exposing (Data(..), ROA, Weight(..), WeightUnit(..))
 import Spil exposing (Score(..), Scores)
 
 port save : D.Value -> Cmd msg
@@ -24,10 +24,14 @@ type alias Person =
 type alias Storage =
   { person : Person
   , sometext : String
-  , log : Dict Int Data
+  , log : Dict Int DataLog
   , playlog : Dict Int Scores
   }
 
+type alias DataLog =
+  { time : Int
+  , data : Data
+  }
 
 initial : Storage
 initial =
@@ -52,9 +56,9 @@ logsometext str storage =
     |> toJson
     |> save
 
-logData : Int -> Data -> Storage -> Cmd msg
-logData tidms data storage =
-  { storage | log = Dict.insert tidms data storage.log }
+logData : Int -> (Int, Data) -> Storage -> Cmd msg
+logData ms_log (ms_data, data) storage =
+  { storage | log = Dict.insert ms_log { time = ms_data, data = data } storage.log }
     |> toJson
     |> save
 
@@ -91,27 +95,44 @@ toJson storage =
 
 -- encode LOG
 
-encodeData : Data -> E.Value
-encodeData data =
-  case data of
-    TempC c ->
-      E.object [( "TempC", E.int c )]
-    HR hr ->
-      E.object [( "HR", E.int hr )]
-    BP high low ->
-      E.object [( "BP", E.object [("high", E.int high), ("low", E.int low)] )]
-    Musing text ->
-      E.object [( "Musing", E.string text )]
-{-    Intox drug weight ->
-      E.object [( "Intox", E.object [("drug", E.string drug), encodeWeight weight] )]
+encodeData : DataLog -> E.Value
+encodeData datalog =
+  let
+    time = E.int datalog.time
+    data =
+      case datalog.data of
+        TempC c ->
+          E.object [( "TempC", E.int c )]
+        HR hr ->
+          E.object [( "HR", E.int hr )]
+        BP high low ->
+          E.object [( "BP", E.object [("high", E.int high), ("low", E.int low)] )]
+        Musing text ->
+          E.object [( "Musing", E.string text )]
+        DrugAdmin drug roa weight ->
+          E.object [( "DrugAdmin", E.object
+            [ ("drug", E.string drug)
+            , ("roa", E.string (Log.text_roa roa))
+            , ("weight", encodeWeight weight)]
+            )]
+  in
+  E.object
+    [ ("time", time)
+    , ("data", data)
+    ]
 
-encodeWeight : Weight -> (String, E.Value)
+encodeWeight : Weight -> E.Value
 encodeWeight weight =
   case weight of
-    Weight Microgram ug ->
-      ("microgram", E.int ug)
-    Weight Milligram mg ->
-      ("milligram", E.int mg)-}
+    Quan unit amount ->
+      E.object
+        [ ("unit", E.string (Log.text_wu unit))
+        , ("amount", E.int amount)
+        ]
+    Qual qualifier ->
+      E.object
+        [ ("qualitative", E.string (Log.text_dq qualifier))
+        ]
 
 
 -- encode PLAY
@@ -172,12 +193,41 @@ personDecoder : D.Decoder Person
 personDecoder =
   (D.map3 Person (D.field "years" D.int) (D.field "cm" D.int) (D.field "kg" D.int))
 
-dictDataDecoder : D.Decoder Data
+dictDataDecoder : D.Decoder DataLog
 dictDataDecoder =
-  D.oneOf
-    [ (D.field "HR" (D.map HR D.int))
-    , (D.field "TempC" (D.map TempC D.int))
-    ]
+  let
+    dataDecoder =
+      D.oneOf
+        [ (D.field "HR" (D.map HR D.int))
+        , (D.field "TempC" (D.map TempC D.int))
+        , (D.field "DrugAdmin" drugDecoder)
+        ]
+  in
+  D.map2 DataLog
+    ( D.field "time" D.int )
+    ( D.field "data" dataDecoder )
+
+drugDecoder : D.Decoder Data
+drugDecoder =
+  let
+    roaDecoder : D.Decoder ROA
+    roaDecoder =
+      D.map Log.roa_from D.string
+
+    weightDecoder : D.Decoder Weight
+    weightDecoder =
+      D.oneOf
+        [ D.map2 Quan
+            (D.field "unit" (D.map Log.wu_from D.string))
+            (D.field "amount" (D.int))
+        , D.map Qual
+            (D.field "qualitative" (D.map Log.dq_from D.string))
+        ]
+  in
+  D.map3 DrugAdmin
+    (D.field "drug" D.string)
+    (D.field "roa" roaDecoder)
+    (D.field "weight" weightDecoder)
 
 dictScoresDecoder : D.Decoder Scores
 dictScoresDecoder =

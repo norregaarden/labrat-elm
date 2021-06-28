@@ -8,14 +8,16 @@ import Element.Input as Input
 import Gen.Params.Log.Drug exposing (Params)
 import Page
 import Process
+import Storage exposing (Storage)
 import Task
 import Request
 import Shared
+import Time
 import UI exposing (appButton, flatFillButton, grayFillButton, h, s)
 import UIColor exposing (white)
 import View exposing (View)
 import Page
-import Log exposing (WeightUnit(..))
+import Log exposing (Data(..), Weight(..), WeightUnit(..))
 
 import Graphql.Http
 import Graphql.OptionalArgument exposing (OptionalArgument(..))
@@ -34,7 +36,7 @@ page : Shared.Model -> Request.With Params -> Page.With Model Msg
 page shared req =
   Page.advanced
     { init = init
-    , update = update
+    , update = update shared.storage
     , view = view
     , subscriptions = \_ -> Sub.none
     }
@@ -51,6 +53,7 @@ type alias Model =
   , weightChoose : ChooseWeight
   , weightQuan : { unit : Dropdown, amount : Int }
   , weightQual : Dropdown
+  , minutesAgo : Int
   }
 
 type alias Drug =
@@ -81,6 +84,7 @@ init =
         , selectedOption = Just (Log.text_wu Milligram) }
       , amount = 0 }
     , weightQual = { state = Dropdown.init "dropdown_dq", selectedOption = Nothing }
+    , minutesAgo = 0
     }
   , Effect.none
   )
@@ -110,7 +114,9 @@ type Msg
     | WeightQuanChanged String
     | DQ_DropdownMsg (Dropdown.Msg String)
     | DQ_Picked (Maybe String)
-    | Log
+    | MinutesAgoChanged String
+    | Save
+    | LogDataTid Time.Posix
 
 delay : Float -> String -> (String -> Msg) -> Cmd Msg
 delay time input msg =
@@ -119,8 +125,8 @@ delay time input msg =
   |> Task.perform identity
 
 
-update : Msg -> Model -> ( Model, Effect Msg )
-update msg model =
+update : Storage -> Msg -> Model -> ( Model, Effect Msg )
+update storage msg model =
   case msg of
     GotResponse response ->
       ( { model | graphql = response
@@ -220,8 +226,50 @@ update msg model =
       in
       ( { model | weightQual = new_dq }, Effect.none )
 
-    Log ->
-      ( model, Effect.none )
+    MinutesAgoChanged input ->
+      ( { model | minutesAgo = Maybe.withDefault 0 (String.toInt input) }, Effect.none )
+
+    Save ->
+      ( model, Task.perform LogDataTid Time.now |> Effect.fromCmd )
+
+    LogDataTid tid ->
+      let
+        log_time =
+          Time.posixToMillis tid
+
+        data_time =
+          log_time - Log.millisFromMinutes model.minutesAgo
+
+        drug =
+          case model.drug of
+            Nothing -> "ERROR"
+            Just d -> d.name
+
+        roa =
+          Log.roa_from <|
+            Maybe.withDefault "ERROR"
+              model.roa.selectedOption
+
+        weight =
+          case model.weightChoose of
+            Quantitative ->
+              Quan
+                (Log.wu_from <|
+                  Maybe.withDefault "ERROR"
+                    model.weightQuan.unit.selectedOption)
+                model.weightQuan.amount
+            Qualitative ->
+              Qual
+                (Log.dq_from <|
+                  Maybe.withDefault "ERROR"
+                    model.weightQual.selectedOption)
+      in
+      ( model,
+        Effect.fromCmd <| Storage.logData
+          log_time
+          (data_time, DrugAdmin drug roa weight)
+          storage
+      )
 
 
 
@@ -304,13 +352,24 @@ viewWeight model drugName =
         ]
       :: more
 
-viewEnd so =
-  case so of
+viewEnd model =
+  case model.roa.selectedOption of
     Nothing ->
       []
     Just s ->
-      [ appButton Log "LOG" |> el [centerX]
+      [ minutesAgo model.minutesAgo MinutesAgoChanged
+      , text ""
+      , text ""
+      , appButton Save "LOG" |> el [centerX]
       , text "", text "", text ""]
+
+minutesAgo value msg =
+  Input.text []
+    { label = Input.labelAbove [] (text "minutes ago" |> el [Font.size (s 1)])
+    , onChange = msg
+    , placeholder = Nothing
+    , text = String.fromInt value
+    }
 
 view : Model -> View Msg
 view model =
@@ -326,7 +385,7 @@ view model =
     ++ [ text ""
       , text ""
       ]
-    ++ viewEnd model.roa.selectedOption
+    ++ viewEnd model
   }
 
 

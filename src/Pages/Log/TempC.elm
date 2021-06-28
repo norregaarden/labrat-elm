@@ -60,7 +60,7 @@ update storage msg model =
     SavedInput ->
       ( model, Task.perform LogDataTid Time.now )
     LogDataTid tid ->
-      ( model, Storage.logData (Time.posixToMillis tid) (TempC model.input) storage )
+      ( model, Storage.logData (Time.posixToMillis tid) (Time.posixToMillis tid, TempC model.input) storage )
 
 
 

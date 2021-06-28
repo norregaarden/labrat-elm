@@ -58,6 +58,6 @@ view shared model =
     [ text "shared.playing"
     --, p (Debug.toString shared.playing)
     , text "shared.storage"
-    --, p (Debug.toString shared.storage)
+    , p (Debug.toString shared.storage)
     ]
   }

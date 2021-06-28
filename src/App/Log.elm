@@ -1,4 +1,13 @@
-module Log exposing (Data(..), Drug, WeightUnit(..), allWUs, DosageQualifier(..), allDQs, Weight(..), ROA, allROAs, text_roa, text_wu, text_dq)
+module Log exposing
+  ( Data(..)
+  , Drug
+  , WeightUnit(..), allWUs
+  , DosageQualifier(..), allDQs
+  , Weight(..)
+  , ROA, allROAs
+  , text_roa, text_wu, text_dq
+  , roa_from, wu_from, dq_from
+  , millisFromMinutes)
 
 -- GENERAL
 
@@ -7,7 +16,7 @@ type Data
     | TempC Int
     | BP Int Int
     | Musing String
-    --| Intox Drug Weight
+    | DrugAdmin Drug ROA Weight
 
 
 
@@ -59,10 +68,29 @@ text_roa roa =
     Smoked -> "Smoked"
     Sublingual -> "Sublingual"
 
+roa_from text =
+  case text of
+    "Insufflated" -> Insufflated
+    "Intravenous" -> Intravenous
+    "Oral" -> Oral
+    "Rectal" -> Rectal
+    "Smoked" -> Smoked
+    "Sublingual" -> Sublingual
+    _ -> Sublingual
+
 text_wu wu =
   case wu of
     Microgram -> "μg"
     Milligram -> "mg"
+
+wu_from text =
+  case text of
+    "μg" -> Microgram
+    "ug" -> Microgram
+    "Microgram" -> Microgram
+    "mg" -> Milligram
+    "Milligram" -> Milligram
+    _ -> Milligram
 
 text_dq dq =
   case dq of
@@ -71,3 +99,18 @@ text_dq dq =
     Common -> "Common"
     Strong -> "Strong"
     Heavy -> "Heavy"
+
+dq_from text =
+  case text of
+    "Threshold" -> Threshold
+    "Light" -> Light
+    "Common" -> Common
+    "Strong" -> Strong
+    "Heavy" -> Heavy
+    _ -> Threshold
+
+
+-- TIME
+
+millisFromMinutes minutes =
+  minutes * 60 * 1000
