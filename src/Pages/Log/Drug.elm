@@ -3,6 +3,7 @@ module Pages.Log.Drug exposing (Model, Msg, page)
 import Effect exposing (Effect)
 import Element exposing (alignRight, centerX, column, el, fill, fillPortion, padding, row, spacing, text, width)
 import Element.Background as Background
+import Element.Events as Events
 import Element.Font as Font
 import Element.Input as Input
 import Gen.Params.Log.Drug exposing (Params)
@@ -13,7 +14,7 @@ import Task
 import Request
 import Shared
 import Time
-import UI exposing (appButton, flatFillButton, grayFillButton, h, s)
+import UI exposing (appButton, flatFillButton, grayFillButton, h, p, s)
 import UIColor exposing (white)
 import View exposing (View)
 import Page
@@ -58,6 +59,7 @@ type alias Model =
 
 type alias Drug =
   { name : String
+  , url : String
   , image : Maybe String
   }
 
@@ -286,6 +288,10 @@ viewDrug model =
         { src = Maybe.withDefault "/images/PSwiki_eye.svg" data.image
         , description = data.name
         }
+      , Element.newTabLink [Font.underline]
+          { url = data.url
+          , label = p ("Read more about " ++ data.name)
+          }
       ]
         |> column [Background.color white, padding (s 3), spacing (s 3)]
 
@@ -306,6 +312,7 @@ viewROA model =
       , h 2 ("Select your route of administration")
       , Dropdown.view dd_roa model.roa model.roa.state
       , text ""
+      , text ""
       ]
       ++ viewWeight model d.name
 
@@ -315,11 +322,18 @@ weightButton qua choose =
       case qua of
         Quantitative -> "Quantitative"
         Qualitative -> "Qualitative"
+
+    attrs =
+      if qua == choose then
+        [Font.underline]
+      else
+        []
   in
-  if qua == choose then
-    flatFillButton (WeightChoose qua) (label)
-  else
-    grayFillButton (WeightChoose qua) (label)
+  el (Events.onClick (WeightChoose qua) :: attrs) (text label)
+  --if qua == choose then
+    --flatFillButton (WeightChoose qua) (label)
+  --else
+    --grayFillButton (WeightChoose qua) (label)
 
 viewWeight model drugName =
   case model.roa.selectedOption of
@@ -405,13 +419,15 @@ query input =
 
 type alias MaybeDrug =
   { name : Maybe String
+  , url : Maybe String
   , images : Maybe (List (Maybe (Maybe String)))
   }
 
 
 drugQuery =
-  SelectionSet.map2 MaybeDrug
+  SelectionSet.map3 MaybeDrug
     Substance.name
+    Substance.url
     (Substance.images SubstanceImage.image)
 
 
@@ -436,6 +452,10 @@ makeRequest firstInput =
 
 drugData : GraphQLModel -> Maybe Drug
 drugData gmodel =
+  let
+    drugUrl name maybeUrl =
+      Maybe.withDefault ("https://psychonautwiki.org/wiki/" ++ name) maybeUrl
+  in
   case gmodel of
     Loading -> Nothing
     NotAsked -> Nothing
@@ -453,6 +473,7 @@ drugData gmodel =
                 Just name ->
                   Just
                     { name = name
+                    , url = drugUrl name drug.url
                     , image = drugImage drug.images
                     }
 
