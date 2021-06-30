@@ -21,10 +21,12 @@ type alias Flags =
 
 type alias Model =
   { storage : Storage
-  , playing :
-    { scores : Spil.Scores
-    , games : List Spil
-    }
+  , playing : Maybe PlayingModel
+  }
+
+type alias PlayingModel =
+  { scores : Spil.Scores
+  , games : List Spil
   }
 
 
@@ -33,16 +35,17 @@ type Msg
     | Play (List Spil)
     | SpilScore Spil.Score
     | SaveScores Time.Posix
+    | GoToPlay
 
 
 
 init : Request -> Flags -> ( Model, Cmd Msg )
 init _ flags =
   ( { storage = Storage.fromJson flags
-    , playing = init_playing
+    , playing = Nothing
   }, Cmd.none )
 
-init_playing =
+initPlaying =
   { scores = Spil.Scores Nothing Nothing
   , games = []
   }
@@ -57,22 +60,29 @@ update req msg model =
       )
 
     Play spilList ->
-        case spilList of
-          spil::list ->
-            ( { model | playing = { scores = Spil.Scores Nothing Nothing, games = list } }
-            , Request.pushRoute (Spil.spilRoute spil) req
-            )
-          [] -> -- will never happen
-            ( model, Cmd.none )
+      case spilList of
+        spil::list ->
+          ( { model | playing = Just
+              { scores = initPlaying.scores
+              , games = spil::list }
+              }
+          , Request.pushRoute (Spil.spilRoute spil) req
+          )
+        [] -> -- will never happen
+          ( model, Cmd.none )
 
     SpilScore score ->
       let
-        playing = model.playing
+        playing =
+          case model.playing of
+            Nothing -> initPlaying
+            Just p -> p
+
         newPlaying =
-          { playing
-            | scores = Spil.updateScores playing.scores score
-            , games = Spil.updateGames playing.games score
+          { scores = Spil.updateScores playing.scores score
+          , games = Spil.updateGames playing.games score
           }
+
         command =
           case newPlaying.games of
             spil::list ->
@@ -80,12 +90,19 @@ update req msg model =
             [] ->
               Task.perform SaveScores Time.now
       in
-        ( {model | playing = newPlaying }, command )
+        ( {model | playing = Just newPlaying }, command )
 
     SaveScores tid ->
-      ( { model | playing = init_playing }
-      , Storage.logScores (Time.posixToMillis tid) (model.playing.scores) model.storage
-      )
+      case model.playing of
+        Nothing ->
+          ( model, Cmd.none )
+        Just p ->
+          ( { model | playing = Nothing }
+          , Storage.logScores (Time.posixToMillis tid) p.scores model.storage
+          )
+
+    GoToPlay ->
+      ( model, Request.pushRoute Route.Play req)
 
 
 

@@ -64,7 +64,7 @@ page shared req =
   Page.advanced
     { init = init
     , update = update
-    , view = view
+    , view = view shared
     , subscriptions = \_ -> Sub.none
     }
 
@@ -81,6 +81,7 @@ type Msg
     | Klik Dut
     | Gem Bool Time.Posix
     | Videre
+    | Nå
 
 
 update : Msg -> Model -> ( Model, Effect Msg )
@@ -129,6 +130,11 @@ update msg model =
       , score model |> DutScore |> Shared.SpilScore |> Effect.fromShared
       )
 
+    Nå ->
+      ( model
+      , Shared.GoToPlay |> Effect.fromShared
+      )
+
 score model =
   let
     correct =
@@ -175,7 +181,7 @@ topView model =
 buttonView model =
     showWhen (not model.igang && not model.færdig) (appButton Begynd "BEGIN")
 
-dataView model =
+dataView sharedPlaying model =
   let
     scr = score model
     meanString = Round.round 3 <| toFloat scr.mean / 1000
@@ -194,7 +200,7 @@ dataView model =
     , spreadString ++ " s" |> text |> el [width (fillPortion 1), Font.alignRight]
     ]
   , row [width fill]
-    [ appButton Videre "Gem" |> el [centerX, padding (s 2)]
+    [ Spil.videreButton sharedPlaying Videre Nå
     ]
   ]
   |> column [padding (s 3), spacing (s 3), width fill]
@@ -216,8 +222,8 @@ dutterView model =
   dutterWrapped (List.map huskDutten model.dutterne)
   |> column [ spacing (s 2), paddingEach (bltr (s 2) (s 2) 0 (s 2)), width fill, height fill ]
 
-view : Model -> View Msg
-view model =
+view : Shared.Model -> Model -> View Msg
+view shared model =
   { title = spilTitel "Shapes and colors"
   , body =
     List.map (\e -> el [ centerX ] e)
@@ -225,5 +231,5 @@ view model =
       , buttonView model
       , dutterView model |> showWhen model.igang
       ]
-    ++ [dataView model |> showWhen model.færdig]
+    ++ [dataView shared.playing model |> showWhen model.færdig]
   }

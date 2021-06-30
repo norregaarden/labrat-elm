@@ -1,6 +1,9 @@
 module Spil exposing (..)
 
+import Element
 import Gen.Route as Route
+import Request
+import UI
 
 
 -- Bruges i Shared.elm
@@ -60,3 +63,17 @@ updateGames games score =
       List.filter (\g -> g /= Dut) games
     TidScore _ ->
       List.filter (\g -> g /= Tid) games
+
+videreButton playing videreMsg nåMsg =
+  case playing of
+    Nothing ->
+      UI.appButton nåMsg "OK"
+      |> Element.el [Element.centerX, Element.padding (UI.s 2)]
+    Just playingModel ->
+      case playingModel.games of
+        [s] ->
+          UI.appButton videreMsg "Save all"
+          |> Element.el [Element.centerX, Element.padding (UI.s 2)]
+        list ->
+          UI.appButton videreMsg "Next game"
+          |> Element.el [Element.centerX, Element.padding (UI.s 2)]

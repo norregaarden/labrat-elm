@@ -5,7 +5,7 @@ import Element exposing (Element, centerX, column, el, fill, padding, paddingXY,
 import Element.Font as Font
 import Gen.Params.Tid exposing (Params)
 import Page
-import Request
+import Request exposing (Request)
 import Round
 import Shared
 import Spil exposing (Score(..))
@@ -40,12 +40,12 @@ init =
 
 -- BOILERPLATE
 
-page : Shared.Model -> Request.With Params -> Page.With Model Msg
+page : Shared.Model -> Request -> Page.With Model Msg
 page shared req =
   Page.advanced
     { init = init
     , update = update
-    , view = view
+    , view = view shared
     , subscriptions = \_ -> Sub.none
     }
 
@@ -58,6 +58,7 @@ type Msg
     | Slutklik
     | Slut Time.Posix
     | Videre
+    | Nå
 
 
 update : Msg -> Model -> ( Model, Effect Msg )
@@ -85,6 +86,11 @@ update msg model =
       , score model |> TidScore |> Shared.SpilScore |> Effect.fromShared
       )
 
+    Nå ->
+      ( model
+      , Shared.GoToPlay |> Effect.fromShared
+      )
+
 
 score model =
   { burde = burde
@@ -106,7 +112,7 @@ sekunder ms =
 
 -- VIEW
 
-vis model =
+vis sharedPlaying model =
   let
     indhold =
       if (not model.igang) then
@@ -128,7 +134,7 @@ vis model =
         [ Round.round 3 egentlig ++ " seconds passed." |> p
         , "You were off by " |> p
         , Round.round 3 forbi ++ " seconds." |> p
-        , appButton Videre "Gem" |> el [centerX, padding (s 2)]
+        , Spil.videreButton sharedPlaying Videre Nå
         ]
       ]
       |> List.map (el [width fill])
@@ -141,8 +147,8 @@ vis model =
   |> List.map (el [centerX])
 
 
-view : Model -> View Msg
-view model =
+view : Shared.Model -> Model -> View Msg
+view shared model =
   { title = spilTitel (fromInt burde ++ " seconds")
-  , body = vis model
+  , body = vis shared.playing model
   }
