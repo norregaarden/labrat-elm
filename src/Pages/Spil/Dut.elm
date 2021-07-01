@@ -17,7 +17,7 @@ import String exposing (fromInt)
 import Task
 import Time
 import Tuple exposing (first, second)
-import UI exposing (appButton, bltr, p, s, showWhen, spilTitel)
+import UI exposing (appButton, bltr, h, p, s, showWhen, spilTitel)
 import View exposing (View)
 import Round
 
@@ -164,6 +164,7 @@ fixDut ( maybeDut, _ ) =
 
 -- VIEW
 
+
 topView model =
   if model.igang then
     svgDut model.udvalgtDut |> html
@@ -171,15 +172,17 @@ topView model =
     |> el [Border.widthEach (bltr 2 0 0 0)]
   else
     column []
-      [ p "Test visual search time" |> el [Font.size (s 3)]
+      [ h 2 "Test your visual search time"
       , column [padding (s 1), spacing (s 1), Font.size (s 1)]
         [ p "Match shape and color." |> el []
         , p (fromInt runder ++ " rounds.") |> el []
         ]
       ]
 
+
 buttonView model =
     showWhen (not model.igang && not model.færdig) (appButton Begynd "BEGIN")
+
 
 dataView sharedPlaying model =
   let
@@ -221,6 +224,7 @@ dutterView model =
   in
   dutterWrapped (List.map huskDutten model.dutterne)
   |> column [ spacing (s 2), paddingEach (bltr (s 2) (s 2) 0 (s 2)), width fill, height fill ]
+
 
 view : Shared.Model -> Model -> View Msg
 view shared model =

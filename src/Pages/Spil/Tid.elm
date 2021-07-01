@@ -12,7 +12,7 @@ import Spil exposing (Score(..))
 import String exposing (fromFloat, fromInt)
 import Task
 import Time
-import UI exposing (appButton, p, s, showListWhen, showWhen, spilTitel)
+import UI exposing (appButton, h, p, s, showListWhen, showWhen, spilTitel)
 import View exposing (View)
 
 -- SETTINGS
@@ -125,7 +125,7 @@ vis sharedPlaying model =
         ]
 
     noget =
-      [ "How long is " ++ fromFloat (sekunder burde) ++" seconds?" |> p |> el [Font.size (s 3)]
+      [ "How long is " ++ fromFloat (sekunder burde) ++" seconds?" |> h 2
       , column [padding (s 1), spacing (s 1), Font.size (s 1)] indhold |> showWhen (not model.færdig)
       ]
 

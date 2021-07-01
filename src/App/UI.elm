@@ -1,6 +1,7 @@
 module UI exposing
   ( appLayout
-  , spilTitel, s, sf, bltr, p, h
+  , spilTitel, s, sf, bltr
+  , p, small, h
   , appButton, smallAppButton
   , smallAppButtonDisabled
   , flatFillButton, grayFillButton
@@ -114,6 +115,9 @@ bltr b l t r =
 -- text wrapping
 p : String -> Element msg
 p str = paragraph [] [text str]
+
+small : String -> Element msg
+small str = paragraph [Font.size (s 1)] [text str]
 
 h : Int -> String -> Element msg
 h n str = paragraph [Region.heading n, Font.size (s (5-n))] [text str]

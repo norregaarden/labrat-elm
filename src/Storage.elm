@@ -148,10 +148,15 @@ encodeScores scores =
       case scores.tid of
         Just s -> encodeScore (TidScore s)
         Nothing -> E.null
+    huskEncode =
+      case scores.husk of
+        Just s -> encodeScore (HuskScore s)
+        Nothing -> E.null
   in
   E.object
     [ ("dut", dutEncode )
     , ("tid", tidEncode )
+    , ("husk", huskEncode )
     ]
 
 encodeScore : Score -> E.Value
@@ -169,6 +174,12 @@ encodeScore score =
       E.object
         [ ("burde", E.int s.burde)
         , ("faktisk", E.int s.faktisk)
+        ]
+
+    HuskScore s ->
+      E.object
+        [ ("huskNumber", E.int s.huskNumber)
+        , ("totalMistakes", E.int s.totalMistakes)
         ]
 
 
@@ -231,9 +242,10 @@ drugDecoder =
 
 dictScoresDecoder : D.Decoder Scores
 dictScoresDecoder =
-  D.map2 Scores
+  D.map3 Scores
     (D.field "dut" (D.nullable scoreDutDecoder))
     (D.field "tid" (D.nullable scoreTidDecoder))
+    (D.field "husk" (D.nullable scoreHuskDecoder))
 
 scoreDutDecoder : D.Decoder Spil.Score_Dut
 scoreDutDecoder =
@@ -248,3 +260,9 @@ scoreTidDecoder =
   D.map2 Spil.Score_Tid
     (D.field "burde" D.int)
     (D.field "faktisk" D.int)
+
+scoreHuskDecoder : D.Decoder Spil.Score_Husk
+scoreHuskDecoder =
+  D.map2 Spil.Score_Husk
+    (D.field "huskNumber" D.int)
+    (D.field "totalMistakes" D.int)

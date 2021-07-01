@@ -27,7 +27,7 @@ vis =
   List.map (\l -> link [Font.size (s 3)] l)
     [ {url = Route.toHref Route.Spil__Dut, label = text "dut"}
     , {url = Route.toHref Route.Spil__Tid, label = text "tid"}
-    , {url = Route.toHref Route.Spil__Blink, label = text "blink"} ]
+    , {url = Route.toHref Route.Spil__Husk, label = text "husk"} ]
 
 
 view : View msg

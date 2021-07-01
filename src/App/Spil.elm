@@ -2,7 +2,6 @@ module Spil exposing (..)
 
 import Element
 import Gen.Route as Route
-import Request
 import UI
 
 
@@ -11,16 +10,19 @@ import UI
 type Spil
     = Dut
     | Tid
+    | Husk
 
-alleSpil = [Dut, Tid] -- games
+alleSpil = [Dut, Tid, Husk] -- games
 
 type Score
     = DutScore Score_Dut
     | TidScore Score_Tid
+    | HuskScore Score_Husk
 
 type alias Scores =
   { dut : Maybe Score_Dut
   , tid : Maybe Score_Tid
+  , husk : Maybe Score_Husk
   }
 
 
@@ -41,6 +43,10 @@ type alias Score_Tid =
   , faktisk : Int
   }
 
+type alias Score_Husk =
+  { huskNumber : Int
+  , totalMistakes : Int
+  }
 
 
 -- Helpers
@@ -49,6 +55,7 @@ spilRoute spil =
   case spil of
     Dut -> Route.Spil__Dut
     Tid -> Route.Spil__Tid
+    Husk -> Route.Spil__Husk
 
 updateScores scores new =
   case new of
@@ -56,6 +63,8 @@ updateScores scores new =
       { scores | dut = Just score }
     TidScore score ->
       { scores | tid = Just score }
+    HuskScore score ->
+      { scores | husk = Just score }
 
 updateGames games score =
   case score of
@@ -63,11 +72,13 @@ updateGames games score =
       List.filter (\g -> g /= Dut) games
     TidScore _ ->
       List.filter (\g -> g /= Tid) games
+    HuskScore _ ->
+      List.filter (\g -> g /= Husk) games
 
-videreButton playing videreMsg nåMsg =
+videreButton playing videreMsg okMsg =
   case playing of
     Nothing ->
-      UI.appButton nåMsg "OK"
+      UI.appButton okMsg "OK"
       |> Element.el [Element.centerX, Element.padding (UI.s 2)]
     Just playingModel ->
       case playingModel.games of
