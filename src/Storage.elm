@@ -61,6 +61,21 @@ logScores tidms scores storage =
     |> save
 
 
+-- DELETE
+
+deleteData : Int -> Storage -> Cmd msg
+deleteData ms_log storage =
+  { storage | log = Dict.remove ms_log storage.log }
+    |> toJson
+    |> save
+
+deleteScores : Int -> Storage -> Cmd msg
+deleteScores tidms storage =
+  { storage | playlog = Dict.remove tidms storage.playlog }
+    |> toJson
+    |> save
+
+
 -- SUBSCRIBE
 
 onChange : (Storage -> msg) -> Sub msg

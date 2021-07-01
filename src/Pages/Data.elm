@@ -3,23 +3,24 @@ module Pages.Data exposing (Model, Msg, page)
 import Dict
 import Element.Background as Background
 import Element.Border as Border
+import Element.Events exposing (onClick, onDoubleClick)
 import Element.Font as Font
 import Html
 import Html.Attributes
 import Husk
 import Log
 import Spil exposing (Spil(..))
-import Storage
+import Storage exposing (Storage)
 import TimeStr
-import Element exposing (Element, alignBottom, alignLeft, alignRight, alpha, centerX, column, el, fill, fillPortion, height, htmlAttribute, inFront, moveUp, paddingEach, paddingXY, paragraph, px, rgba255, row, spacing, text, width)
+import Element exposing (Element, alignBottom, alignLeft, alignRight, alpha, behindContent, centerX, column, el, fill, fillPortion, height, htmlAttribute, inFront, moveUp, padding, paddingEach, paddingXY, paragraph, px, rgba255, row, spaceEvenly, spacing, text, width)
 import Gen.Params.Data exposing (Params)
 import Page
 import Request
 import Shared
 import Task
 import Time
-import UI exposing (bltr, p, s)
-import UIColor exposing (gray, greenToRed, scaleRatio)
+import UI exposing (bltr, p, s, small)
+import UIColor exposing (gray, greenToRed, orangeDark, red, scaleRatio, white)
 import View exposing (View)
 
 
@@ -29,7 +30,7 @@ barHeight
   = 70
 
 barWidth
-  = 20
+  = 30
 
 dAlpha
   = 0.666
@@ -45,7 +46,7 @@ page : Shared.Model -> Request.With Params -> Page.With Model Msg
 page shared _ =
   Page.element
     { init = init shared
-    , update = update
+    , update = update shared.storage
     , view = view shared
     , subscriptions = \_ -> Sub.none
     }
@@ -60,6 +61,8 @@ type alias Model =
   , zone : Time.Zone
   , labelKeys : List (Int, LogType)
   , baseline : Baseline
+  , clicked : Int
+  , popup : Popup
   }
 
 type alias Baseline =
@@ -68,6 +71,12 @@ type alias Baseline =
   , husk : Spil.Score_Husk
   }
 
+type alias Popup =
+  { popup : Bool
+  , key : Int
+  , label : LogType
+  , delete : Bool
+  }
 
 type LogType
   = Log
@@ -91,6 +100,13 @@ initBaseline =
     }
   }
 
+initPopup =
+  { popup = False
+  , key = 0
+  , label = Log
+  , delete = False
+  }
+
 init : Shared.Model -> ( Model, Cmd Msg )
 init shared =
   let
@@ -107,6 +123,8 @@ init shared =
     , zone = Time.utc
     , labelKeys = List.sortBy Tuple.first labelKeys
     , baseline = initBaseline
+    , clicked = 0
+    , popup = initPopup
     }
   , Task.perform FindTime <| Task.map2 Tuple.pair Time.now Time.here
   )
@@ -118,10 +136,15 @@ init shared =
 
 type Msg
     = FindTime (Time.Posix, Time.Zone)
+    | Click Int
+    | EditClick (Int, LogType)
+    | ClosePopup
+    | Delete
+    | ReallyDelete
 
 
-update : Msg -> Model -> ( Model, Cmd Msg )
-update msg model =
+update : Storage -> Msg -> Model -> ( Model, Cmd Msg )
+update storage msg model =
   case msg of
     FindTime (now, zone) ->
       ( { model
@@ -130,14 +153,112 @@ update msg model =
         }
       , Cmd.none )
 
+    Click key ->
+      ( { model
+        | clicked = key
+        }
+      , Cmd.none )
+
+    EditClick (key, label) ->
+      ( { model
+        | popup =
+          { popup = True
+          , key = key
+          , label = label
+          , delete = False
+          }
+        }
+      , Cmd.none )
+
+    ClosePopup ->
+      ( { model | popup = initPopup }
+      , Cmd.none )
+
+    Delete ->
+      let
+        popup = model.popup
+        newPopup =
+          { popup
+          | delete = True
+          }
+      in
+      ( { model | popup = newPopup }
+      , Cmd.none )
+
+    ReallyDelete ->
+      if model.popup.popup && model.popup.delete then
+        let
+          del =
+            case model.popup.label of
+              Log ->
+                Storage.deleteData
+              Play ->
+                Storage.deleteScores
+        in
+        ( { model | popup = initPopup }
+        , del model.popup.key storage
+        )
+      else
+        ( model, Cmd.none )
+
+
 
 
 -- VIEW
 
+viewPopup popup =
+  let
+    buttonAttrs =
+      [ paddingXY (s 3) (s -1), Border.rounded 10, centerX ]
+    deleteAttrs =
+      onClick Delete ::
+      buttonAttrs ++
+      [ Font.color red, Background.color white ]
+    sureAttrs =
+      onClick ReallyDelete ::
+      buttonAttrs ++
+      [ Font.color white, Background.color red ]
+    cancelAttrs =
+      onClick ClosePopup ::
+      buttonAttrs ++
+      [ Font.color white, Background.color gray ]
+    buttons =
+      case popup.delete of
+        False ->
+          [ (text "Delete") |> el deleteAttrs
+          , (text "Cancel") |> el cancelAttrs
+          ]
+        True ->
+          [ (text "Cancel") |> el cancelAttrs
+          , (text "Delete?") |> el sureAttrs
+          ]
+  in
+  row
+    [ width fill, height fill
+    , Background.color orangeDark
+    , spacing (s 3)
+    ]
+    buttons
 
-viewSingleLogTime : Int -> Time.Zone -> Element msg
-viewSingleLogTime timems zone =
-  el [Font.size (s -1), paddingEach (bltr (s 1) 0 0 0)] <| text <| (++) "" <| TimeStr.toDateTime zone <| Time.millisToPosix timems
+
+viewTimeAndEdit : (Int, LogType) -> Time.Posix -> Time.Zone -> Int -> Element Msg
+viewTimeAndEdit (key, label) time zone clicked =
+  let
+    left =
+      time |> TimeStr.toDateTime zone |> text |> el [Font.size (s -1), alignLeft]
+
+    right =
+      if key == clicked then
+        text "Edit" |> el
+          [ Font.size (s -1), Font.underline
+          , onClick (EditClick (key, label))
+          , alignRight ]
+      else
+        Element.none
+  in
+  row
+    [ width fill, paddingEach (bltr (s 1) 0 0 0) ]
+    [ left, right ]
 
 
 viewSingleLog : Log.Data -> Element msg
@@ -351,53 +472,49 @@ viewSpilMeta =
 
 
 
-
-viewData labelKeys logDict playDict baseline zone =
+viewData shared model =
   let
-    viewTime (key, label) =
-      case label of
-        Play ->
-          el [Font.size (s -1)] <| text <| (++) "" <|
-            TimeStr.toDateTime zone (Time.millisToPosix key)
-        Log ->
-          Element.none
+    popupAttribute key =
+      if model.popup.popup && model.popup.key == key then
+        inFront (viewPopup model.popup)
+      else
+        behindContent Element.none
 
     viewSingleData (key, label) =
       case label of
         Log ->
-          case Dict.get key logDict of
+          case Dict.get key shared.storage.log of
             Nothing ->
-              text <| "ERROR key "
-                ++ String.fromInt key
-                ++ " not found in log"
+              column []
+                [ p <| "Deleted entry from "
+                , p <| TimeStr.toDateTime model.zone (Time.millisToPosix key) ]
 
             Just value ->
-              column [width fill]
-                [ viewSingleLogTime value.time zone
+              column [ width fill, onClick (Click key) ]
+                [ viewTimeAndEdit (key, label) (Time.millisToPosix value.time) model.zone model.clicked
                 , viewSingleLog value.data
                 ]
 
         Play ->
-          case Dict.get key playDict of
+          case Dict.get key shared.storage.playlog of
             Nothing ->
-              text <| "ERROR key "
-                ++ String.fromInt key
-                ++ " not found in playlog"
+              column []
+                [ p <| "Deleted entry from "
+                , p <| TimeStr.toDateTime model.zone (Time.millisToPosix key) ]
 
             Just value ->
-              column [width fill]
-                [ viewSinglePlay value baseline
+              column [ width fill, onClick (Click key), popupAttribute key ]
+                [ viewTimeAndEdit (key, label) (Time.millisToPosix key) model.zone model.clicked
+                , viewSinglePlay value model.baseline
                 , viewSpilMeta
                 ]
 
     accumulator (key, label) acc =
-      column [paddingXY 0 (s 3), width fill, Border.widthEach (bltr 0 0 1 0)]
-        [ viewTime (key, label)
-        , viewSingleData (key, label)
-        ]
+      el [paddingXY 0 (s 3), width fill, Border.widthEach (bltr 0 0 1 0), popupAttribute key]
+        ( viewSingleData (key, label) )
       :: acc
   in
-  column [width fill] <| List.foldl accumulator [] labelKeys
+  column [width fill] <| List.foldl accumulator [] model.labelKeys
 
 
 view : Shared.Model -> Model -> View Msg
@@ -408,8 +525,9 @@ view shared model =
       [ TimeStr.toFullDay model.zone model.now |> text |> el [alignLeft]
       , TimeStr.toFullTime model.zone model.now |> text |> el [alignRight]
       ]
-    , viewData model.labelKeys shared.storage.log shared.storage.playlog model.baseline model.zone
+    , viewData shared model
     , text ""
-    , p "Note: Height of colored bars are not linear."
+    , text ""
+    --, p "Note: Height of colored bars are not linear."
     ]
   }
