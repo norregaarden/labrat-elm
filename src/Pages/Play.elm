@@ -142,7 +142,6 @@ view model =
     , text ""
     , text ""
     , p "Or casually try one of the three games:"
-    , text ""
     , row [width fill, spacing (s -3)] <|
       List.map
         (\l -> link [centerX, centerY, padding (s -3)] l

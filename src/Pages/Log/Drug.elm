@@ -1,12 +1,13 @@
 module Pages.Log.Drug exposing (Model, Msg, page)
 
 import Effect exposing (Effect)
-import Element exposing (alignRight, centerX, column, el, fill, fillPortion, padding, row, spacing, text, width)
+import Element exposing (alignRight, centerX, column, el, fill, fillPortion, htmlAttribute, padding, paddingEach, paddingXY, row, spacing, text, width)
 import Element.Background as Background
 import Element.Events as Events
 import Element.Font as Font
 import Element.Input as Input
 import Gen.Params.Log.Drug exposing (Params)
+import Html.Attributes exposing (type_)
 import Page
 import Process
 import Storage exposing (Storage)
@@ -14,7 +15,7 @@ import Task
 import Request
 import Shared
 import Time
-import UI exposing (appButton, h, p, s)
+import UI exposing (appButton, bltr, h, p, s)
 import UIColor exposing (white)
 import View exposing (View)
 import Page
@@ -77,7 +78,7 @@ init =
   ( { graphql = RemoteData.Loading
     , input = ""
     , drug = Nothing
-    , searchError = "search for your drug"
+    , searchError = "Hint: Hyphens don't matter, e.g. 2-fma = 2fma"
     , roa = { state = Dropdown.init "dropdown_roa", selectedOption = Nothing }
     , weightChoose = Quantitative
     , weightQuan =
@@ -98,7 +99,7 @@ dd_wu =
   dropdownConfig "unit" (List.map Log.text_wu Log.allWUs) WU_DropdownMsg WU_Picked
 
 dd_dq =
-  dropdownConfig "qualifier" (List.map Log.text_dq Log.allDQs) DQ_DropdownMsg DQ_Picked
+  dropdownConfig "choose qualifier" (List.map Log.text_dq Log.allDQs) DQ_DropdownMsg DQ_Picked
 
 
 -- UPDATE
@@ -289,31 +290,38 @@ viewDrug model =
         , description = data.name
         }
       , Element.newTabLink [Font.underline]
-          { url = data.url
-          , label = p ("Read more about " ++ data.name)
-          }
+        { url = data.url
+        , label = p ("Read more about " ++ data.name)
+        }
       ]
-        |> column [Background.color white, padding (s 3), spacing (s 3)]
+      |> column [Background.color white, padding (s 3), spacing (s 3)]
 
 viewSearch value =
   Input.text []
-    { label = Input.labelAbove [] (text "search PSwiki" |> el [Font.size (s 1)])
+    { label = Input.labelAbove [] (text "search for your drug on PSwiki:" |> el [Font.size (s 1)])
     , onChange = ChangedInput
     , placeholder = Just (Input.placeholder [] (text "drug name"))
     , text = value
     }
 
 viewROA model =
+  let
+    morespace =
+      if model.roa.selectedOption == Nothing then
+        [text "", text "", text "", text "", text "", text "", text "", text ""]
+      else
+        []
+  in
   case model.drug of
     Nothing -> []
     Just d ->
       [ text ""
-      --, h 2 ("Enter ROA for " ++ d.name)
       , h 2 ("Select your route of administration")
       , Dropdown.view dd_roa model.roa model.roa.state
       , text ""
       , text ""
       ]
+      ++ morespace
       ++ viewWeight model d.name
 
 weightButton qua choose =
@@ -330,10 +338,6 @@ weightButton qua choose =
         []
   in
   el (Events.onClick (WeightChoose qua) :: attrs) (text label)
-  --if qua == choose then
-    --flatFillButton (WeightChoose qua) (label)
-  --else
-    --grayFillButton (WeightChoose qua) (label)
 
 viewWeight model drugName =
   case model.roa.selectedOption of
@@ -341,16 +345,21 @@ viewWeight model drugName =
       []
     Just roa ->
       let
+        textvalue =
+          case String.fromInt model.weightQuan.amount of
+            "0" -> ""
+            v -> v
+
         more =
           case model.weightChoose of
             Quantitative ->
               row [width fill, spacing (s 2)]
                 [ el [width (fillPortion 3)] <|
-                  Input.text [alignRight, Font.alignRight]
+                  Input.text [Font.alignRight, htmlAttribute (type_ "number")]
                     { label = Input.labelHidden "enter dosage"
                     , onChange = WeightQuanChanged
                     , placeholder = Just (Input.placeholder [] (text "enter dosage"))
-                    , text = String.fromInt model.weightQuan.amount
+                    , text = textvalue
                     }
                 , el [width (fillPortion 1)] <|
                   Dropdown.view dd_wu model.weightQuan.unit model.weightQuan.unit.state
@@ -373,13 +382,13 @@ viewEnd model =
     Just s ->
       [ minutesAgo model.minutesAgo MinutesAgoChanged
       , text ""
-      , text ""
       , appButton Save "LOG" |> el [centerX]
       , text "", text "", text ""]
 
 minutesAgo value msg =
-  Input.text []
-    { label = Input.labelAbove [] (text "minutes ago" |> el [Font.size (s 1)])
+  --Input.text [Font.alignRight, paddingXY (s 3) (s -1), htmlAttribute (type_ "number")]
+  Input.text [Font.alignRight, htmlAttribute (type_ "number")]
+    { label = Input.labelRight [paddingEach (bltr 0 (s 3) 0 0)] (text "minutes ago" |> el [Font.size (s 1)])
     , onChange = msg
     , placeholder = Nothing
     , text = String.fromInt value
@@ -389,7 +398,7 @@ view : Model -> View Msg
 view model =
   { title = "log | lab rat"
   , body =
-    (h 1 "Drug administration")
+    (h 2 "Drug administration")
     --:: UI.p (Debug.toString model.graphql)
     :: text ""
     :: viewSearch model.input

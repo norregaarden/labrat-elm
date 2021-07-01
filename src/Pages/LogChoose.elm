@@ -34,9 +34,9 @@ type alias LogRoute = (String, Route)
 
 logRoutes : List LogRoute
 logRoutes =
-  [ ("Temperature", Route.Log__TempC)
+  [ ("Drug ", Route.Log__Drug)
+  , ("Temperature", Route.Log__TempC)
   , ("Heart rate", Route.Log__HR)
-  , ("Drug ", Route.Log__Drug)
   ]
 
 
