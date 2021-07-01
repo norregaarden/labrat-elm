@@ -3,7 +3,6 @@ module Pages.Spil.Tid exposing (Model, Msg, page)
 import Effect exposing (Effect)
 import Element exposing (Element, centerX, column, el, fill, padding, paddingXY, spacing, text, width)
 import Element.Font as Font
-import Gen.Params.Tid exposing (Params)
 import Page
 import Request exposing (Request)
 import Round

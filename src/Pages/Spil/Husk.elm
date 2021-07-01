@@ -4,11 +4,9 @@ import Element.Background as Background
 import Element.Border as Border
 import Husk
 import Effect exposing (Effect)
-import Element exposing (Element, centerX, centerY, column, el, fill, fillPortion, height, padding, paddingEach, paddingXY, px, row, spacing, text, width)
+import Element exposing (Element, centerX, centerY, column, el, fill, fillPortion, height, padding, paddingXY, row, spacing, text, width)
 import Element.Events as Events
 import Element.Font as Font
-import Element.Keyed as Keyed
-import List exposing (length)
 import Page
 import Process
 import Random
@@ -17,7 +15,7 @@ import Request exposing (Request)
 import Shared
 import Spil exposing (Score(..), Score_Husk)
 import Task
-import UI exposing (appButton, bltr, h, p, s, small)
+import UI exposing (appButton, h, p, s, small)
 import UIColor exposing (green, red)
 import View exposing (View)
 

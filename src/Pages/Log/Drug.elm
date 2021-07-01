@@ -14,7 +14,7 @@ import Task
 import Request
 import Shared
 import Time
-import UI exposing (appButton, flatFillButton, grayFillButton, h, p, s)
+import UI exposing (appButton, h, p, s)
 import UIColor exposing (white)
 import View exposing (View)
 import Page

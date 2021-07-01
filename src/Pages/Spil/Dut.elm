@@ -3,7 +3,7 @@ module Pages.Spil.Dut exposing (Model, Msg, page)
 import Dutter exposing (..)
 import Spil exposing (Score(..))
 import Effect exposing (Effect)
-import Element exposing (centerX, column, el, fill, fillPortion, height, html, maximum, padding, paddingEach, paddingXY, row, spaceEvenly, spacing, text, width)
+import Element exposing (centerX, column, el, fill, fillPortion, height, html, maximum, padding, paddingEach, row, spaceEvenly, spacing, text, width)
 import Element.Border as Border
 import Element.Events exposing (onClick)
 import Element.Font as Font
@@ -17,7 +17,7 @@ import String exposing (fromInt)
 import Task
 import Time
 import Tuple exposing (first, second)
-import UI exposing (appButton, bltr, h, p, s, showWhen, small, spilTitel)
+import UI exposing (appButton, bltr, h, s, showWhen, small, spilTitel)
 import View exposing (View)
 import Round
 

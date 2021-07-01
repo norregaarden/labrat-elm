@@ -1,12 +1,12 @@
 module Pages.LogChoose exposing (Model, Msg, page)
 
-import Element exposing (centerX, column, none, padding, spacing)
+import Element exposing (centerX, column, spacing)
 import Gen.Route as Route exposing (Route)
 import Page
 import Request exposing (Request)
 import Shared
 import Storage exposing (Storage)
-import UI exposing (appButton, s, smallAppButton, flatFillButton)
+import UI exposing (s, flatFillButton)
 import View exposing (View)
 
 

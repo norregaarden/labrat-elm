@@ -8,7 +8,6 @@ module Shared exposing
     )
 
 import Json.Decode as Json
-import Log
 import Request exposing (Request)
 import Storage exposing (Storage)
 import Task
