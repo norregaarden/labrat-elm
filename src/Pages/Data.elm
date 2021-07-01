@@ -4,12 +4,14 @@ import Dict
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
+import Html
+import Html.Attributes
 import Husk
 import Log
 import Spil exposing (Spil(..))
 import Storage
 import TimeStr
-import Element exposing (Element, alignBottom, alignLeft, alignRight, alpha, centerX, column, el, fill, fillPortion, height, inFront, moveUp, paddingEach, paddingXY, px, rgba255, row, spacing, text, width)
+import Element exposing (Element, alignBottom, alignLeft, alignRight, alpha, centerX, column, el, fill, fillPortion, height, htmlAttribute, inFront, moveUp, paddingEach, paddingXY, paragraph, px, rgba255, row, spacing, text, width)
 import Gen.Params.Data exposing (Params)
 import Page
 import Request
@@ -161,7 +163,13 @@ viewSingleLog log =
       dataRow "Blood Pressure" (String.fromInt high ++ " / " ++ String.fromInt low)
 
     Log.Musing string ->
-      dataColumn [text "Musing: ", p string]
+      dataColumn
+        [ paragraph
+            [ Html.Attributes.style "white-space" "pre-wrap"
+                |> htmlAttribute
+            ]
+            [ Element.html (Html.text string) ]
+        ]
 
     Log.DrugAdmin drug roa weight ->
       dataColumn

@@ -23,7 +23,6 @@ type alias Person =
 
 type alias Storage =
   { person : Person
-  , sometext : String
   , log : Dict Int DataLog
   , playlog : Dict Int Scores
   }
@@ -36,7 +35,6 @@ type alias DataLog =
 initial : Storage
 initial =
   { person = Person 0 0 0
-  , sometext = "davdav"
   , log = Dict.empty
   , playlog = Dict.empty
   }
@@ -47,12 +45,6 @@ initial =
 editPerson : Person -> Storage -> Cmd msg
 editPerson person storage =
   { storage | person = person }
-    |> toJson
-    |> save
-
-logsometext : String -> Storage -> Cmd msg
-logsometext str storage =
-  { storage | sometext = str }
     |> toJson
     |> save
 
@@ -87,7 +79,6 @@ toJson storage =
       , ("cm", E.int storage.person.cm)
       , ("kg", E.int storage.person.kg)
       ])
-    , ("sometext", E.string storage.sometext)
     , ("log", E.dict String.fromInt encodeData storage.log)
     , ("playlog", E.dict String.fromInt encodeScores storage.playlog)
     ]
@@ -194,9 +185,8 @@ fromJson value =
 
 decoder : D.Decoder Storage
 decoder =
-  D.map4 Storage
+  D.map3 Storage
     (D.field "person" personDecoder)
-    (D.field "sometext" D.string)
     (D.field "log" (Dextra.dict2 D.int dictDataDecoder ))
     (D.field "playlog" (Dextra.dict2 D.int dictScoresDecoder ))
 
@@ -212,6 +202,7 @@ dictDataDecoder =
         [ (D.field "HR" (D.map HR D.int))
         , (D.field "TempC" (D.map TempC D.int))
         , (D.field "DrugAdmin" drugDecoder)
+        , (D.field "Musing" (D.map Musing D.string))
         ]
   in
   D.map2 DataLog
