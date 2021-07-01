@@ -7,6 +7,7 @@ import Element.Border as Border
 import Element.Font as Font
 import Gen.Route as Route
 import Husk
+import Pages.Spil.Tid
 import Random
 import Random.List
 import Spil exposing (..)
@@ -154,7 +155,7 @@ view model =
         , { url = Route.toHref Route.Spil__Tid
           , label = column [centerX] <|
               List.map (el [centerX])
-                [ p "10" |> el [Font.size (s 6)
+                [ p (String.fromInt Pages.Spil.Tid.burdeSeconds) |> el [Font.size (s 6)
                 , Font.extraBold], p "seconds"]
           }
         , { url = Route.toHref Route.Spil__Husk

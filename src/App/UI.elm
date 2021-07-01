@@ -37,7 +37,7 @@ buttonFontShadow =
 
 ---- META ----
 
-spilTitel titel = "Play: " ++ titel ++ " | lab rat"
+spilTitel titel = "play: " ++ titel ++ " | lab rat"
 
 
 ---- APP ----
