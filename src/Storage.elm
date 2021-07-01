@@ -22,7 +22,8 @@ type alias Person =
 
 
 type alias Storage =
-  { person : Person
+  { identifier : String
+  , person : Person
   , log : Dict Int DataLog
   , playlog : Dict Int Scores
   }
@@ -34,10 +35,20 @@ type alias DataLog =
 
 initial : Storage
 initial =
-  { person = Person 0 0 0
+  { identifier = ""
+  , person = Person 0 0 0
   , log = Dict.empty
   , playlog = Dict.empty
   }
+
+setIdentifier : String -> Storage -> Cmd msg
+setIdentifier id storage =
+  if storage.identifier == "" then
+    { storage | identifier = id }
+      |> toJson
+      |> save
+  else
+    Cmd.none
 
 
 -- UPDATE
@@ -89,7 +100,8 @@ onChange fromStorage =
 toJson : Storage -> E.Value
 toJson storage =
   E.object
-    [ ("person", E.object
+    [ ("identifier", E.string storage.identifier)
+    , ("person", E.object
       [ ("years", E.int storage.person.years)
       , ("cm", E.int storage.person.cm)
       , ("kg", E.int storage.person.kg)
@@ -200,7 +212,8 @@ fromJson value =
 
 decoder : D.Decoder Storage
 decoder =
-  D.map3 Storage
+  D.map4 Storage
+    (D.field "identifier" D.string)
     (D.field "person" personDecoder)
     (D.field "log" (Dextra.dict2 D.int dictDataDecoder ))
     (D.field "playlog" (Dextra.dict2 D.int dictScoresDecoder ))

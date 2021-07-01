@@ -11,6 +11,7 @@ import Html.Attributes
 import Husk
 import Json.Encode as Encode
 import Log
+import Random
 import Spil exposing (Spil(..))
 import Storage exposing (Storage)
 import TimeStr
@@ -137,6 +138,7 @@ init shared =
 
 type Msg
     = FindTime (Time.Posix, Time.Zone)
+    | SetStorageIdentifier Float
     | Click Int
     | EditClick (Int, LogType)
     | ClosePopup
@@ -149,11 +151,25 @@ update : Storage -> Msg -> Model -> ( Model, Cmd Msg )
 update storage msg model =
   case msg of
     FindTime (now, zone) ->
+      let
+        cmd =
+          if storage.identifier == "" then
+            Random.generate SetStorageIdentifier (Random.float 0 1)
+          else
+            Cmd.none
+      in
       ( { model
         | now = now
         , zone = zone
         }
-      , Cmd.none )
+      , cmd )
+
+    SetStorageIdentifier randomFloat ->
+      ( model
+      , Storage.setIdentifier
+          (String.fromInt (Time.posixToMillis model.now) ++ String.fromFloat randomFloat)
+          storage
+      )
 
     Click key ->
       ( { model

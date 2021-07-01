@@ -89,7 +89,7 @@ update req msg model =
             [] ->
               Task.perform SaveScores Time.now
       in
-        ( {model | playing = Just newPlaying }, command )
+        ( { model | playing = Just newPlaying }, command )
 
     SaveScores tid ->
       case model.playing of

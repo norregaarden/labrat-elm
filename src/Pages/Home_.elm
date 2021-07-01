@@ -26,6 +26,6 @@ vis =
 
 view : View msg
 view =
-  { title = "lab rat - cognitive tests for humans"
+  { title = "lab rat"
   , body = vis
   }
