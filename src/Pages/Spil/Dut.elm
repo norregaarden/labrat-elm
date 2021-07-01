@@ -3,7 +3,7 @@ module Pages.Spil.Dut exposing (Model, Msg, page)
 import Dutter exposing (..)
 import Spil exposing (Score(..))
 import Effect exposing (Effect)
-import Element exposing (centerX, column, el, fill, fillPortion, height, html, maximum, padding, paddingEach, row, spaceEvenly, spacing, text, width)
+import Element exposing (centerX, column, el, fill, fillPortion, height, html, maximum, padding, paddingEach, paddingXY, row, spaceEvenly, spacing, text, width)
 import Element.Border as Border
 import Element.Events exposing (onClick)
 import Element.Font as Font
@@ -17,7 +17,7 @@ import String exposing (fromInt)
 import Task
 import Time
 import Tuple exposing (first, second)
-import UI exposing (appButton, bltr, h, p, s, showWhen, spilTitel)
+import UI exposing (appButton, bltr, h, p, s, showWhen, small, spilTitel)
 import View exposing (View)
 import Round
 
@@ -171,12 +171,11 @@ topView model =
     |> el [width (maximum (s 11) fill), paddingEach (bltr (s 3) (s 3) 0 (s 3))]
     |> el [Border.widthEach (bltr 2 0 0 0)]
   else
-    column []
+    column [padding 0, spacing (s 1)]
       [ h 2 "Test your visual search time"
-      , column [padding (s 1), spacing (s 1), Font.size (s 1)]
-        [ p "Match shape and color." |> el []
-        , p (fromInt runder ++ " rounds.") |> el []
-        ]
+      , small "Click the figure that matches both shape and color."
+      , small (fromInt runder ++ " rounds.")
+      , text ""
       ]
 
 
@@ -206,7 +205,7 @@ dataView sharedPlaying model =
     [ Spil.videreButton sharedPlaying Videre Nå
     ]
   ]
-  |> column [padding (s 3), spacing (s 3), width fill]
+  |> column [padding 0, spacing (s 3), width fill]
 
 
 dutterView model =

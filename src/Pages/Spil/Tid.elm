@@ -1,7 +1,7 @@
 module Pages.Spil.Tid exposing (Model, Msg, page)
 
 import Effect exposing (Effect)
-import Element exposing (Element, centerX, column, el, fill, padding, paddingXY, spacing, width)
+import Element exposing (Element, centerX, column, el, fill, padding, paddingXY, spacing, text, width)
 import Element.Font as Font
 import Gen.Params.Tid exposing (Params)
 import Page
@@ -117,24 +117,25 @@ vis sharedPlaying model =
     indhold =
       if (not model.igang) then
         [ p "Press START when you're ready."
-        , (appButton Startklik "START") |> el [centerX, padding (s 4)]
+        , (appButton Startklik "START") |> el [centerX, padding (s 3)]
         ]
       else
         [ p ("Press STOP when you believe " ++ fromFloat (sekunder burde) ++ " seconds have passed")
-        , (appButton Slutklik "STOP") |> el [] |> el [centerX, padding (s 1)]
+        , (appButton Slutklik "STOP") |> el [centerX, padding (s 1)]
         ]
 
     noget =
       [ "How long is " ++ fromFloat (sekunder burde) ++" seconds?" |> h 2
-      , column [padding (s 1), spacing (s 1), Font.size (s 1)] indhold |> showWhen (not model.færdig)
+      , text ""
+      , column [spacing (s 1), Font.size (s 1), width fill] indhold |> showWhen (not model.færdig)
       ]
 
     nogetmere =
-      [column [spacing (s 1), paddingXY 0 (s 4)]
+      [column [spacing (s 1), paddingXY 0 (s 4), width fill]
         [ Round.round 3 egentlig ++ " seconds passed." |> p
         , "You were off by " |> p
         , Round.round 3 forbi ++ " seconds." |> p
-        , Spil.videreButton sharedPlaying Videre Nå
+        , Spil.videreButton sharedPlaying Videre Nå |> el [centerX]
         ]
       ]
       |> List.map (el [width fill])
@@ -144,7 +145,6 @@ vis sharedPlaying model =
     forbi = egentlig - (sekunder burde)
   in
   (noget ++ nogetmere)
-  |> List.map (el [centerX])
 
 
 view : Shared.Model -> Model -> View Msg

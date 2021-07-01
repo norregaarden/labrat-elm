@@ -425,7 +425,7 @@ vis sharedPlaying model =
           "Afterwards, click the images in the corresponding order."
       --, small <| String.fromInt startHuskNumber ++ " images in the first round."
       , text ""
-      , appButton Begynd "Ready" |> el [centerX]
+      , appButton Begynd "READY" |> el [centerX]
       --, viewImages Husk.allImages False
       ]
 
