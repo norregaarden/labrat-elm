@@ -5,7 +5,8 @@ module Log exposing
   , DosageQualifier(..), allDQs
   , Weight(..)
   , ROA, allROAs
-  , text_roa, text_wu, text_dq
+  , text_roa, text_weight
+  , text_wu, text_dq
   , roa_from, wu_from, dq_from
   , millisFromMinutes)
 
@@ -77,6 +78,14 @@ roa_from text =
     "Smoked" -> Smoked
     "Sublingual" -> Sublingual
     _ -> Sublingual
+
+text_weight weight =
+  case weight of
+    Quan unit amount ->
+      String.fromInt amount ++ " " ++ text_wu unit
+    Qual qualifier ->
+      text_dq qualifier
+
 
 text_wu wu =
   case wu of
