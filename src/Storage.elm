@@ -227,7 +227,8 @@ dictDataDecoder =
   let
     dataDecoder =
       D.oneOf
-        [ (D.field "HR" (D.map HR D.int))
+        [ (D.field "BP" bpDecoder)
+        , (D.field "HR" (D.map HR D.int))
         , (D.field "TempC" (D.map TempC D.int))
         , (D.field "DrugAdmin" drugDecoder)
         , (D.field "Musing" (D.map Musing D.string))
@@ -236,6 +237,12 @@ dictDataDecoder =
   D.map2 DataLog
     ( D.field "time" D.int )
     ( D.field "data" dataDecoder )
+
+bpDecoder : D.Decoder Data
+bpDecoder =
+  D.map2 BP
+    ( D.field "high" D.int )
+    ( D.field "low" D.int )
 
 drugDecoder : D.Decoder Data
 drugDecoder =
