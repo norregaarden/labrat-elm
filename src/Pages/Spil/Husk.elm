@@ -42,6 +42,7 @@ countdownTime
 
 
 page : Shared.Model -> Request -> Page.With Model Msg
+page shared req =
   Page.advanced
     { init = init
     , update = update
