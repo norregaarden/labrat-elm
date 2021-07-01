@@ -5,9 +5,11 @@ import Element.Background as Background
 import Element.Border as Border
 import Element.Events exposing (onClick, onDoubleClick)
 import Element.Font as Font
+import File.Download as Download
 import Html
 import Html.Attributes
 import Husk
+import Json.Encode as Encode
 import Log
 import Spil exposing (Spil(..))
 import Storage exposing (Storage)
@@ -19,7 +21,7 @@ import Request
 import Shared
 import Task
 import Time
-import UI exposing (bltr, p, s, small)
+import UI exposing (appButton, bltr, p, s, small, smallAppButton)
 import UIColor exposing (gray, greenToRed, orangeDark, red, scaleRatio, white)
 import View exposing (View)
 
@@ -39,7 +41,6 @@ dAlpha2
   = 0.666/2
 
 --
-
 
 
 page : Shared.Model -> Request.With Params -> Page.With Model Msg
@@ -141,6 +142,7 @@ type Msg
     | ClosePopup
     | Delete
     | ReallyDelete
+    | DownloadData
 
 
 update : Storage -> Msg -> Model -> ( Model, Cmd Msg )
@@ -200,6 +202,14 @@ update storage msg model =
         )
       else
         ( model, Cmd.none )
+
+    DownloadData ->
+      ( model
+      , Encode.encode 2 (Storage.toJson storage)
+        |> Download.string
+          ("labratapp " ++ TimeStr.toDateTime model.zone model.now ++ ".json")
+          "text/json"
+      )
 
 
 
@@ -525,6 +535,7 @@ view shared model =
       [ TimeStr.toFullDay model.zone model.now |> text |> el [alignLeft]
       , TimeStr.toFullTime model.zone model.now |> text |> el [alignRight]
       ]
+    , smallAppButton DownloadData "Download data" |> el [centerX, padding (s 3)]
     , viewData shared model
     , text ""
     , text ""
