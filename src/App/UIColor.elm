@@ -43,8 +43,6 @@ red =
 
 -- red green blue for play scores visuals
 -- log(2(x+1/e+1/e^2+1/e^3+1/e^4+1/e^5)) + 1 - log(2(1+1/e+1/e^2+1/e^3+1/e^4+1/e^5))
--- over 2 og under 1/2 er rødt
--- 1.23 og 1/1.23 gult
 
 scaleRatio x =
   let
@@ -71,7 +69,7 @@ scoreGreen =
 
 wA : Int -> Int -> Float -> Int
 wA low high ratio =
-   ratio * (toFloat low) + (1-ratio) * (toFloat high)
+   ratio * (toFloat low) + (1 - ratio) * (toFloat high)
    |> round
 
 -- ratio betwen 0 and 1
@@ -85,22 +83,3 @@ greenToRed y =
   else
     weightedAverageRGB scoreYellow scoreRed y
     |> rgb255FromRGB
-
-
-
-{-
--- y from scaleRatio
-greenToRed y =
-  let
-    redToYellow z =
-
-
-    yellowToGreen z =
-
-
-  in
-  if y > 1.23 then
-    redToYellow y
-  else
-    yellowToGreen y
--}

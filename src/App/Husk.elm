@@ -1,4 +1,4 @@
-module Husk exposing (Image, allImages, placeholderImage, fixImage, imageString)
+module Husk exposing (Image, allImages, placeholderImage, imageString)
 
 
 type Image
@@ -32,13 +32,6 @@ allImages =
 
 placeholderImage =
   LibertyCap
-
-
-fixImage : ( Maybe Image, List Image ) -> Image
-fixImage ( maybe, _ ) =
-  case maybe of
-    Nothing -> placeholderImage
-    Just image -> image
 
 
 imageString : Image -> String

@@ -1,7 +1,7 @@
 module Pages.Log.Drug exposing (Model, Msg, page)
 
 import Effect exposing (Effect)
-import Element exposing (alignRight, centerX, column, el, fill, fillPortion, htmlAttribute, padding, paddingEach, paddingXY, row, spacing, text, width)
+import Element exposing (centerX, column, el, fill, fillPortion, htmlAttribute, padding, paddingEach, row, spacing, text, width)
 import Element.Background as Background
 import Element.Events as Events
 import Element.Font as Font
@@ -35,7 +35,7 @@ import Helpers.DropdownConfig exposing (dropdownConfig)
 
 
 page : Shared.Model -> Request.With Params -> Page.With Model Msg
-page shared req =
+page shared _ =
   Page.advanced
     { init = init
     , update = update shared.storage
@@ -379,14 +379,13 @@ viewEnd model =
   case model.roa.selectedOption of
     Nothing ->
       []
-    Just s ->
+    Just _ ->
       [ minutesAgo model.minutesAgo MinutesAgoChanged
       , text ""
       , appButton Save "LOG" |> el [centerX]
       , text "", text "", text ""]
 
 minutesAgo value msg =
-  --Input.text [Font.alignRight, paddingXY (s 3) (s -1), htmlAttribute (type_ "number")]
   Input.text [Font.alignRight, htmlAttribute (type_ "number")]
     { label = Input.labelRight [paddingEach (bltr 0 (s 3) 0 0)] (text "minutes ago" |> el [Font.size (s 1)])
     , onChange = msg
@@ -399,7 +398,6 @@ view model =
   { title = "log | lab rat"
   , body =
     (h 2 "Drug administration")
-    --:: UI.p (Debug.toString model.graphql)
     :: text ""
     :: viewSearch model.input
     :: viewDrug model
@@ -447,7 +445,6 @@ makeRequest firstInput =
     thirdInput = String.filter (\c -> c == ' ' |> not) secondInput
     fourthInput = String.filter (\c -> c == '-' |> not) thirdInput
     input = String.trim fourthInput
-    --log = Debug.log "input" input
   in
   if input == "" then
     Cmd.none
@@ -468,12 +465,12 @@ drugData gmodel =
   case gmodel of
     Loading -> Nothing
     NotAsked -> Nothing
-    Failure e -> Nothing
+    Failure _ -> Nothing
     Success response ->
       case response of
         Nothing -> Nothing
         Just [] -> Nothing
-        Just (d::list) ->
+        Just (d::_) ->
           case d of
             Nothing -> Nothing
             Just drug ->
@@ -515,4 +512,4 @@ drugImage maybeImages =
   in
   case images of
     [] -> Nothing
-    i::l -> Just i
+    i::_ -> Just i

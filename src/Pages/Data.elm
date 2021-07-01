@@ -9,15 +9,15 @@ import Log
 import Spil exposing (Spil(..))
 import Storage
 import TimeStr
-import Element exposing (Element, alignBottom, alignLeft, alignRight, alpha, centerX, column, el, explain, fill, fillPortion, height, inFront, moveDown, moveUp, padding, paddingEach, paddingXY, px, rgba255, row, spaceEvenly, spacing, text, width)
+import Element exposing (Element, alignBottom, alignLeft, alignRight, alpha, centerX, column, el, fill, fillPortion, height, inFront, moveUp, paddingEach, paddingXY, px, rgba255, row, spacing, text, width)
 import Gen.Params.Data exposing (Params)
 import Page
 import Request
 import Shared
 import Task
 import Time
-import UI exposing (bltr, p, s, small)
-import UIColor exposing (gray, green, greenToRed, scaleRatio)
+import UI exposing (bltr, p, s)
+import UIColor exposing (gray, greenToRed, scaleRatio)
 import View exposing (View)
 
 
@@ -40,7 +40,7 @@ dAlpha2
 
 
 page : Shared.Model -> Request.With Params -> Page.With Model Msg
-page shared req =
+page shared _ =
   Page.element
     { init = init shared
     , update = update
@@ -71,11 +71,6 @@ type LogType
   = Log
   | Play
 
-logTypeText logType =
-  case logType of
-    Log -> "Log"
-    Play -> "Play"
-
 
 initBaseline =
   { dut =
@@ -85,12 +80,12 @@ initBaseline =
     , rounds = 10 -- not used
     }
   , tid =
-    { burde = 10000
-    , faktisk = 10000
+    { burde = 10000 -- not used
+    , faktisk = 10000 -- not used
     }
   , husk =
-    { huskNumber = 6
-    , totalMistakes = 3
+    { huskNumber = 6 -- not used
+    , totalMistakes = 3 -- not used
     }
   }
 
@@ -174,34 +169,6 @@ viewSingleLog log =
         , dataRow "ROA" (Log.text_roa roa)
         , dataRow "Dose" (Log.text_weight weight)
         ]
-
-
-viewDebugPlay : Spil.Scores -> Element msg
-viewDebugPlay playEntry =
-  let
-    dutView =
-      case playEntry.dut of
-        Nothing ->
-          text "næ"
-        Just dutScore ->
-          small <| Debug.toString dutScore
-
-    tidView =
-      case playEntry.tid of
-        Nothing ->
-          text "næ"
-        Just tidScore ->
-          small <| Debug.toString tidScore
-
-    huskView =
-      case playEntry.husk of
-        Nothing ->
-          text "næ"
-        Just huskScore ->
-          small <| Debug.toString huskScore
-
-  in
-  row [width fill] [dutView, tidView, huskView]
 
 
 viewSinglePlay : Spil.Scores -> Baseline -> Element msg
@@ -411,8 +378,7 @@ viewData labelKeys logDict playDict baseline zone =
 
             Just value ->
               column [width fill]
-                [ -- viewDebugPlay value
-                viewSinglePlay value baseline
+                [ viewSinglePlay value baseline
                 , viewSpilMeta
                 ]
 
@@ -434,9 +400,6 @@ view shared model =
       [ TimeStr.toFullDay model.zone model.now |> text |> el [alignLeft]
       , TimeStr.toFullTime model.zone model.now |> text |> el [alignRight]
       ]
-    --, p (Debug.toString shared.playing)
-    --, text "shared.storage"
-    --, p (Debug.toString shared.storage.playlog)
     , viewData model.labelKeys shared.storage.log shared.storage.playlog model.baseline model.zone
     , text ""
     , p "Note: Height of colored bars are not linear."

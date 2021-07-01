@@ -1,7 +1,7 @@
 module Helpers.DropdownConfig exposing (..)
 
 import Dropdown
-import Element exposing (el, fill, padding, paddingXY, pointer, px, rgb255, rotate, row, spacing, text, width)
+import Element exposing (el, fill, padding, paddingXY, pointer, rgb255, rotate, row, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font

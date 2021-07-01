@@ -4,7 +4,7 @@ import Element.Background as Background
 import Element.Border as Border
 import Husk
 import Effect exposing (Effect)
-import Element exposing (Element, centerX, centerY, column, el, fill, fillPortion, height, padding, paddingXY, row, spacing, text, width)
+import Element exposing (Element, centerX, centerY, column, el, fill, fillPortion, height, padding, paddingXY, row, text, width)
 import Element.Events as Events
 import Element.Font as Font
 import Page
@@ -42,7 +42,6 @@ countdownTime
 
 
 page : Shared.Model -> Request -> Page.With Model Msg
-page shared req =
   Page.advanced
     { init = init
     , update = update
