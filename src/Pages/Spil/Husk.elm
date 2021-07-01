@@ -331,7 +331,7 @@ viewImages igang =
   let
     billederRow billeder =
       List.map (el [width (fillPortion 1)]) billeder
-      |> row [spacing 0, width fill, height fill]
+      |> row [width fill, height fill]
 
     billederWrapped billeder =
       if List.length billeder > 0 then
@@ -362,7 +362,7 @@ viewImages igang =
 
   in
   billederWrapped (List.map klikBillede igang.alleBilleder)
-  |> column [ spacing 0, padding 0, width fill, height fill ]
+  |> column [ width fill, height fill ]
 
 
 visIgang igang =

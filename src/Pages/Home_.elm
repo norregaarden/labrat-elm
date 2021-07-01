@@ -2,11 +2,9 @@ module Pages.Home_ exposing (view)
 
 -- elm-spa server
 
-import Element exposing (Element, el, link, text)
-import Element.Font as Font
-import UI exposing (s)
+import Element exposing (Element)
+import UI exposing (h)
 import View exposing (View)
-import Gen.Route as Route exposing (Route)
 
 
 -- MODEL
@@ -23,11 +21,7 @@ init =
 
 vis: List (Element msg)
 vis =
-  el [Font.size (s 1)] (text "Try a game :") ::
-  List.map (\l -> link [Font.size (s 3)] l)
-    [ {url = Route.toHref Route.Spil__Dut, label = text "dut"}
-    , {url = Route.toHref Route.Spil__Tid, label = text "tid"}
-    , {url = Route.toHref Route.Spil__Husk, label = text "husk"} ]
+  h 1 "Welcome, lab rat." |> List.singleton
 
 
 view : View msg
