@@ -15,7 +15,7 @@ import Request exposing (Request)
 import Shared
 import Spil exposing (Score(..), Score_Husk)
 import Task
-import UI exposing (appButton, h, p, s, small)
+import UI exposing (appButton, h, p, s, small, spilTitel)
 import UIColor exposing (green, red)
 import View exposing (View)
 
@@ -450,6 +450,6 @@ vis sharedPlaying model =
 
 view : Shared.Model -> Model -> View Msg
 view shared model =
-  { title = "Spil: Husk"
+  { title = spilTitel "short-term memory"
   , body = vis shared.playing model
   }

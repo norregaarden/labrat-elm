@@ -227,7 +227,7 @@ dutterView model =
 
 view : Shared.Model -> Model -> View Msg
 view shared model =
-  { title = spilTitel "Shapes and colors"
+  { title = spilTitel "visual search"
   , body =
     List.map (\e -> el [ centerX ] e)
       [ topView model
