@@ -73,8 +73,9 @@ header r = row
   --, Border.widthEach (bltr 1 0 0 0)
   , Background.color (rgba 1 1 1 0.666)
   ]
-    [ routeLink labratlogo Route.Home_ [] |> el [width shrink, paddingXY 0 (s -3)]
-    , row [paddingXY (s -1) 0, width fill, height fill, spacing -1]
+    [ routeLink labratlogo Route.Home_ []
+      |> el [width shrink, paddingXY 0 (s -3), width (maximum (42*2) (fillPortion 1)) ]
+    , row [paddingXY (s -1) 0, width fill, height fill, spacing -1, width (fillPortion 6) ]
       [ headerLink "DATA" Route.Data r
       , headerLink "LOG" Route.LogChoose r
       , headerLink "PLAY" Route.Play r
@@ -84,12 +85,14 @@ header r = row
 labratlogo =
   column
     [ Font.size (s 1)
-    , Font.color white
-    , Background.color blue
-    , padding (s -3)
     , Border.rounded (s -1)
+    , width fill
     ]
-    [text "lab", text "rat"]
+    [ image [width fill]
+      { src = "images/rotteHjerneLogo.svg"
+      , description = "lab rat logo"
+      }
+    ]
 
 footer = []
 
