@@ -2,8 +2,8 @@ module Pages.Home_ exposing (view)
 
 -- elm-spa server
 
-import Element exposing (Element, fill, image, paddingXY, width)
-import UI exposing (h, s)
+import Element exposing (Element, fill, image, paddingXY, text, width)
+import UI exposing (h, s, small)
 import View exposing (View)
 
 
@@ -25,6 +25,9 @@ vis =
   , image [width fill, paddingXY 0 (s 3) ]
     { src = "/images/rottefyr.png"
     , description = "rottefyr" }
+  , text ""
+  , small "lab rat"
+  , small "v 0.1"
   ]
 
 
