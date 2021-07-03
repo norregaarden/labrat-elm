@@ -304,7 +304,7 @@ viewSingleLog log =
       dataRow "Heart rate" (String.fromInt bpm ++ " bpm")
 
     Log.TempC tc ->
-      dataRow "Temperature" (String.fromInt tc ++ " °C")
+      dataRow "Temperature" (String.fromFloat tc ++ " °C")
 
     Log.BP high low ->
       dataRow "Blood Pressure" (String.fromInt high ++ " / " ++ String.fromInt low)

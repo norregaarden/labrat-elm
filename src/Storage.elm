@@ -120,7 +120,7 @@ encodeData datalog =
     data =
       case datalog.data of
         TempC c ->
-          E.object [( "TempC", E.int c )]
+          E.object [( "TempC", E.float c )]
         HR hr ->
           E.object [( "HR", E.int hr )]
         BP high low ->
@@ -229,7 +229,7 @@ dictDataDecoder =
       D.oneOf
         [ (D.field "BP" bpDecoder)
         , (D.field "HR" (D.map HR D.int))
-        , (D.field "TempC" (D.map TempC D.int))
+        , (D.field "TempC" (D.map TempC D.float))
         , (D.field "DrugAdmin" drugDecoder)
         , (D.field "Musing" (D.map Musing D.string))
         ]

@@ -14,7 +14,7 @@ module Log exposing
 
 type Data
     = HR Int
-    | TempC Int
+    | TempC Float
     | BP Int Int
     | Musing String
     | DrugAdmin Drug ROA Weight
