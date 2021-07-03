@@ -72,7 +72,7 @@ update storage msg model =
 
 
 fixInput input =
-  input |> String.toFloat |> Maybe.withDefault 0 
+  input |> String.toFloat |> Maybe.withDefault 0
   |> Round.round 1 |> String.toFloat |> Maybe.withDefault 0
 
 

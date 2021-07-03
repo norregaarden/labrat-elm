@@ -38,6 +38,7 @@ logRoutes =
   , ("Drug", Route.Log__Drug)
   , ("Temperature", Route.Log__TempC)
   , ("Heart rate", Route.Log__HR)
+  , ("Blood pressure", Route.Log__BP)
   ]
 
 
