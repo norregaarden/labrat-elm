@@ -89,7 +89,7 @@ labratlogo =
     , width fill
     ]
     [ image [width fill]
-      { src = "images/rotteHjerneLogo.svg"
+      { src = "/images/rotteHjerneLogo.svg"
       , description = "lab rat logo"
       }
     ]
