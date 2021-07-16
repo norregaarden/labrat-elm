@@ -3,7 +3,11 @@ personal tracking and cognitive tests
 
 Find the app here: [labratapp.org](https://labratapp.org)
 
+.
 
+.
+
+.
 
 # how to build and watch
 > 🌳  built with [elm-spa](https://elm-spa.dev)
