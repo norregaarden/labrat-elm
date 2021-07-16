@@ -85,6 +85,6 @@ vis model =
 
 view : Model -> View Msg
 view model =
-  { title = "log | lab rat"
+  { title = "log: musing | lab rat"
   , body = vis model
   }

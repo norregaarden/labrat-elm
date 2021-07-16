@@ -103,6 +103,6 @@ view _ model =
       [ intIntForm model |> el [Font.size (s 2)]
       ]
   in
-  { title = "log | lab rat"
+  { title = "log: blood pressure | lab rat"
   , body = body
   }

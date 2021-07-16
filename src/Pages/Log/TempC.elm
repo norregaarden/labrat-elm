@@ -136,6 +136,6 @@ view _ model =
       [ floatForm model |> el [Font.size (s 2)]
       ]
   in
-  { title = "log | lab rat"
+  { title = "log: temperature | lab rat"
   , body = body
   }
