@@ -1,7 +1,27 @@
-# my new project
+# lab rat
+personal tracking and cognitive tests
+
+<br>
+
+Find the public app here: 
+## [labratapp.org](https://labratapp.org)
+
+
+
+<br>
+<br>
+<br>
+<br>
+<br>
+
+__________
+
+or clone and view it locally:
+
+## how to build and watch
 > 🌳  built with [elm-spa](https://elm-spa.dev)
 
-## dependencies
+### dependencies
 
 This project requires the latest LTS version of [Node.js](https://nodejs.org/)
 
@@ -9,7 +29,7 @@ This project requires the latest LTS version of [Node.js](https://nodejs.org/)
 npm install -g elm elm-spa
 ```
 
-## running locally
+### running locally
 
 ```bash
 elm-spa server  # starts this app at http:/localhost:1234
@@ -23,6 +43,6 @@ elm-spa build  # production build
 elm-spa watch  # runs build as you code (without the server)
 ```
 
-## learn more
+### learn more
 
 You can learn more at [elm-spa.dev](https://elm-spa.dev)
