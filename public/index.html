@@ -10,10 +10,11 @@
   src: url('/font/CutiveMono-Regular.ttf')  format('truetype'); /* Safari, Android, iOS */
 }
   </style>
-</head>
-<body>
   <script src="/dist/elm.js"></script>
+  <script src="/js/keycloak.js"></script>
   <script src="/main.js"></script>
+</head>
+<body onload="initKeycloak()">
   <script>
     if('serviceWorker' in navigator) {
       navigator.serviceWorker
@@ -23,11 +24,11 @@
   </script>
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-5ZM1WT3DK7"></script>
   <script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
 
-  gtag('config', 'G-5ZM1WT3DK7');
-</script>
+    gtag('config', 'G-5ZM1WT3DK7');
+  </script>
 </body>
 </html>

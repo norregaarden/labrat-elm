@@ -1,0 +1,1776 @@
+schema {
+  query: query_root
+  mutation: mutation_root
+  subscription: subscription_root
+}
+
+"""whether this query should be cached (Hasura Cloud only)"""
+directive @cached(
+  """measured in seconds"""
+  ttl: Int! = 60
+
+  """refresh the cache entry"""
+  refresh: Boolean! = false
+) on QUERY
+
+"""
+Boolean expression to compare columns of type "Int". All fields are combined with logical 'AND'.
+"""
+input Int_comparison_exp {
+  _eq: Int
+  _gt: Int
+  _gte: Int
+  _in: [Int!]
+  _is_null: Boolean
+  _lt: Int
+  _lte: Int
+  _neq: Int
+  _nin: [Int!]
+}
+
+"""
+Boolean expression to compare columns of type "String". All fields are combined with logical 'AND'.
+"""
+input String_comparison_exp {
+  _eq: String
+  _gt: String
+  _gte: String
+
+  """does the column match the given case-insensitive pattern"""
+  _ilike: String
+  _in: [String!]
+
+  """
+  does the column match the given POSIX regular expression, case insensitive
+  """
+  _iregex: String
+  _is_null: Boolean
+
+  """does the column match the given pattern"""
+  _like: String
+  _lt: String
+  _lte: String
+  _neq: String
+
+  """does the column NOT match the given case-insensitive pattern"""
+  _nilike: String
+  _nin: [String!]
+
+  """
+  does the column NOT match the given POSIX regular expression, case insensitive
+  """
+  _niregex: String
+
+  """does the column NOT match the given pattern"""
+  _nlike: String
+
+  """
+  does the column NOT match the given POSIX regular expression, case sensitive
+  """
+  _nregex: String
+
+  """does the column NOT match the given SQL regular expression"""
+  _nsimilar: String
+
+  """
+  does the column match the given POSIX regular expression, case sensitive
+  """
+  _regex: String
+
+  """does the column match the given SQL regular expression"""
+  _similar: String
+}
+
+"""
+columns and relationships of "drug_nicknames"
+"""
+type drug_nicknames {
+  drug_id: Int!
+  id: Int!
+  name: String!
+}
+
+"""
+aggregated selection of "drug_nicknames"
+"""
+type drug_nicknames_aggregate {
+  aggregate: drug_nicknames_aggregate_fields
+  nodes: [drug_nicknames!]!
+}
+
+"""
+aggregate fields of "drug_nicknames"
+"""
+type drug_nicknames_aggregate_fields {
+  avg: drug_nicknames_avg_fields
+  count(columns: [drug_nicknames_select_column!], distinct: Boolean): Int!
+  max: drug_nicknames_max_fields
+  min: drug_nicknames_min_fields
+  stddev: drug_nicknames_stddev_fields
+  stddev_pop: drug_nicknames_stddev_pop_fields
+  stddev_samp: drug_nicknames_stddev_samp_fields
+  sum: drug_nicknames_sum_fields
+  var_pop: drug_nicknames_var_pop_fields
+  var_samp: drug_nicknames_var_samp_fields
+  variance: drug_nicknames_variance_fields
+}
+
+"""
+order by aggregate values of table "drug_nicknames"
+"""
+input drug_nicknames_aggregate_order_by {
+  avg: drug_nicknames_avg_order_by
+  count: order_by
+  max: drug_nicknames_max_order_by
+  min: drug_nicknames_min_order_by
+  stddev: drug_nicknames_stddev_order_by
+  stddev_pop: drug_nicknames_stddev_pop_order_by
+  stddev_samp: drug_nicknames_stddev_samp_order_by
+  sum: drug_nicknames_sum_order_by
+  var_pop: drug_nicknames_var_pop_order_by
+  var_samp: drug_nicknames_var_samp_order_by
+  variance: drug_nicknames_variance_order_by
+}
+
+"""
+input type for inserting array relation for remote table "drug_nicknames"
+"""
+input drug_nicknames_arr_rel_insert_input {
+  data: [drug_nicknames_insert_input!]!
+
+  """on conflict condition"""
+  on_conflict: drug_nicknames_on_conflict
+}
+
+"""aggregate avg on columns"""
+type drug_nicknames_avg_fields {
+  drug_id: Float
+  id: Float
+}
+
+"""
+order by avg() on columns of table "drug_nicknames"
+"""
+input drug_nicknames_avg_order_by {
+  drug_id: order_by
+  id: order_by
+}
+
+"""
+Boolean expression to filter rows from the table "drug_nicknames". All fields are combined with a logical 'AND'.
+"""
+input drug_nicknames_bool_exp {
+  _and: [drug_nicknames_bool_exp!]
+  _not: drug_nicknames_bool_exp
+  _or: [drug_nicknames_bool_exp!]
+  drug_id: Int_comparison_exp
+  id: Int_comparison_exp
+  name: String_comparison_exp
+}
+
+"""
+unique or primary key constraints on table "drug_nicknames"
+"""
+enum drug_nicknames_constraint {
+  """unique or primary key constraint"""
+  drug_nicknames_pkey
+}
+
+"""
+input type for incrementing numeric columns in table "drug_nicknames"
+"""
+input drug_nicknames_inc_input {
+  drug_id: Int
+  id: Int
+}
+
+"""
+input type for inserting data into table "drug_nicknames"
+"""
+input drug_nicknames_insert_input {
+  drug_id: Int
+  id: Int
+  name: String
+}
+
+"""aggregate max on columns"""
+type drug_nicknames_max_fields {
+  drug_id: Int
+  id: Int
+  name: String
+}
+
+"""
+order by max() on columns of table "drug_nicknames"
+"""
+input drug_nicknames_max_order_by {
+  drug_id: order_by
+  id: order_by
+  name: order_by
+}
+
+"""aggregate min on columns"""
+type drug_nicknames_min_fields {
+  drug_id: Int
+  id: Int
+  name: String
+}
+
+"""
+order by min() on columns of table "drug_nicknames"
+"""
+input drug_nicknames_min_order_by {
+  drug_id: order_by
+  id: order_by
+  name: order_by
+}
+
+"""
+response of any mutation on the table "drug_nicknames"
+"""
+type drug_nicknames_mutation_response {
+  """number of rows affected by the mutation"""
+  affected_rows: Int!
+
+  """data from the rows affected by the mutation"""
+  returning: [drug_nicknames!]!
+}
+
+"""
+on conflict condition type for table "drug_nicknames"
+"""
+input drug_nicknames_on_conflict {
+  constraint: drug_nicknames_constraint!
+  update_columns: [drug_nicknames_update_column!]! = []
+  where: drug_nicknames_bool_exp
+}
+
+"""Ordering options when selecting data from "drug_nicknames"."""
+input drug_nicknames_order_by {
+  drug_id: order_by
+  id: order_by
+  name: order_by
+}
+
+"""primary key columns input for table: drug_nicknames"""
+input drug_nicknames_pk_columns_input {
+  id: Int!
+}
+
+"""
+select columns of table "drug_nicknames"
+"""
+enum drug_nicknames_select_column {
+  """column name"""
+  drug_id
+
+  """column name"""
+  id
+
+  """column name"""
+  name
+}
+
+"""
+input type for updating data in table "drug_nicknames"
+"""
+input drug_nicknames_set_input {
+  drug_id: Int
+  id: Int
+  name: String
+}
+
+"""aggregate stddev on columns"""
+type drug_nicknames_stddev_fields {
+  drug_id: Float
+  id: Float
+}
+
+"""
+order by stddev() on columns of table "drug_nicknames"
+"""
+input drug_nicknames_stddev_order_by {
+  drug_id: order_by
+  id: order_by
+}
+
+"""aggregate stddev_pop on columns"""
+type drug_nicknames_stddev_pop_fields {
+  drug_id: Float
+  id: Float
+}
+
+"""
+order by stddev_pop() on columns of table "drug_nicknames"
+"""
+input drug_nicknames_stddev_pop_order_by {
+  drug_id: order_by
+  id: order_by
+}
+
+"""aggregate stddev_samp on columns"""
+type drug_nicknames_stddev_samp_fields {
+  drug_id: Float
+  id: Float
+}
+
+"""
+order by stddev_samp() on columns of table "drug_nicknames"
+"""
+input drug_nicknames_stddev_samp_order_by {
+  drug_id: order_by
+  id: order_by
+}
+
+"""aggregate sum on columns"""
+type drug_nicknames_sum_fields {
+  drug_id: Int
+  id: Int
+}
+
+"""
+order by sum() on columns of table "drug_nicknames"
+"""
+input drug_nicknames_sum_order_by {
+  drug_id: order_by
+  id: order_by
+}
+
+"""
+update columns of table "drug_nicknames"
+"""
+enum drug_nicknames_update_column {
+  """column name"""
+  drug_id
+
+  """column name"""
+  id
+
+  """column name"""
+  name
+}
+
+"""aggregate var_pop on columns"""
+type drug_nicknames_var_pop_fields {
+  drug_id: Float
+  id: Float
+}
+
+"""
+order by var_pop() on columns of table "drug_nicknames"
+"""
+input drug_nicknames_var_pop_order_by {
+  drug_id: order_by
+  id: order_by
+}
+
+"""aggregate var_samp on columns"""
+type drug_nicknames_var_samp_fields {
+  drug_id: Float
+  id: Float
+}
+
+"""
+order by var_samp() on columns of table "drug_nicknames"
+"""
+input drug_nicknames_var_samp_order_by {
+  drug_id: order_by
+  id: order_by
+}
+
+"""aggregate variance on columns"""
+type drug_nicknames_variance_fields {
+  drug_id: Float
+  id: Float
+}
+
+"""
+order by variance() on columns of table "drug_nicknames"
+"""
+input drug_nicknames_variance_order_by {
+  drug_id: order_by
+  id: order_by
+}
+
+"""
+columns and relationships of "drug_resources"
+"""
+type drug_resources {
+  drug_id: Int!
+  id: Int!
+  source_link: String!
+  source_name: String!
+}
+
+"""
+aggregated selection of "drug_resources"
+"""
+type drug_resources_aggregate {
+  aggregate: drug_resources_aggregate_fields
+  nodes: [drug_resources!]!
+}
+
+"""
+aggregate fields of "drug_resources"
+"""
+type drug_resources_aggregate_fields {
+  avg: drug_resources_avg_fields
+  count(columns: [drug_resources_select_column!], distinct: Boolean): Int!
+  max: drug_resources_max_fields
+  min: drug_resources_min_fields
+  stddev: drug_resources_stddev_fields
+  stddev_pop: drug_resources_stddev_pop_fields
+  stddev_samp: drug_resources_stddev_samp_fields
+  sum: drug_resources_sum_fields
+  var_pop: drug_resources_var_pop_fields
+  var_samp: drug_resources_var_samp_fields
+  variance: drug_resources_variance_fields
+}
+
+"""
+order by aggregate values of table "drug_resources"
+"""
+input drug_resources_aggregate_order_by {
+  avg: drug_resources_avg_order_by
+  count: order_by
+  max: drug_resources_max_order_by
+  min: drug_resources_min_order_by
+  stddev: drug_resources_stddev_order_by
+  stddev_pop: drug_resources_stddev_pop_order_by
+  stddev_samp: drug_resources_stddev_samp_order_by
+  sum: drug_resources_sum_order_by
+  var_pop: drug_resources_var_pop_order_by
+  var_samp: drug_resources_var_samp_order_by
+  variance: drug_resources_variance_order_by
+}
+
+"""
+input type for inserting array relation for remote table "drug_resources"
+"""
+input drug_resources_arr_rel_insert_input {
+  data: [drug_resources_insert_input!]!
+
+  """on conflict condition"""
+  on_conflict: drug_resources_on_conflict
+}
+
+"""aggregate avg on columns"""
+type drug_resources_avg_fields {
+  drug_id: Float
+  id: Float
+}
+
+"""
+order by avg() on columns of table "drug_resources"
+"""
+input drug_resources_avg_order_by {
+  drug_id: order_by
+  id: order_by
+}
+
+"""
+Boolean expression to filter rows from the table "drug_resources". All fields are combined with a logical 'AND'.
+"""
+input drug_resources_bool_exp {
+  _and: [drug_resources_bool_exp!]
+  _not: drug_resources_bool_exp
+  _or: [drug_resources_bool_exp!]
+  drug_id: Int_comparison_exp
+  id: Int_comparison_exp
+  source_link: String_comparison_exp
+  source_name: String_comparison_exp
+}
+
+"""
+unique or primary key constraints on table "drug_resources"
+"""
+enum drug_resources_constraint {
+  """unique or primary key constraint"""
+  drug_resources_pkey
+}
+
+"""
+input type for incrementing numeric columns in table "drug_resources"
+"""
+input drug_resources_inc_input {
+  drug_id: Int
+  id: Int
+}
+
+"""
+input type for inserting data into table "drug_resources"
+"""
+input drug_resources_insert_input {
+  drug_id: Int
+  id: Int
+  source_link: String
+  source_name: String
+}
+
+"""aggregate max on columns"""
+type drug_resources_max_fields {
+  drug_id: Int
+  id: Int
+  source_link: String
+  source_name: String
+}
+
+"""
+order by max() on columns of table "drug_resources"
+"""
+input drug_resources_max_order_by {
+  drug_id: order_by
+  id: order_by
+  source_link: order_by
+  source_name: order_by
+}
+
+"""aggregate min on columns"""
+type drug_resources_min_fields {
+  drug_id: Int
+  id: Int
+  source_link: String
+  source_name: String
+}
+
+"""
+order by min() on columns of table "drug_resources"
+"""
+input drug_resources_min_order_by {
+  drug_id: order_by
+  id: order_by
+  source_link: order_by
+  source_name: order_by
+}
+
+"""
+response of any mutation on the table "drug_resources"
+"""
+type drug_resources_mutation_response {
+  """number of rows affected by the mutation"""
+  affected_rows: Int!
+
+  """data from the rows affected by the mutation"""
+  returning: [drug_resources!]!
+}
+
+"""
+on conflict condition type for table "drug_resources"
+"""
+input drug_resources_on_conflict {
+  constraint: drug_resources_constraint!
+  update_columns: [drug_resources_update_column!]! = []
+  where: drug_resources_bool_exp
+}
+
+"""Ordering options when selecting data from "drug_resources"."""
+input drug_resources_order_by {
+  drug_id: order_by
+  id: order_by
+  source_link: order_by
+  source_name: order_by
+}
+
+"""primary key columns input for table: drug_resources"""
+input drug_resources_pk_columns_input {
+  id: Int!
+}
+
+"""
+select columns of table "drug_resources"
+"""
+enum drug_resources_select_column {
+  """column name"""
+  drug_id
+
+  """column name"""
+  id
+
+  """column name"""
+  source_link
+
+  """column name"""
+  source_name
+}
+
+"""
+input type for updating data in table "drug_resources"
+"""
+input drug_resources_set_input {
+  drug_id: Int
+  id: Int
+  source_link: String
+  source_name: String
+}
+
+"""aggregate stddev on columns"""
+type drug_resources_stddev_fields {
+  drug_id: Float
+  id: Float
+}
+
+"""
+order by stddev() on columns of table "drug_resources"
+"""
+input drug_resources_stddev_order_by {
+  drug_id: order_by
+  id: order_by
+}
+
+"""aggregate stddev_pop on columns"""
+type drug_resources_stddev_pop_fields {
+  drug_id: Float
+  id: Float
+}
+
+"""
+order by stddev_pop() on columns of table "drug_resources"
+"""
+input drug_resources_stddev_pop_order_by {
+  drug_id: order_by
+  id: order_by
+}
+
+"""aggregate stddev_samp on columns"""
+type drug_resources_stddev_samp_fields {
+  drug_id: Float
+  id: Float
+}
+
+"""
+order by stddev_samp() on columns of table "drug_resources"
+"""
+input drug_resources_stddev_samp_order_by {
+  drug_id: order_by
+  id: order_by
+}
+
+"""aggregate sum on columns"""
+type drug_resources_sum_fields {
+  drug_id: Int
+  id: Int
+}
+
+"""
+order by sum() on columns of table "drug_resources"
+"""
+input drug_resources_sum_order_by {
+  drug_id: order_by
+  id: order_by
+}
+
+"""
+update columns of table "drug_resources"
+"""
+enum drug_resources_update_column {
+  """column name"""
+  drug_id
+
+  """column name"""
+  id
+
+  """column name"""
+  source_link
+
+  """column name"""
+  source_name
+}
+
+"""aggregate var_pop on columns"""
+type drug_resources_var_pop_fields {
+  drug_id: Float
+  id: Float
+}
+
+"""
+order by var_pop() on columns of table "drug_resources"
+"""
+input drug_resources_var_pop_order_by {
+  drug_id: order_by
+  id: order_by
+}
+
+"""aggregate var_samp on columns"""
+type drug_resources_var_samp_fields {
+  drug_id: Float
+  id: Float
+}
+
+"""
+order by var_samp() on columns of table "drug_resources"
+"""
+input drug_resources_var_samp_order_by {
+  drug_id: order_by
+  id: order_by
+}
+
+"""aggregate variance on columns"""
+type drug_resources_variance_fields {
+  drug_id: Float
+  id: Float
+}
+
+"""
+order by variance() on columns of table "drug_resources"
+"""
+input drug_resources_variance_order_by {
+  drug_id: order_by
+  id: order_by
+}
+
+"""
+columns and relationships of "drugs"
+"""
+type drugs {
+  """An array relationship"""
+  drug_nicknames(
+    """distinct select on columns"""
+    distinct_on: [drug_nicknames_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [drug_nicknames_order_by!]
+
+    """filter the rows returned"""
+    where: drug_nicknames_bool_exp
+  ): [drug_nicknames!]!
+
+  """An aggregate relationship"""
+  drug_nicknames_aggregate(
+    """distinct select on columns"""
+    distinct_on: [drug_nicknames_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [drug_nicknames_order_by!]
+
+    """filter the rows returned"""
+    where: drug_nicknames_bool_exp
+  ): drug_nicknames_aggregate!
+
+  """An array relationship"""
+  drug_resources(
+    """distinct select on columns"""
+    distinct_on: [drug_resources_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [drug_resources_order_by!]
+
+    """filter the rows returned"""
+    where: drug_resources_bool_exp
+  ): [drug_resources!]!
+
+  """An aggregate relationship"""
+  drug_resources_aggregate(
+    """distinct select on columns"""
+    distinct_on: [drug_resources_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [drug_resources_order_by!]
+
+    """filter the rows returned"""
+    where: drug_resources_bool_exp
+  ): drug_resources_aggregate!
+  id: Int!
+  longname: String!
+  shortname: String
+}
+
+"""
+aggregated selection of "drugs"
+"""
+type drugs_aggregate {
+  aggregate: drugs_aggregate_fields
+  nodes: [drugs!]!
+}
+
+"""
+aggregate fields of "drugs"
+"""
+type drugs_aggregate_fields {
+  avg: drugs_avg_fields
+  count(columns: [drugs_select_column!], distinct: Boolean): Int!
+  max: drugs_max_fields
+  min: drugs_min_fields
+  stddev: drugs_stddev_fields
+  stddev_pop: drugs_stddev_pop_fields
+  stddev_samp: drugs_stddev_samp_fields
+  sum: drugs_sum_fields
+  var_pop: drugs_var_pop_fields
+  var_samp: drugs_var_samp_fields
+  variance: drugs_variance_fields
+}
+
+"""aggregate avg on columns"""
+type drugs_avg_fields {
+  id: Float
+}
+
+"""
+Boolean expression to filter rows from the table "drugs". All fields are combined with a logical 'AND'.
+"""
+input drugs_bool_exp {
+  _and: [drugs_bool_exp!]
+  _not: drugs_bool_exp
+  _or: [drugs_bool_exp!]
+  drug_nicknames: drug_nicknames_bool_exp
+  drug_resources: drug_resources_bool_exp
+  id: Int_comparison_exp
+  longname: String_comparison_exp
+  shortname: String_comparison_exp
+}
+
+"""
+unique or primary key constraints on table "drugs"
+"""
+enum drugs_constraint {
+  """unique or primary key constraint"""
+  drugs_longname_key
+
+  """unique or primary key constraint"""
+  drugs_pkey
+
+  """unique or primary key constraint"""
+  drugs_shortname_key
+}
+
+"""
+input type for incrementing numeric columns in table "drugs"
+"""
+input drugs_inc_input {
+  id: Int
+}
+
+"""
+input type for inserting data into table "drugs"
+"""
+input drugs_insert_input {
+  drug_nicknames: drug_nicknames_arr_rel_insert_input
+  drug_resources: drug_resources_arr_rel_insert_input
+  id: Int
+  longname: String
+  shortname: String
+}
+
+"""aggregate max on columns"""
+type drugs_max_fields {
+  id: Int
+  longname: String
+  shortname: String
+}
+
+"""aggregate min on columns"""
+type drugs_min_fields {
+  id: Int
+  longname: String
+  shortname: String
+}
+
+"""
+response of any mutation on the table "drugs"
+"""
+type drugs_mutation_response {
+  """number of rows affected by the mutation"""
+  affected_rows: Int!
+
+  """data from the rows affected by the mutation"""
+  returning: [drugs!]!
+}
+
+"""
+on conflict condition type for table "drugs"
+"""
+input drugs_on_conflict {
+  constraint: drugs_constraint!
+  update_columns: [drugs_update_column!]! = []
+  where: drugs_bool_exp
+}
+
+"""Ordering options when selecting data from "drugs"."""
+input drugs_order_by {
+  drug_nicknames_aggregate: drug_nicknames_aggregate_order_by
+  drug_resources_aggregate: drug_resources_aggregate_order_by
+  id: order_by
+  longname: order_by
+  shortname: order_by
+}
+
+"""primary key columns input for table: drugs"""
+input drugs_pk_columns_input {
+  id: Int!
+}
+
+"""
+select columns of table "drugs"
+"""
+enum drugs_select_column {
+  """column name"""
+  id
+
+  """column name"""
+  longname
+
+  """column name"""
+  shortname
+}
+
+"""
+input type for updating data in table "drugs"
+"""
+input drugs_set_input {
+  id: Int
+  longname: String
+  shortname: String
+}
+
+"""aggregate stddev on columns"""
+type drugs_stddev_fields {
+  id: Float
+}
+
+"""aggregate stddev_pop on columns"""
+type drugs_stddev_pop_fields {
+  id: Float
+}
+
+"""aggregate stddev_samp on columns"""
+type drugs_stddev_samp_fields {
+  id: Float
+}
+
+"""aggregate sum on columns"""
+type drugs_sum_fields {
+  id: Int
+}
+
+"""
+update columns of table "drugs"
+"""
+enum drugs_update_column {
+  """column name"""
+  id
+
+  """column name"""
+  longname
+
+  """column name"""
+  shortname
+}
+
+"""aggregate var_pop on columns"""
+type drugs_var_pop_fields {
+  id: Float
+}
+
+"""aggregate var_samp on columns"""
+type drugs_var_samp_fields {
+  id: Float
+}
+
+"""aggregate variance on columns"""
+type drugs_variance_fields {
+  id: Float
+}
+
+"""mutation root"""
+type mutation_root {
+  """
+  delete data from the table: "drug_nicknames"
+  """
+  delete_drug_nicknames(
+    """filter the rows which have to be deleted"""
+    where: drug_nicknames_bool_exp!
+  ): drug_nicknames_mutation_response
+
+  """
+  delete single row from the table: "drug_nicknames"
+  """
+  delete_drug_nicknames_by_pk(id: Int!): drug_nicknames
+
+  """
+  delete data from the table: "drug_resources"
+  """
+  delete_drug_resources(
+    """filter the rows which have to be deleted"""
+    where: drug_resources_bool_exp!
+  ): drug_resources_mutation_response
+
+  """
+  delete single row from the table: "drug_resources"
+  """
+  delete_drug_resources_by_pk(id: Int!): drug_resources
+
+  """
+  delete data from the table: "drugs"
+  """
+  delete_drugs(
+    """filter the rows which have to be deleted"""
+    where: drugs_bool_exp!
+  ): drugs_mutation_response
+
+  """
+  delete single row from the table: "drugs"
+  """
+  delete_drugs_by_pk(id: Int!): drugs
+
+  """
+  delete data from the table: "test"
+  """
+  delete_test(
+    """filter the rows which have to be deleted"""
+    where: test_bool_exp!
+  ): test_mutation_response
+
+  """
+  delete single row from the table: "test"
+  """
+  delete_test_by_pk(id: Int!): test
+
+  """
+  insert data into the table: "drug_nicknames"
+  """
+  insert_drug_nicknames(
+    """the rows to be inserted"""
+    objects: [drug_nicknames_insert_input!]!
+
+    """on conflict condition"""
+    on_conflict: drug_nicknames_on_conflict
+  ): drug_nicknames_mutation_response
+
+  """
+  insert a single row into the table: "drug_nicknames"
+  """
+  insert_drug_nicknames_one(
+    """the row to be inserted"""
+    object: drug_nicknames_insert_input!
+
+    """on conflict condition"""
+    on_conflict: drug_nicknames_on_conflict
+  ): drug_nicknames
+
+  """
+  insert data into the table: "drug_resources"
+  """
+  insert_drug_resources(
+    """the rows to be inserted"""
+    objects: [drug_resources_insert_input!]!
+
+    """on conflict condition"""
+    on_conflict: drug_resources_on_conflict
+  ): drug_resources_mutation_response
+
+  """
+  insert a single row into the table: "drug_resources"
+  """
+  insert_drug_resources_one(
+    """the row to be inserted"""
+    object: drug_resources_insert_input!
+
+    """on conflict condition"""
+    on_conflict: drug_resources_on_conflict
+  ): drug_resources
+
+  """
+  insert data into the table: "drugs"
+  """
+  insert_drugs(
+    """the rows to be inserted"""
+    objects: [drugs_insert_input!]!
+
+    """on conflict condition"""
+    on_conflict: drugs_on_conflict
+  ): drugs_mutation_response
+
+  """
+  insert a single row into the table: "drugs"
+  """
+  insert_drugs_one(
+    """the row to be inserted"""
+    object: drugs_insert_input!
+
+    """on conflict condition"""
+    on_conflict: drugs_on_conflict
+  ): drugs
+
+  """
+  insert data into the table: "test"
+  """
+  insert_test(
+    """the rows to be inserted"""
+    objects: [test_insert_input!]!
+
+    """on conflict condition"""
+    on_conflict: test_on_conflict
+  ): test_mutation_response
+
+  """
+  insert a single row into the table: "test"
+  """
+  insert_test_one(
+    """the row to be inserted"""
+    object: test_insert_input!
+
+    """on conflict condition"""
+    on_conflict: test_on_conflict
+  ): test
+
+  """
+  update data of the table: "drug_nicknames"
+  """
+  update_drug_nicknames(
+    """increments the numeric columns with given value of the filtered values"""
+    _inc: drug_nicknames_inc_input
+
+    """sets the columns of the filtered rows to the given values"""
+    _set: drug_nicknames_set_input
+
+    """filter the rows which have to be updated"""
+    where: drug_nicknames_bool_exp!
+  ): drug_nicknames_mutation_response
+
+  """
+  update single row of the table: "drug_nicknames"
+  """
+  update_drug_nicknames_by_pk(
+    """increments the numeric columns with given value of the filtered values"""
+    _inc: drug_nicknames_inc_input
+
+    """sets the columns of the filtered rows to the given values"""
+    _set: drug_nicknames_set_input
+    pk_columns: drug_nicknames_pk_columns_input!
+  ): drug_nicknames
+
+  """
+  update data of the table: "drug_resources"
+  """
+  update_drug_resources(
+    """increments the numeric columns with given value of the filtered values"""
+    _inc: drug_resources_inc_input
+
+    """sets the columns of the filtered rows to the given values"""
+    _set: drug_resources_set_input
+
+    """filter the rows which have to be updated"""
+    where: drug_resources_bool_exp!
+  ): drug_resources_mutation_response
+
+  """
+  update single row of the table: "drug_resources"
+  """
+  update_drug_resources_by_pk(
+    """increments the numeric columns with given value of the filtered values"""
+    _inc: drug_resources_inc_input
+
+    """sets the columns of the filtered rows to the given values"""
+    _set: drug_resources_set_input
+    pk_columns: drug_resources_pk_columns_input!
+  ): drug_resources
+
+  """
+  update data of the table: "drugs"
+  """
+  update_drugs(
+    """increments the numeric columns with given value of the filtered values"""
+    _inc: drugs_inc_input
+
+    """sets the columns of the filtered rows to the given values"""
+    _set: drugs_set_input
+
+    """filter the rows which have to be updated"""
+    where: drugs_bool_exp!
+  ): drugs_mutation_response
+
+  """
+  update single row of the table: "drugs"
+  """
+  update_drugs_by_pk(
+    """increments the numeric columns with given value of the filtered values"""
+    _inc: drugs_inc_input
+
+    """sets the columns of the filtered rows to the given values"""
+    _set: drugs_set_input
+    pk_columns: drugs_pk_columns_input!
+  ): drugs
+
+  """
+  update data of the table: "test"
+  """
+  update_test(
+    """increments the numeric columns with given value of the filtered values"""
+    _inc: test_inc_input
+
+    """sets the columns of the filtered rows to the given values"""
+    _set: test_set_input
+
+    """filter the rows which have to be updated"""
+    where: test_bool_exp!
+  ): test_mutation_response
+
+  """
+  update single row of the table: "test"
+  """
+  update_test_by_pk(
+    """increments the numeric columns with given value of the filtered values"""
+    _inc: test_inc_input
+
+    """sets the columns of the filtered rows to the given values"""
+    _set: test_set_input
+    pk_columns: test_pk_columns_input!
+  ): test
+}
+
+"""column ordering options"""
+enum order_by {
+  """in ascending order, nulls last"""
+  asc
+
+  """in ascending order, nulls first"""
+  asc_nulls_first
+
+  """in ascending order, nulls last"""
+  asc_nulls_last
+
+  """in descending order, nulls first"""
+  desc
+
+  """in descending order, nulls first"""
+  desc_nulls_first
+
+  """in descending order, nulls last"""
+  desc_nulls_last
+}
+
+type query_root {
+  """An array relationship"""
+  drug_nicknames(
+    """distinct select on columns"""
+    distinct_on: [drug_nicknames_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [drug_nicknames_order_by!]
+
+    """filter the rows returned"""
+    where: drug_nicknames_bool_exp
+  ): [drug_nicknames!]!
+
+  """An aggregate relationship"""
+  drug_nicknames_aggregate(
+    """distinct select on columns"""
+    distinct_on: [drug_nicknames_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [drug_nicknames_order_by!]
+
+    """filter the rows returned"""
+    where: drug_nicknames_bool_exp
+  ): drug_nicknames_aggregate!
+
+  """fetch data from the table: "drug_nicknames" using primary key columns"""
+  drug_nicknames_by_pk(id: Int!): drug_nicknames
+
+  """An array relationship"""
+  drug_resources(
+    """distinct select on columns"""
+    distinct_on: [drug_resources_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [drug_resources_order_by!]
+
+    """filter the rows returned"""
+    where: drug_resources_bool_exp
+  ): [drug_resources!]!
+
+  """An aggregate relationship"""
+  drug_resources_aggregate(
+    """distinct select on columns"""
+    distinct_on: [drug_resources_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [drug_resources_order_by!]
+
+    """filter the rows returned"""
+    where: drug_resources_bool_exp
+  ): drug_resources_aggregate!
+
+  """fetch data from the table: "drug_resources" using primary key columns"""
+  drug_resources_by_pk(id: Int!): drug_resources
+
+  """
+  fetch data from the table: "drugs"
+  """
+  drugs(
+    """distinct select on columns"""
+    distinct_on: [drugs_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [drugs_order_by!]
+
+    """filter the rows returned"""
+    where: drugs_bool_exp
+  ): [drugs!]!
+
+  """
+  fetch aggregated fields from the table: "drugs"
+  """
+  drugs_aggregate(
+    """distinct select on columns"""
+    distinct_on: [drugs_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [drugs_order_by!]
+
+    """filter the rows returned"""
+    where: drugs_bool_exp
+  ): drugs_aggregate!
+
+  """fetch data from the table: "drugs" using primary key columns"""
+  drugs_by_pk(id: Int!): drugs
+
+  """
+  fetch data from the table: "test"
+  """
+  test(
+    """distinct select on columns"""
+    distinct_on: [test_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [test_order_by!]
+
+    """filter the rows returned"""
+    where: test_bool_exp
+  ): [test!]!
+
+  """
+  fetch aggregated fields from the table: "test"
+  """
+  test_aggregate(
+    """distinct select on columns"""
+    distinct_on: [test_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [test_order_by!]
+
+    """filter the rows returned"""
+    where: test_bool_exp
+  ): test_aggregate!
+
+  """fetch data from the table: "test" using primary key columns"""
+  test_by_pk(id: Int!): test
+}
+
+type subscription_root {
+  """An array relationship"""
+  drug_nicknames(
+    """distinct select on columns"""
+    distinct_on: [drug_nicknames_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [drug_nicknames_order_by!]
+
+    """filter the rows returned"""
+    where: drug_nicknames_bool_exp
+  ): [drug_nicknames!]!
+
+  """An aggregate relationship"""
+  drug_nicknames_aggregate(
+    """distinct select on columns"""
+    distinct_on: [drug_nicknames_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [drug_nicknames_order_by!]
+
+    """filter the rows returned"""
+    where: drug_nicknames_bool_exp
+  ): drug_nicknames_aggregate!
+
+  """fetch data from the table: "drug_nicknames" using primary key columns"""
+  drug_nicknames_by_pk(id: Int!): drug_nicknames
+
+  """An array relationship"""
+  drug_resources(
+    """distinct select on columns"""
+    distinct_on: [drug_resources_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [drug_resources_order_by!]
+
+    """filter the rows returned"""
+    where: drug_resources_bool_exp
+  ): [drug_resources!]!
+
+  """An aggregate relationship"""
+  drug_resources_aggregate(
+    """distinct select on columns"""
+    distinct_on: [drug_resources_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [drug_resources_order_by!]
+
+    """filter the rows returned"""
+    where: drug_resources_bool_exp
+  ): drug_resources_aggregate!
+
+  """fetch data from the table: "drug_resources" using primary key columns"""
+  drug_resources_by_pk(id: Int!): drug_resources
+
+  """
+  fetch data from the table: "drugs"
+  """
+  drugs(
+    """distinct select on columns"""
+    distinct_on: [drugs_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [drugs_order_by!]
+
+    """filter the rows returned"""
+    where: drugs_bool_exp
+  ): [drugs!]!
+
+  """
+  fetch aggregated fields from the table: "drugs"
+  """
+  drugs_aggregate(
+    """distinct select on columns"""
+    distinct_on: [drugs_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [drugs_order_by!]
+
+    """filter the rows returned"""
+    where: drugs_bool_exp
+  ): drugs_aggregate!
+
+  """fetch data from the table: "drugs" using primary key columns"""
+  drugs_by_pk(id: Int!): drugs
+
+  """
+  fetch data from the table: "test"
+  """
+  test(
+    """distinct select on columns"""
+    distinct_on: [test_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [test_order_by!]
+
+    """filter the rows returned"""
+    where: test_bool_exp
+  ): [test!]!
+
+  """
+  fetch aggregated fields from the table: "test"
+  """
+  test_aggregate(
+    """distinct select on columns"""
+    distinct_on: [test_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [test_order_by!]
+
+    """filter the rows returned"""
+    where: test_bool_exp
+  ): test_aggregate!
+
+  """fetch data from the table: "test" using primary key columns"""
+  test_by_pk(id: Int!): test
+}
+
+"""
+columns and relationships of "test"
+"""
+type test {
+  id: Int!
+  test: String!
+}
+
+"""
+aggregated selection of "test"
+"""
+type test_aggregate {
+  aggregate: test_aggregate_fields
+  nodes: [test!]!
+}
+
+"""
+aggregate fields of "test"
+"""
+type test_aggregate_fields {
+  avg: test_avg_fields
+  count(columns: [test_select_column!], distinct: Boolean): Int!
+  max: test_max_fields
+  min: test_min_fields
+  stddev: test_stddev_fields
+  stddev_pop: test_stddev_pop_fields
+  stddev_samp: test_stddev_samp_fields
+  sum: test_sum_fields
+  var_pop: test_var_pop_fields
+  var_samp: test_var_samp_fields
+  variance: test_variance_fields
+}
+
+"""aggregate avg on columns"""
+type test_avg_fields {
+  id: Float
+}
+
+"""
+Boolean expression to filter rows from the table "test". All fields are combined with a logical 'AND'.
+"""
+input test_bool_exp {
+  _and: [test_bool_exp!]
+  _not: test_bool_exp
+  _or: [test_bool_exp!]
+  id: Int_comparison_exp
+  test: String_comparison_exp
+}
+
+"""
+unique or primary key constraints on table "test"
+"""
+enum test_constraint {
+  """unique or primary key constraint"""
+  test_pkey
+}
+
+"""
+input type for incrementing numeric columns in table "test"
+"""
+input test_inc_input {
+  id: Int
+}
+
+"""
+input type for inserting data into table "test"
+"""
+input test_insert_input {
+  id: Int
+  test: String
+}
+
+"""aggregate max on columns"""
+type test_max_fields {
+  id: Int
+  test: String
+}
+
+"""aggregate min on columns"""
+type test_min_fields {
+  id: Int
+  test: String
+}
+
+"""
+response of any mutation on the table "test"
+"""
+type test_mutation_response {
+  """number of rows affected by the mutation"""
+  affected_rows: Int!
+
+  """data from the rows affected by the mutation"""
+  returning: [test!]!
+}
+
+"""
+on conflict condition type for table "test"
+"""
+input test_on_conflict {
+  constraint: test_constraint!
+  update_columns: [test_update_column!]! = []
+  where: test_bool_exp
+}
+
+"""Ordering options when selecting data from "test"."""
+input test_order_by {
+  id: order_by
+  test: order_by
+}
+
+"""primary key columns input for table: test"""
+input test_pk_columns_input {
+  id: Int!
+}
+
+"""
+select columns of table "test"
+"""
+enum test_select_column {
+  """column name"""
+  id
+
+  """column name"""
+  test
+}
+
+"""
+input type for updating data in table "test"
+"""
+input test_set_input {
+  id: Int
+  test: String
+}
+
+"""aggregate stddev on columns"""
+type test_stddev_fields {
+  id: Float
+}
+
+"""aggregate stddev_pop on columns"""
+type test_stddev_pop_fields {
+  id: Float
+}
+
+"""aggregate stddev_samp on columns"""
+type test_stddev_samp_fields {
+  id: Float
+}
+
+"""aggregate sum on columns"""
+type test_sum_fields {
+  id: Int
+}
+
+"""
+update columns of table "test"
+"""
+enum test_update_column {
+  """column name"""
+  id
+
+  """column name"""
+  test
+}
+
+"""aggregate var_pop on columns"""
+type test_var_pop_fields {
+  id: Float
+}
+
+"""aggregate var_samp on columns"""
+type test_var_samp_fields {
+  id: Float
+}
+
+"""aggregate variance on columns"""
+type test_variance_fields {
+  id: Float
+}
+

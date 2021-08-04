@@ -1,6 +1,6 @@
 module Pages.LogChoose exposing (Model, Msg, page)
 
-import Element exposing (centerX, column, spacing)
+import Element exposing (centerX, column, fill, link, spacing, width)
 import Gen.Route as Route exposing (Route)
 import Page
 import Request exposing (Request)
@@ -67,7 +67,8 @@ view storage model =
       flatFillButton (ChosenDataType (t, r)) t
 
     body =
-      logRoutes |> List.map dtButton
+      logRoutes
+        |> List.map (\(t,r) -> link [width fill] { url = Route.toHref r, label = dtButton (t,r) })
         |> column [centerX, spacing (s 2)]
   in
     { title = "log | lab rat"
