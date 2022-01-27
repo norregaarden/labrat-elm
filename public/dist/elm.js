@@ -25622,7 +25622,7 @@ var $author$project$Pages$Spil$Husk$maxMistakes = 2;
 var $author$project$Pages$Spil$Husk$score = function (igang) {
 	return _Utils_eq(
 		igang.huskNummer,
-		$elm$core$List$length(igang.udvalgteBilleder)) ? ((_Utils_cmp(igang.huskNummer, $author$project$Pages$Spil$Husk$startHuskNumber) > 0) ? {huskNumber: igang.huskNummer, totalMistakes: igang.totalFejl} : {huskNumber: 0, totalMistakes: igang.totalFejl}) : {huskNumber: -1, totalMistakes: -1};
+		$elm$core$List$length(igang.udvalgteBilleder)) ? ((_Utils_cmp(igang.huskNummer, $author$project$Pages$Spil$Husk$startHuskNumber) > 0) ? {huskNumber: igang.huskNummer - 1, totalMistakes: igang.totalFejl} : {huskNumber: 0, totalMistakes: igang.totalFejl}) : {huskNumber: -1, totalMistakes: -1};
 };
 var $elm$core$List$tail = function (list) {
 	if (list.b) {

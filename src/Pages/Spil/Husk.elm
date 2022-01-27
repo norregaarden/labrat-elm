@@ -306,7 +306,7 @@ score : IgangModel -> Score_Husk
 score igang =
   if igang.huskNummer == List.length igang.udvalgteBilleder then
     if igang.huskNummer > startHuskNumber then
-      { huskNumber = igang.huskNummer
+      { huskNumber = igang.huskNummer - 1
       , totalMistakes = igang.totalFejl
       }
     else
