@@ -21,7 +21,7 @@ import Gen.Route as Route exposing (Route)
 ---- SETTINGS ----
 
 font =
-  Font.family [Font.typeface "Cutive Mono", Font.monospace]
+  Font.family [Font.typeface "Source Serif 4", Font.sansSerif]
 
 buttonShadow =
  Border.shadow
@@ -46,7 +46,7 @@ appLayout: Route -> List (Element msg) -> List (Html msg)
 appLayout headerRoute pageContent =
   [header headerRoute] ++ [column [paddingXY (s 2) (s 6), spacing (s 2), width fill] pageContent] ++  footer
   |> column [width fill, height fill]
-  |> layout [font, Background.color beige] |> List.singleton
+  |> layout [font, Font.light, Background.color white] |> List.singleton
 
 
 ---- SHARED VIEW ----
@@ -55,7 +55,7 @@ headerLink string route r =
   let
     bg =
       if route == r then
-        [Background.color beige]
+        [Font.color orangeLight]
       else
         []
 
@@ -123,19 +123,29 @@ small : String -> Element msg
 small str = paragraph [Font.size (s 1)] [text str]
 
 h : Int -> String -> Element msg
-h n str = paragraph [Region.heading n, Font.size (s (5 - n))] [text str]
+h n str =
+  if n == 1 then
+    paragraph
+      [Region.heading n, Font.size (s (5 - n)), Font.color blue, Font.extraBold
+      , paddingXY 0 (s 0)
+      ]
+      [text str]
+  else
+    paragraph
+      [Region.heading n, Font.size (s (5 - n))]
+      [text str]
 
 appButton msg label =
   Input.button
-    [ paddingXY (s 4) (s 2)
+    [ paddingXY (s 5) (s 3)
     , width (minimum (s 11) shrink)
-    , Font.color white
-    , Font.extraBold
+    , Font.color black
+    --, Font.extraBold
     , Font.size (s 4)
     , Background.color orangeLight
-    , Border.rounded (s -1)
-    , buttonShadow
-    , buttonFontShadow
+    , Border.rounded (s -5)
+    --, buttonShadow
+    --, buttonFontShadow
     , Element.focused
       [ Background.color blue ]
     ]
@@ -145,17 +155,17 @@ appButton msg label =
 
 smallAppButton msg label =
   Input.button
-    [ paddingXY (s 2) (s 0)
+    [ paddingXY (s 3) (s 2)
     , width (minimum (s 9) shrink)
-    , Font.color white
-    , Font.extraBold
+    , Font.color black
+    --, Font.extraBold
     , Font.size (s 2)
     , Background.color orangeLight
-    , Border.rounded (s -1)
+    , Border.rounded (s -5)
     , Element.focused
         [ Background.color blue ]
-    , buttonShadow
-    , buttonFontShadow
+    --, buttonShadow
+    --, buttonFontShadow
     ]
     { onPress = Just msg
     , label = text label |> el [centerX]
@@ -163,13 +173,13 @@ smallAppButton msg label =
 
 flatFillButton msg label =
   Input.button
-    [ paddingXY (s 2) (s 0)
+    [ paddingXY (s 3) (s 2)
     , width fill
-    , Font.color white
-    , Font.extraBold
+    , Font.color black
+    --, Font.extraBold
     , Font.size (s 2)
     , Background.color orangeLight
-    , Border.rounded (s -1)
+    , Border.rounded (s -5)
     --, Element.focused [ Background.color blue ]
     ]
     { onPress = Just msg

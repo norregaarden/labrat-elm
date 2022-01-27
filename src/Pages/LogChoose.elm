@@ -69,7 +69,7 @@ view storage model =
     body =
       logRoutes
         |> List.map (\(t,r) -> link [width fill] { url = Route.toHref r, label = dtButton (t,r) })
-        |> column [centerX, spacing (s 2)]
+        |> column [centerX, spacing (s 3)]
   in
     { title = "log | lab rat"
     , body = [body]

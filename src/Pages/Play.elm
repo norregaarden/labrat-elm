@@ -137,7 +137,7 @@ view model =
   { title = "play | lab rat"
   , body =
     [ p "Play all games in random order and save the results:"
-    , appButton PlayClick "Play" |> el [centerX]
+    , appButton PlayClick "PLAY" |> el [centerX]
     , small "About one minute in total."
     , text ""
     , text ""

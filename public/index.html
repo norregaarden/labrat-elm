@@ -5,12 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="manifest" href="/manifest.json">
   <style>
-@font-face {
-  font-family: 'Cutive Mono';
-  src: url('/font/CutiveMono-Regular.ttf')  format('truetype'); /* Safari, Android, iOS */
-}
+    @import url('https://fonts.googleapis.com/css2?family=Source+Serif+4:wght@300&display=swap');
   </style>
-  <script src="/dist/elm.js"></script>
 </head>
 <body>
   <script>
@@ -20,6 +16,7 @@
                .then(function() { console.log("Service Worker Registered"); });
     }
   </script>
+  <script src="/dist/elm.js"></script>
   <script src="/main.js"></script>
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-5ZM1WT3DK7"></script>
   <script>

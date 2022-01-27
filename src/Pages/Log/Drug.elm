@@ -397,7 +397,7 @@ view : Model -> View Msg
 view model =
   { title = "log: drug | lab rat"
   , body =
-    (h 2 "Drug administration")
+    (h 1 "Drug administration")
     :: text ""
     :: viewSearch model.input
     :: viewDrug model

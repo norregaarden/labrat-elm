@@ -18147,6 +18147,7 @@ var $mdgriffith$elm_ui$Element$rgb255 = F3(
 	function (red, green, blue) {
 		return A4($mdgriffith$elm_ui$Internal$Model$Rgba, red / 255, green / 255, blue / 255, 1);
 	});
+var $author$project$UIColor$black = A3($mdgriffith$elm_ui$Element$rgb255, 0, 0, 0);
 var $author$project$UIColor$blue = A3($mdgriffith$elm_ui$Element$rgb255, 0, 95, 115);
 var $mdgriffith$elm_ui$Internal$Model$Button = {$: 'Button'};
 var $mdgriffith$elm_ui$Internal$Model$Describe = function (a) {
@@ -18281,19 +18282,11 @@ var $mdgriffith$elm_ui$Element$Input$button = F2(
 				_List_fromArray(
 					[label])));
 	});
-var $author$project$UIColor$black = A3($mdgriffith$elm_ui$Element$rgb255, 0, 0, 0);
-var $mdgriffith$elm_ui$Internal$Model$formatTextShadow = function (shadow) {
-	return A2(
-		$elm$core$String$join,
-		' ',
-		_List_fromArray(
-			[
-				$elm$core$String$fromFloat(shadow.offset.a) + 'px',
-				$elm$core$String$fromFloat(shadow.offset.b) + 'px',
-				$elm$core$String$fromFloat(shadow.blur) + 'px',
-				$mdgriffith$elm_ui$Internal$Model$formatColor(shadow.color)
-			]));
-};
+var $mdgriffith$elm_ui$Internal$Model$Colored = F3(
+	function (a, b, c) {
+		return {$: 'Colored', a: a, b: b, c: c};
+	});
+var $mdgriffith$elm_ui$Internal$Flag$bgColor = $mdgriffith$elm_ui$Internal$Flag$flag(8);
 var $mdgriffith$elm_ui$Internal$Model$formatColorClass = function (_v0) {
 	var red = _v0.a;
 	var green = _v0.b;
@@ -18301,70 +18294,6 @@ var $mdgriffith$elm_ui$Internal$Model$formatColorClass = function (_v0) {
 	var alpha = _v0.d;
 	return $mdgriffith$elm_ui$Internal$Model$floatClass(red) + ('-' + ($mdgriffith$elm_ui$Internal$Model$floatClass(green) + ('-' + ($mdgriffith$elm_ui$Internal$Model$floatClass(blue) + ('-' + $mdgriffith$elm_ui$Internal$Model$floatClass(alpha))))));
 };
-var $mdgriffith$elm_ui$Internal$Model$textShadowClass = function (shadow) {
-	return $elm$core$String$concat(
-		_List_fromArray(
-			[
-				'txt',
-				$mdgriffith$elm_ui$Internal$Model$floatClass(shadow.offset.a) + 'px',
-				$mdgriffith$elm_ui$Internal$Model$floatClass(shadow.offset.b) + 'px',
-				$mdgriffith$elm_ui$Internal$Model$floatClass(shadow.blur) + 'px',
-				$mdgriffith$elm_ui$Internal$Model$formatColorClass(shadow.color)
-			]));
-};
-var $mdgriffith$elm_ui$Internal$Flag$txtShadows = $mdgriffith$elm_ui$Internal$Flag$flag(18);
-var $mdgriffith$elm_ui$Element$Font$shadow = function (shade) {
-	return A2(
-		$mdgriffith$elm_ui$Internal$Model$StyleClass,
-		$mdgriffith$elm_ui$Internal$Flag$txtShadows,
-		A3(
-			$mdgriffith$elm_ui$Internal$Model$Single,
-			$mdgriffith$elm_ui$Internal$Model$textShadowClass(shade),
-			'text-shadow',
-			$mdgriffith$elm_ui$Internal$Model$formatTextShadow(shade)));
-};
-var $author$project$UI$buttonFontShadow = $mdgriffith$elm_ui$Element$Font$shadow(
-	{
-		blur: 0.1,
-		color: $author$project$UIColor$black,
-		offset: _Utils_Tuple2(0.1, 0.1)
-	});
-var $mdgriffith$elm_ui$Internal$Model$boxShadowClass = function (shadow) {
-	return $elm$core$String$concat(
-		_List_fromArray(
-			[
-				shadow.inset ? 'box-inset' : 'box-',
-				$mdgriffith$elm_ui$Internal$Model$floatClass(shadow.offset.a) + 'px',
-				$mdgriffith$elm_ui$Internal$Model$floatClass(shadow.offset.b) + 'px',
-				$mdgriffith$elm_ui$Internal$Model$floatClass(shadow.blur) + 'px',
-				$mdgriffith$elm_ui$Internal$Model$floatClass(shadow.size) + 'px',
-				$mdgriffith$elm_ui$Internal$Model$formatColorClass(shadow.color)
-			]));
-};
-var $mdgriffith$elm_ui$Internal$Flag$shadows = $mdgriffith$elm_ui$Internal$Flag$flag(19);
-var $mdgriffith$elm_ui$Element$Border$shadow = function (almostShade) {
-	var shade = {blur: almostShade.blur, color: almostShade.color, inset: false, offset: almostShade.offset, size: almostShade.size};
-	return A2(
-		$mdgriffith$elm_ui$Internal$Model$StyleClass,
-		$mdgriffith$elm_ui$Internal$Flag$shadows,
-		A3(
-			$mdgriffith$elm_ui$Internal$Model$Single,
-			$mdgriffith$elm_ui$Internal$Model$boxShadowClass(shade),
-			'box-shadow',
-			$mdgriffith$elm_ui$Internal$Model$formatBoxShadow(shade)));
-};
-var $author$project$UI$buttonShadow = $mdgriffith$elm_ui$Element$Border$shadow(
-	{
-		blur: 3,
-		color: $author$project$UIColor$black,
-		offset: _Utils_Tuple2(0.5, 0.5),
-		size: 0.0001
-	});
-var $mdgriffith$elm_ui$Internal$Model$Colored = F3(
-	function (a, b, c) {
-		return {$: 'Colored', a: a, b: b, c: c};
-	});
-var $mdgriffith$elm_ui$Internal$Flag$bgColor = $mdgriffith$elm_ui$Internal$Flag$flag(8);
 var $mdgriffith$elm_ui$Element$Background$color = function (clr) {
 	return A2(
 		$mdgriffith$elm_ui$Internal$Model$StyleClass,
@@ -18386,8 +18315,6 @@ var $mdgriffith$elm_ui$Element$Font$color = function (fontColor) {
 			'color',
 			fontColor));
 };
-var $mdgriffith$elm_ui$Internal$Flag$fontWeight = $mdgriffith$elm_ui$Internal$Flag$flag(13);
-var $mdgriffith$elm_ui$Element$Font$extraBold = A2($mdgriffith$elm_ui$Internal$Model$Class, $mdgriffith$elm_ui$Internal$Flag$fontWeight, $mdgriffith$elm_ui$Internal$Style$classes.textExtraBold);
 var $mdgriffith$elm_ui$Internal$Model$Focus = {$: 'Focus'};
 var $mdgriffith$elm_ui$Internal$Model$PseudoSelector = F2(
 	function (a, b) {
@@ -18546,7 +18473,6 @@ var $mdgriffith$elm_ui$Element$Border$rounded = function (radius) {
 			'border-radius',
 			$elm$core$String$fromInt(radius) + 'px'));
 };
-var $author$project$UIColor$white = A3($mdgriffith$elm_ui$Element$rgb255, 255, 255, 255);
 var $author$project$UI$smallAppButton = F2(
 	function (msg, label) {
 		return A2(
@@ -18555,27 +18481,24 @@ var $author$project$UI$smallAppButton = F2(
 				[
 					A2(
 					$mdgriffith$elm_ui$Element$paddingXY,
-					$author$project$UI$s(2),
-					$author$project$UI$s(0)),
+					$author$project$UI$s(3),
+					$author$project$UI$s(2)),
 					$mdgriffith$elm_ui$Element$width(
 					A2(
 						$mdgriffith$elm_ui$Element$minimum,
 						$author$project$UI$s(9),
 						$mdgriffith$elm_ui$Element$shrink)),
-					$mdgriffith$elm_ui$Element$Font$color($author$project$UIColor$white),
-					$mdgriffith$elm_ui$Element$Font$extraBold,
+					$mdgriffith$elm_ui$Element$Font$color($author$project$UIColor$black),
 					$mdgriffith$elm_ui$Element$Font$size(
 					$author$project$UI$s(2)),
 					$mdgriffith$elm_ui$Element$Background$color($author$project$UIColor$orangeLight),
 					$mdgriffith$elm_ui$Element$Border$rounded(
-					$author$project$UI$s(-1)),
+					$author$project$UI$s(-5)),
 					$mdgriffith$elm_ui$Element$focused(
 					_List_fromArray(
 						[
 							$mdgriffith$elm_ui$Element$Background$color($author$project$UIColor$blue)
-						])),
-					$author$project$UI$buttonShadow,
-					$author$project$UI$buttonFontShadow
+						]))
 				]),
 			{
 				label: A2(
@@ -18770,6 +18693,7 @@ var $author$project$Pages$Data$ReallyDelete = {$: 'ReallyDelete'};
 var $author$project$UIColor$gray = A3($mdgriffith$elm_ui$Element$rgb255, 100, 100, 100);
 var $author$project$UIColor$orangeDark = A3($mdgriffith$elm_ui$Element$rgb255, 202, 103, 2);
 var $author$project$UIColor$red = A3($mdgriffith$elm_ui$Element$rgb255, 174, 32, 18);
+var $author$project$UIColor$white = A3($mdgriffith$elm_ui$Element$rgb255, 255, 255, 255);
 var $author$project$Pages$Data$viewPopup = function (popup) {
 	var buttonAttrs = _List_fromArray(
 		[
@@ -19758,13 +19682,32 @@ var $author$project$Pages$Log$BP$ChangedLow = function (a) {
 	return {$: 'ChangedLow', a: a};
 };
 var $author$project$Pages$Log$BP$SavedInput = {$: 'SavedInput'};
+var $mdgriffith$elm_ui$Internal$Flag$fontWeight = $mdgriffith$elm_ui$Internal$Flag$flag(13);
+var $mdgriffith$elm_ui$Element$Font$extraBold = A2($mdgriffith$elm_ui$Internal$Model$Class, $mdgriffith$elm_ui$Internal$Flag$fontWeight, $mdgriffith$elm_ui$Internal$Style$classes.textExtraBold);
 var $mdgriffith$elm_ui$Internal$Model$Heading = function (a) {
 	return {$: 'Heading', a: a};
 };
 var $mdgriffith$elm_ui$Element$Region$heading = A2($elm$core$Basics$composeL, $mdgriffith$elm_ui$Internal$Model$Describe, $mdgriffith$elm_ui$Internal$Model$Heading);
 var $author$project$UI$h = F2(
 	function (n, str) {
-		return A2(
+		return (n === 1) ? A2(
+			$mdgriffith$elm_ui$Element$paragraph,
+			_List_fromArray(
+				[
+					$mdgriffith$elm_ui$Element$Region$heading(n),
+					$mdgriffith$elm_ui$Element$Font$size(
+					$author$project$UI$s(5 - n)),
+					$mdgriffith$elm_ui$Element$Font$color($author$project$UIColor$blue),
+					$mdgriffith$elm_ui$Element$Font$extraBold,
+					A2(
+					$mdgriffith$elm_ui$Element$paddingXY,
+					0,
+					$author$project$UI$s(0))
+				]),
+			_List_fromArray(
+				[
+					$mdgriffith$elm_ui$Element$text(str)
+				])) : A2(
 			$mdgriffith$elm_ui$Element$paragraph,
 			_List_fromArray(
 				[
@@ -23003,22 +22946,19 @@ var $author$project$UI$appButton = F2(
 				[
 					A2(
 					$mdgriffith$elm_ui$Element$paddingXY,
-					$author$project$UI$s(4),
-					$author$project$UI$s(2)),
+					$author$project$UI$s(5),
+					$author$project$UI$s(3)),
 					$mdgriffith$elm_ui$Element$width(
 					A2(
 						$mdgriffith$elm_ui$Element$minimum,
 						$author$project$UI$s(11),
 						$mdgriffith$elm_ui$Element$shrink)),
-					$mdgriffith$elm_ui$Element$Font$color($author$project$UIColor$white),
-					$mdgriffith$elm_ui$Element$Font$extraBold,
+					$mdgriffith$elm_ui$Element$Font$color($author$project$UIColor$black),
 					$mdgriffith$elm_ui$Element$Font$size(
 					$author$project$UI$s(4)),
 					$mdgriffith$elm_ui$Element$Background$color($author$project$UIColor$orangeLight),
 					$mdgriffith$elm_ui$Element$Border$rounded(
-					$author$project$UI$s(-1)),
-					$author$project$UI$buttonShadow,
-					$author$project$UI$buttonFontShadow,
+					$author$project$UI$s(-5)),
 					$mdgriffith$elm_ui$Element$focused(
 					_List_fromArray(
 						[
@@ -23594,7 +23534,7 @@ var $author$project$Pages$Log$Drug$view = function (model) {
 	return {
 		body: A2(
 			$elm$core$List$cons,
-			A2($author$project$UI$h, 2, 'Drug administration'),
+			A2($author$project$UI$h, 1, 'Drug administration'),
 			A2(
 				$elm$core$List$cons,
 				$mdgriffith$elm_ui$Element$text(''),
@@ -24403,16 +24343,15 @@ var $author$project$UI$flatFillButton = F2(
 				[
 					A2(
 					$mdgriffith$elm_ui$Element$paddingXY,
-					$author$project$UI$s(2),
-					$author$project$UI$s(0)),
+					$author$project$UI$s(3),
+					$author$project$UI$s(2)),
 					$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill),
-					$mdgriffith$elm_ui$Element$Font$color($author$project$UIColor$white),
-					$mdgriffith$elm_ui$Element$Font$extraBold,
+					$mdgriffith$elm_ui$Element$Font$color($author$project$UIColor$black),
 					$mdgriffith$elm_ui$Element$Font$size(
 					$author$project$UI$s(2)),
 					$mdgriffith$elm_ui$Element$Background$color($author$project$UIColor$orangeLight),
 					$mdgriffith$elm_ui$Element$Border$rounded(
-					$author$project$UI$s(-1))
+					$author$project$UI$s(-5))
 				]),
 			{
 				label: A2(
@@ -24478,7 +24417,7 @@ var $author$project$Pages$LogChoose$view = F2(
 				[
 					$mdgriffith$elm_ui$Element$centerX,
 					$mdgriffith$elm_ui$Element$spacing(
-					$author$project$UI$s(2))
+					$author$project$UI$s(3))
 				]),
 			A2(
 				$elm$core$List$map,
@@ -25133,7 +25072,7 @@ var $author$project$Pages$Play$view = function (model) {
 				$mdgriffith$elm_ui$Element$el,
 				_List_fromArray(
 					[$mdgriffith$elm_ui$Element$centerX]),
-				A2($author$project$UI$appButton, $author$project$Pages$Play$PlayClick, 'Play')),
+				A2($author$project$UI$appButton, $author$project$Pages$Play$PlayClick, 'PLAY')),
 				$author$project$UI$small('About one minute in total.'),
 				$mdgriffith$elm_ui$Element$text(''),
 				$mdgriffith$elm_ui$Element$text(''),
@@ -27273,7 +27212,6 @@ var $author$project$Main$update = F2(
 						effect));
 		}
 	});
-var $author$project$UIColor$beige = A3($mdgriffith$elm_ui$Element$rgb255, 233, 216, 166);
 var $mdgriffith$elm_ui$Internal$Model$FontFamily = F2(
 	function (a, b) {
 		return {$: 'FontFamily', a: a, b: b};
@@ -27326,8 +27264,8 @@ var $mdgriffith$elm_ui$Element$Font$family = function (families) {
 			A3($elm$core$List$foldl, $mdgriffith$elm_ui$Internal$Model$renderFontClassName, 'ff-', families),
 			families));
 };
-var $mdgriffith$elm_ui$Internal$Model$Monospace = {$: 'Monospace'};
-var $mdgriffith$elm_ui$Element$Font$monospace = $mdgriffith$elm_ui$Internal$Model$Monospace;
+var $mdgriffith$elm_ui$Internal$Model$SansSerif = {$: 'SansSerif'};
+var $mdgriffith$elm_ui$Element$Font$sansSerif = $mdgriffith$elm_ui$Internal$Model$SansSerif;
 var $mdgriffith$elm_ui$Internal$Model$Typeface = function (a) {
 	return {$: 'Typeface', a: a};
 };
@@ -27335,8 +27273,8 @@ var $mdgriffith$elm_ui$Element$Font$typeface = $mdgriffith$elm_ui$Internal$Model
 var $author$project$UI$font = $mdgriffith$elm_ui$Element$Font$family(
 	_List_fromArray(
 		[
-			$mdgriffith$elm_ui$Element$Font$typeface('Cutive Mono'),
-			$mdgriffith$elm_ui$Element$Font$monospace
+			$mdgriffith$elm_ui$Element$Font$typeface('Source Serif 4'),
+			$mdgriffith$elm_ui$Element$Font$sansSerif
 		]));
 var $author$project$UI$footer = _List_Nil;
 var $author$project$UI$routeLink = F3(
@@ -27360,7 +27298,7 @@ var $author$project$UI$headerLink = F3(
 		};
 		var bg = _Utils_eq(route, r) ? _List_fromArray(
 			[
-				$mdgriffith$elm_ui$Element$Background$color($author$project$UIColor$beige)
+				$mdgriffith$elm_ui$Element$Font$color($author$project$UIColor$orangeLight)
 			]) : _List_Nil;
 		var headerLinkAttributes = _Utils_ap(
 			bg,
@@ -27596,7 +27534,6 @@ var $mdgriffith$elm_ui$Internal$Model$renderRoot = F3(
 					_List_fromArray(
 						[child]))));
 	});
-var $mdgriffith$elm_ui$Internal$Model$SansSerif = {$: 'SansSerif'};
 var $mdgriffith$elm_ui$Internal$Model$rootStyle = function () {
 	var families = _List_fromArray(
 		[
@@ -27657,6 +27594,7 @@ var $mdgriffith$elm_ui$Element$layoutWith = F3(
 	});
 var $mdgriffith$elm_ui$Element$layout = $mdgriffith$elm_ui$Element$layoutWith(
 	{options: _List_Nil});
+var $mdgriffith$elm_ui$Element$Font$light = A2($mdgriffith$elm_ui$Internal$Model$Class, $mdgriffith$elm_ui$Internal$Flag$fontWeight, $mdgriffith$elm_ui$Internal$Style$classes.textLight);
 var $author$project$UI$appLayout = F2(
 	function (headerRoute, pageContent) {
 		return $elm$core$List$singleton(
@@ -27665,7 +27603,8 @@ var $author$project$UI$appLayout = F2(
 				_List_fromArray(
 					[
 						$author$project$UI$font,
-						$mdgriffith$elm_ui$Element$Background$color($author$project$UIColor$beige)
+						$mdgriffith$elm_ui$Element$Font$light,
+						$mdgriffith$elm_ui$Element$Background$color($author$project$UIColor$white)
 					]),
 				A2(
 					$mdgriffith$elm_ui$Element$column,
