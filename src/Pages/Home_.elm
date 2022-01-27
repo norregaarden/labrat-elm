@@ -27,7 +27,7 @@ vis: List (Element msg)
 vis =
   [ h 2 "Welcome, lab rat."
   , image [width (px 301), height (px 363), paddingXY 0 (s 3) ]
-    { src = "/images/rottefyr.png"
+    { src = "/images/rottefyr.webp"
     , description = "rottefyr" }
   , text ""
   , text ""
