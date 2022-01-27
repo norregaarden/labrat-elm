@@ -45,7 +45,7 @@ spilTitel titel = "play: " ++ titel ++ " | lab rat"
 appLayout: Route -> List (Element msg) -> List (Html msg)
 appLayout headerRoute pageContent =
   [header headerRoute] ++ [column [paddingXY (s 2) (s 6), spacing (s 2), width fill] pageContent] ++  footer
-  |> column [width fill, height fill]
+  |> column [height fill, fill |> maximum 666 |> width, centerX]
   |> layout [font, Font.light, Background.color white] |> List.singleton
 
 
