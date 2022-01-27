@@ -1,15 +1,14 @@
 # lab rat
-personal tracking and cognitive tests
+demo app for personal tracking and cognitive tests
 
 <br>
 
-Find the public app here: 
+Find the public app here (view on mobile): 
 ## [labratapp.org](https://labratapp.org)
 
 
 
-<br>
-<br>
+
 <br>
 <br>
 <br>
