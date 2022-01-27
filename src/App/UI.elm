@@ -88,7 +88,7 @@ labratlogo =
     , Border.rounded (s -1)
     , width fill
     ]
-    [ image [width fill]
+    [ image [width (px 50), height (px 50)]
       { src = "/images/rotteHjerneLogo.svg"
       , description = "lab rat logo"
       }

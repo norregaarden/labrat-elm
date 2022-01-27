@@ -136,13 +136,12 @@ view : Model -> View Msg
 view model =
   { title = "play | lab rat"
   , body =
-    [ p "Play all games in random order and save the results:"
+    [ p "Play all games in one minute:"
     , appButton PlayClick "PLAY" |> el [centerX]
-    , small "About one minute in total."
     , text ""
     , text ""
     , text ""
-    , p "Or casually try one of the three games:"
+    , p "Try one game without saving:"
     , row [width fill, spacing (s -3)] <|
       List.map
         (\l -> link [centerX, centerY, padding (s -3)] l

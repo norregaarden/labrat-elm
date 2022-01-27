@@ -1,7 +1,7 @@
 module Pages.Log.Drug exposing (Model, Msg, page)
 
 import Effect exposing (Effect)
-import Element exposing (centerX, column, el, fill, fillPortion, htmlAttribute, padding, paddingEach, row, spacing, text, width)
+import Element exposing (centerX, column, el, fill, fillPortion, height, htmlAttribute, maximum, padding, paddingEach, row, shrink, spacing, text, width)
 import Element.Background as Background
 import Element.Events as Events
 import Element.Font as Font
@@ -16,7 +16,7 @@ import Request
 import Shared
 import Time
 import UI exposing (appButton, bltr, h, p, s)
-import UIColor exposing (white)
+import UIColor exposing (blue, orangeLight, white)
 import View exposing (View)
 import Page
 import Log exposing (Data(..), Weight(..), WeightUnit(..))
@@ -78,7 +78,7 @@ init =
   ( { graphql = RemoteData.Loading
     , input = ""
     , drug = Nothing
-    , searchError = "Hint: Hyphens don't matter, e.g. 2-fma = 2fma"
+    , searchError = "hint: hyphens dont matter"
     , roa = { state = Dropdown.init "dropdown_roa", selectedOption = Nothing }
     , weightChoose = Quantitative
     , weightQuan =
@@ -151,7 +151,7 @@ update storage msg model =
             "loading '" ++ input ++ "'"
       in
       ( { model | input = input, drug = drug, searchError = error }
-      , delay 234 input Delayed |> Effect.fromCmd )
+      , delay 666 input Delayed |> Effect.fromCmd )
 
     Delayed input ->
       let
@@ -285,11 +285,11 @@ viewDrug model =
       h 3 model.searchError
     Just data ->
       [ h 2 data.name |> el [Font.extraBold]
-      , Element.image [width fill]
+      , Element.image [fill |> maximum 210 |> width, shrink |> (maximum 210) |> height]
         { src = Maybe.withDefault "/images/PSwiki_eye.svg" data.image
         , description = data.name
         }
-      , Element.newTabLink [Font.underline]
+      , Element.newTabLink [Font.color blue]
         { url = data.url
         , label = p ("Read more about " ++ data.name)
         }
@@ -298,11 +298,14 @@ viewDrug model =
 
 viewSearch value =
   Input.text []
-    { label = Input.labelAbove [] (text "search for your drug on PSwiki:" |> el [Font.size (s 1)])
+    { label = Input.labelAbove [] (text "search for your drug on PsychonautWiki:" |> el [Font.size (s 1)])
     , onChange = ChangedInput
     , placeholder = Just (Input.placeholder [] (text "drug name"))
     , text = value
     }
+
+viewDetailsHeader txt =
+  h 2 txt |> el [Font.color orangeLight]
 
 viewROA model =
   let
@@ -316,7 +319,7 @@ viewROA model =
     Nothing -> []
     Just d ->
       [ text ""
-      , h 2 ("Select your route of administration")
+      , viewDetailsHeader "Select your route of administration"
       , Dropdown.view dd_roa model.roa model.roa.state
       , text ""
       , text ""
@@ -333,7 +336,7 @@ weightButton qua choose =
 
     attrs =
       if qua == choose then
-        [Font.underline]
+        [Font.color blue]
       else
         []
   in
@@ -368,7 +371,7 @@ viewWeight model drugName =
             Qualitative ->
               [ Dropdown.view dd_dq model.weightQual model.weightQual.state ]
       in
-      h 2 ("Enter dosage for " ++ roa ++ " " ++ drugName)
+      viewDetailsHeader ("Enter dosage for " ++ roa ++ " " ++ drugName)
       :: row [width fill, spacing (s 2)]
         [ weightButton Qualitative model.weightChoose |> el [width (fillPortion 1)]
         , weightButton Quantitative model.weightChoose |> el [width (fillPortion 1)]
@@ -398,7 +401,6 @@ view model =
   { title = "log: drug | lab rat"
   , body =
     (h 1 "Drug administration")
-    :: text ""
     :: viewSearch model.input
     :: viewDrug model
     :: text ""

@@ -12705,10 +12705,6 @@ var $author$project$Pages$Data$DownloadData = {$: 'DownloadData'};
 var $mdgriffith$elm_ui$Internal$Model$AlignX = function (a) {
 	return {$: 'AlignX', a: a};
 };
-var $mdgriffith$elm_ui$Internal$Model$Left = {$: 'Left'};
-var $mdgriffith$elm_ui$Element$alignLeft = $mdgriffith$elm_ui$Internal$Model$AlignX($mdgriffith$elm_ui$Internal$Model$Left);
-var $mdgriffith$elm_ui$Internal$Model$Right = {$: 'Right'};
-var $mdgriffith$elm_ui$Element$alignRight = $mdgriffith$elm_ui$Internal$Model$AlignX($mdgriffith$elm_ui$Internal$Model$Right);
 var $mdgriffith$elm_ui$Internal$Model$CenterX = {$: 'CenterX'};
 var $mdgriffith$elm_ui$Element$centerX = $mdgriffith$elm_ui$Internal$Model$AlignX($mdgriffith$elm_ui$Internal$Model$CenterX);
 var $mdgriffith$elm_ui$Internal$Model$Unkeyed = function (a) {
@@ -18069,10 +18065,6 @@ var $mdgriffith$elm_ui$Element$el = F2(
 				_List_fromArray(
 					[child])));
 	});
-var $mdgriffith$elm_ui$Internal$Model$Fill = function (a) {
-	return {$: 'Fill', a: a};
-};
-var $mdgriffith$elm_ui$Element$fill = $mdgriffith$elm_ui$Internal$Model$Fill(1);
 var $mdgriffith$elm_ui$Internal$Model$PaddingStyle = F5(
 	function (a, b, c, d, e) {
 		return {$: 'PaddingStyle', a: a, b: b, c: c, d: d, e: e};
@@ -18095,33 +18087,6 @@ var $mdgriffith$elm_ui$Element$padding = function (x) {
 			f,
 			f));
 };
-var $mdgriffith$elm_ui$Internal$Model$AsRow = {$: 'AsRow'};
-var $mdgriffith$elm_ui$Internal$Model$asRow = $mdgriffith$elm_ui$Internal$Model$AsRow;
-var $mdgriffith$elm_ui$Internal$Model$Attr = function (a) {
-	return {$: 'Attr', a: a};
-};
-var $mdgriffith$elm_ui$Internal$Model$htmlClass = function (cls) {
-	return $mdgriffith$elm_ui$Internal$Model$Attr(
-		$elm$html$Html$Attributes$class(cls));
-};
-var $mdgriffith$elm_ui$Element$row = F2(
-	function (attrs, children) {
-		return A4(
-			$mdgriffith$elm_ui$Internal$Model$element,
-			$mdgriffith$elm_ui$Internal$Model$asRow,
-			$mdgriffith$elm_ui$Internal$Model$div,
-			A2(
-				$elm$core$List$cons,
-				$mdgriffith$elm_ui$Internal$Model$htmlClass($mdgriffith$elm_ui$Internal$Style$classes.contentLeft + (' ' + $mdgriffith$elm_ui$Internal$Style$classes.contentCenterY)),
-				A2(
-					$elm$core$List$cons,
-					$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$shrink),
-					A2(
-						$elm$core$List$cons,
-						$mdgriffith$elm_ui$Element$height($mdgriffith$elm_ui$Element$shrink),
-						attrs))),
-			$mdgriffith$elm_ui$Internal$Model$Unkeyed(children));
-	});
 var $elm$core$Basics$pow = _Basics_pow;
 var $mdgriffith$elm_ui$Element$modular = F3(
 	function (normal, ratio, rescale) {
@@ -18129,16 +18094,6 @@ var $mdgriffith$elm_ui$Element$modular = F3(
 	});
 var $author$project$UI$sf = A2($mdgriffith$elm_ui$Element$modular, 16, 1.25);
 var $author$project$UI$s = A2($elm$core$Basics$composeR, $author$project$UI$sf, $elm$core$Basics$round);
-var $mdgriffith$elm_ui$Internal$Model$FontSize = function (a) {
-	return {$: 'FontSize', a: a};
-};
-var $mdgriffith$elm_ui$Internal$Flag$fontSize = $mdgriffith$elm_ui$Internal$Flag$flag(4);
-var $mdgriffith$elm_ui$Element$Font$size = function (i) {
-	return A2(
-		$mdgriffith$elm_ui$Internal$Model$StyleClass,
-		$mdgriffith$elm_ui$Internal$Flag$fontSize,
-		$mdgriffith$elm_ui$Internal$Model$FontSize(i));
-};
 var $mdgriffith$elm_ui$Internal$Model$Rgba = F4(
 	function (a, b, c, d) {
 		return {$: 'Rgba', a: a, b: b, c: c, d: d};
@@ -18149,6 +18104,9 @@ var $mdgriffith$elm_ui$Element$rgb255 = F3(
 	});
 var $author$project$UIColor$black = A3($mdgriffith$elm_ui$Element$rgb255, 0, 0, 0);
 var $author$project$UIColor$blue = A3($mdgriffith$elm_ui$Element$rgb255, 0, 95, 115);
+var $mdgriffith$elm_ui$Internal$Model$Attr = function (a) {
+	return {$: 'Attr', a: a};
+};
 var $mdgriffith$elm_ui$Internal$Model$Button = {$: 'Button'};
 var $mdgriffith$elm_ui$Internal$Model$Describe = function (a) {
 	return {$: 'Describe', a: a};
@@ -18172,6 +18130,10 @@ var $mdgriffith$elm_ui$Element$Input$hasFocusStyle = function (attr) {
 	} else {
 		return false;
 	}
+};
+var $mdgriffith$elm_ui$Internal$Model$htmlClass = function (cls) {
+	return $mdgriffith$elm_ui$Internal$Model$Attr(
+		$elm$html$Html$Attributes$class(cls));
 };
 var $mdgriffith$elm_ui$Element$Input$focusDefault = function (attrs) {
 	return A2($elm$core$List$any, $mdgriffith$elm_ui$Element$Input$hasFocusStyle, attrs) ? $mdgriffith$elm_ui$Internal$Model$NoAttribute : $mdgriffith$elm_ui$Internal$Model$htmlClass('focusable');
@@ -18473,6 +18435,16 @@ var $mdgriffith$elm_ui$Element$Border$rounded = function (radius) {
 			'border-radius',
 			$elm$core$String$fromInt(radius) + 'px'));
 };
+var $mdgriffith$elm_ui$Internal$Model$FontSize = function (a) {
+	return {$: 'FontSize', a: a};
+};
+var $mdgriffith$elm_ui$Internal$Flag$fontSize = $mdgriffith$elm_ui$Internal$Flag$flag(4);
+var $mdgriffith$elm_ui$Element$Font$size = function (i) {
+	return A2(
+		$mdgriffith$elm_ui$Internal$Model$StyleClass,
+		$mdgriffith$elm_ui$Internal$Flag$fontSize,
+		$mdgriffith$elm_ui$Internal$Model$FontSize(i));
+};
 var $author$project$UI$smallAppButton = F2(
 	function (msg, label) {
 		return A2(
@@ -18508,93 +18480,6 @@ var $author$project$UI$smallAppButton = F2(
 					$mdgriffith$elm_ui$Element$text(label)),
 				onPress: $elm$core$Maybe$Just(msg)
 			});
-	});
-var $author$project$TimeStr$toMonth = F2(
-	function (zone, time) {
-		var _v0 = A2($elm$time$Time$toMonth, zone, time);
-		switch (_v0.$) {
-			case 'Jan':
-				return 'jan';
-			case 'Feb':
-				return 'feb';
-			case 'Mar':
-				return 'mar';
-			case 'Apr':
-				return 'apr';
-			case 'May':
-				return 'may';
-			case 'Jun':
-				return 'jun';
-			case 'Jul':
-				return 'jul';
-			case 'Aug':
-				return 'aug';
-			case 'Sep':
-				return 'sep';
-			case 'Oct':
-				return 'okt';
-			case 'Nov':
-				return 'nov';
-			default:
-				return 'dec';
-		}
-	});
-var $elm$time$Time$Fri = {$: 'Fri'};
-var $elm$time$Time$Mon = {$: 'Mon'};
-var $elm$time$Time$Sat = {$: 'Sat'};
-var $elm$time$Time$Sun = {$: 'Sun'};
-var $elm$time$Time$Thu = {$: 'Thu'};
-var $elm$time$Time$Tue = {$: 'Tue'};
-var $elm$time$Time$Wed = {$: 'Wed'};
-var $elm$time$Time$toWeekday = F2(
-	function (zone, time) {
-		var _v0 = A2(
-			$elm$core$Basics$modBy,
-			7,
-			A2(
-				$elm$time$Time$flooredDiv,
-				A2($elm$time$Time$toAdjustedMinutes, zone, time),
-				60 * 24));
-		switch (_v0) {
-			case 0:
-				return $elm$time$Time$Thu;
-			case 1:
-				return $elm$time$Time$Fri;
-			case 2:
-				return $elm$time$Time$Sat;
-			case 3:
-				return $elm$time$Time$Sun;
-			case 4:
-				return $elm$time$Time$Mon;
-			case 5:
-				return $elm$time$Time$Tue;
-			default:
-				return $elm$time$Time$Wed;
-		}
-	});
-var $author$project$TimeStr$toWeekday = F2(
-	function (zone, time) {
-		var _v0 = A2($elm$time$Time$toWeekday, zone, time);
-		switch (_v0.$) {
-			case 'Mon':
-				return 'Mon';
-			case 'Tue':
-				return 'Tue';
-			case 'Wed':
-				return 'Wed';
-			case 'Thu':
-				return 'Thu';
-			case 'Fri':
-				return 'Fri';
-			case 'Sat':
-				return 'Sat';
-			default:
-				return 'Sun';
-		}
-	});
-var $author$project$TimeStr$toFullDay = F2(
-	function (zone, time) {
-		return '' + (A2($author$project$TimeStr$toWeekday, zone, time) + (' ' + (A2($author$project$TimeStr$toYear, zone, time) + (' ' + (A2($author$project$TimeStr$toMonth, zone, time) + (' ' + (A2($author$project$TimeStr$toDay, zone, time) + '. ')))))));
 	});
 var $author$project$Pages$Data$Click = function (a) {
 	return {$: 'Click', a: a};
@@ -18635,6 +18520,10 @@ var $mdgriffith$elm_ui$Element$column = F2(
 						attrs))),
 			$mdgriffith$elm_ui$Internal$Model$Unkeyed(children));
 	});
+var $mdgriffith$elm_ui$Internal$Model$Fill = function (a) {
+	return {$: 'Fill', a: a};
+};
+var $mdgriffith$elm_ui$Element$fill = $mdgriffith$elm_ui$Internal$Model$Fill(1);
 var $mdgriffith$elm_ui$Internal$Model$InFront = {$: 'InFront'};
 var $mdgriffith$elm_ui$Element$inFront = function (element) {
 	return A2($mdgriffith$elm_ui$Element$createNearby, $mdgriffith$elm_ui$Internal$Model$InFront, element);
@@ -18693,6 +18582,26 @@ var $author$project$Pages$Data$ReallyDelete = {$: 'ReallyDelete'};
 var $author$project$UIColor$gray = A3($mdgriffith$elm_ui$Element$rgb255, 100, 100, 100);
 var $author$project$UIColor$orangeDark = A3($mdgriffith$elm_ui$Element$rgb255, 202, 103, 2);
 var $author$project$UIColor$red = A3($mdgriffith$elm_ui$Element$rgb255, 174, 32, 18);
+var $mdgriffith$elm_ui$Internal$Model$AsRow = {$: 'AsRow'};
+var $mdgriffith$elm_ui$Internal$Model$asRow = $mdgriffith$elm_ui$Internal$Model$AsRow;
+var $mdgriffith$elm_ui$Element$row = F2(
+	function (attrs, children) {
+		return A4(
+			$mdgriffith$elm_ui$Internal$Model$element,
+			$mdgriffith$elm_ui$Internal$Model$asRow,
+			$mdgriffith$elm_ui$Internal$Model$div,
+			A2(
+				$elm$core$List$cons,
+				$mdgriffith$elm_ui$Internal$Model$htmlClass($mdgriffith$elm_ui$Internal$Style$classes.contentLeft + (' ' + $mdgriffith$elm_ui$Internal$Style$classes.contentCenterY)),
+				A2(
+					$elm$core$List$cons,
+					$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$shrink),
+					A2(
+						$elm$core$List$cons,
+						$mdgriffith$elm_ui$Element$height($mdgriffith$elm_ui$Element$shrink),
+						attrs))),
+			$mdgriffith$elm_ui$Internal$Model$Unkeyed(children));
+	});
 var $author$project$UIColor$white = A3($mdgriffith$elm_ui$Element$rgb255, 255, 255, 255);
 var $author$project$Pages$Data$viewPopup = function (popup) {
 	var buttonAttrs = _List_fromArray(
@@ -18774,6 +18683,10 @@ var $author$project$Pages$Data$viewPopup = function (popup) {
 			]),
 		buttons);
 };
+var $mdgriffith$elm_ui$Internal$Model$Left = {$: 'Left'};
+var $mdgriffith$elm_ui$Element$alignLeft = $mdgriffith$elm_ui$Internal$Model$AlignX($mdgriffith$elm_ui$Internal$Model$Left);
+var $mdgriffith$elm_ui$Internal$Model$Right = {$: 'Right'};
+var $mdgriffith$elm_ui$Element$alignRight = $mdgriffith$elm_ui$Internal$Model$AlignX($mdgriffith$elm_ui$Internal$Model$Right);
 var $mdgriffith$elm_ui$Internal$Model$unstyled = A2($elm$core$Basics$composeL, $mdgriffith$elm_ui$Internal$Model$Unstyled, $elm$core$Basics$always);
 var $mdgriffith$elm_ui$Element$html = $mdgriffith$elm_ui$Internal$Model$unstyled;
 var $mdgriffith$elm_ui$Element$htmlAttribute = $mdgriffith$elm_ui$Internal$Model$Attr;
@@ -19560,29 +19473,7 @@ var $author$project$Pages$Data$view = F2(
 		return {
 			body: _List_fromArray(
 				[
-					A2(
-					$mdgriffith$elm_ui$Element$row,
-					_List_fromArray(
-						[
-							$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill),
-							$mdgriffith$elm_ui$Element$Font$size(
-							$author$project$UI$s(1))
-						]),
-					_List_fromArray(
-						[
-							A2(
-							$mdgriffith$elm_ui$Element$el,
-							_List_fromArray(
-								[$mdgriffith$elm_ui$Element$alignLeft]),
-							$mdgriffith$elm_ui$Element$text(
-								A2($author$project$TimeStr$toFullDay, model.zone, model.now))),
-							A2(
-							$mdgriffith$elm_ui$Element$el,
-							_List_fromArray(
-								[$mdgriffith$elm_ui$Element$alignRight]),
-							$mdgriffith$elm_ui$Element$text(
-								A2($author$project$TimeStr$toFullTime, model.zone, model.now)))
-						])),
+					$mdgriffith$elm_ui$Element$text('Your data is only stored on this device.'),
 					A2(
 					$mdgriffith$elm_ui$Element$el,
 					_List_fromArray(
@@ -20643,7 +20534,7 @@ var $author$project$Pages$Log$Drug$init = _Utils_Tuple2(
 			selectedOption: $elm$core$Maybe$Nothing,
 			state: $PaackEng$elm_ui_dropdown$Dropdown$init('dropdown_roa')
 		},
-		searchError: 'Hint: Hyphens don\'t matter, e.g. 2-fma = 2fma',
+		searchError: 'hint: hyphens dont matter',
 		weightChoose: $author$project$Pages$Log$Drug$Quantitative,
 		weightQual: {
 			selectedOption: $elm$core$Maybe$Nothing,
@@ -22632,7 +22523,7 @@ var $author$project$Pages$Log$Drug$update = F3(
 						model,
 						{drug: drug, input: input, searchError: error}),
 					$author$project$Effect$fromCmd(
-						A3($author$project$Pages$Log$Drug$delay, 234, input, $author$project$Pages$Log$Drug$Delayed)));
+						A3($author$project$Pages$Log$Drug$delay, 666, input, $author$project$Pages$Log$Drug$Delayed)));
 			case 'Delayed':
 				var input = msg.a;
 				var cmd = _Utils_eq(input, model.input) ? $author$project$Pages$Log$Drug$makeRequest(input) : $elm$core$Platform$Cmd$none;
@@ -22854,6 +22745,14 @@ var $mdgriffith$elm_ui$Element$image = F2(
 						$mdgriffith$elm_ui$Internal$Model$Unkeyed(_List_Nil))
 					])));
 	});
+var $mdgriffith$elm_ui$Internal$Model$Max = F2(
+	function (a, b) {
+		return {$: 'Max', a: a, b: b};
+	});
+var $mdgriffith$elm_ui$Element$maximum = F2(
+	function (i, l) {
+		return A2($mdgriffith$elm_ui$Internal$Model$Max, i, l);
+	});
 var $elm$html$Html$Attributes$rel = _VirtualDom_attribute('rel');
 var $elm$html$Html$Attributes$target = $elm$html$Html$Attributes$stringProperty('target');
 var $mdgriffith$elm_ui$Element$newTabLink = F2(
@@ -22917,7 +22816,10 @@ var $author$project$Pages$Log$Drug$viewDrug = function (model) {
 					$mdgriffith$elm_ui$Element$image,
 					_List_fromArray(
 						[
-							$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill)
+							$mdgriffith$elm_ui$Element$width(
+							A2($mdgriffith$elm_ui$Element$maximum, 210, $mdgriffith$elm_ui$Element$fill)),
+							$mdgriffith$elm_ui$Element$height(
+							A2($mdgriffith$elm_ui$Element$maximum, 210, $mdgriffith$elm_ui$Element$shrink))
 						]),
 					{
 						description: data.name,
@@ -22926,7 +22828,9 @@ var $author$project$Pages$Log$Drug$viewDrug = function (model) {
 					A2(
 					$mdgriffith$elm_ui$Element$newTabLink,
 					_List_fromArray(
-						[$mdgriffith$elm_ui$Element$Font$underline]),
+						[
+							$mdgriffith$elm_ui$Element$Font$color($author$project$UIColor$blue)
+						]),
 					{
 						label: $author$project$UI$p('Read more about ' + data.name),
 						url: data.url
@@ -23338,6 +23242,15 @@ var $PaackEng$elm_ui_dropdown$Dropdown$view = F3(
 					trigger)
 				]));
 	});
+var $author$project$Pages$Log$Drug$viewDetailsHeader = function (txt) {
+	return A2(
+		$mdgriffith$elm_ui$Element$el,
+		_List_fromArray(
+			[
+				$mdgriffith$elm_ui$Element$Font$color($author$project$UIColor$orangeLight)
+			]),
+		A2($author$project$UI$h, 2, txt));
+};
 var $author$project$Pages$Log$Drug$Qualitative = {$: 'Qualitative'};
 var $author$project$Pages$Log$Drug$WeightQuanChanged = function (a) {
 	return {$: 'WeightQuanChanged', a: a};
@@ -23355,7 +23268,9 @@ var $author$project$Pages$Log$Drug$weightButton = F2(
 			}
 		}();
 		var attrs = _Utils_eq(qua, choose) ? _List_fromArray(
-			[$mdgriffith$elm_ui$Element$Font$underline]) : _List_Nil;
+			[
+				$mdgriffith$elm_ui$Element$Font$color($author$project$UIColor$blue)
+			]) : _List_Nil;
 		return A2(
 			$mdgriffith$elm_ui$Element$el,
 			A2(
@@ -23438,7 +23353,7 @@ var $author$project$Pages$Log$Drug$viewWeight = F2(
 			}();
 			return A2(
 				$elm$core$List$cons,
-				A2($author$project$UI$h, 2, 'Enter dosage for ' + (roa + (' ' + drugName))),
+				$author$project$Pages$Log$Drug$viewDetailsHeader('Enter dosage for ' + (roa + (' ' + drugName))),
 				A2(
 					$elm$core$List$cons,
 					A2(
@@ -23492,7 +23407,7 @@ var $author$project$Pages$Log$Drug$viewROA = function (model) {
 			_List_fromArray(
 				[
 					$mdgriffith$elm_ui$Element$text(''),
-					A2($author$project$UI$h, 2, 'Select your route of administration'),
+					$author$project$Pages$Log$Drug$viewDetailsHeader('Select your route of administration'),
 					A3($PaackEng$elm_ui_dropdown$Dropdown$view, $author$project$Pages$Log$Drug$dd_roa, model.roa, model.roa.state),
 					$mdgriffith$elm_ui$Element$text(''),
 					$mdgriffith$elm_ui$Element$text('')
@@ -23520,7 +23435,7 @@ var $author$project$Pages$Log$Drug$viewSearch = function (value) {
 							$mdgriffith$elm_ui$Element$Font$size(
 							$author$project$UI$s(1))
 						]),
-					$mdgriffith$elm_ui$Element$text('search for your drug on PSwiki:'))),
+					$mdgriffith$elm_ui$Element$text('search for your drug on PsychonautWiki:'))),
 			onChange: $author$project$Pages$Log$Drug$ChangedInput,
 			placeholder: $elm$core$Maybe$Just(
 				A2(
@@ -23537,25 +23452,22 @@ var $author$project$Pages$Log$Drug$view = function (model) {
 			A2($author$project$UI$h, 1, 'Drug administration'),
 			A2(
 				$elm$core$List$cons,
-				$mdgriffith$elm_ui$Element$text(''),
+				$author$project$Pages$Log$Drug$viewSearch(model.input),
 				A2(
 					$elm$core$List$cons,
-					$author$project$Pages$Log$Drug$viewSearch(model.input),
+					$author$project$Pages$Log$Drug$viewDrug(model),
 					A2(
 						$elm$core$List$cons,
-						$author$project$Pages$Log$Drug$viewDrug(model),
-						A2(
-							$elm$core$List$cons,
-							$mdgriffith$elm_ui$Element$text(''),
+						$mdgriffith$elm_ui$Element$text(''),
+						_Utils_ap(
+							$author$project$Pages$Log$Drug$viewROA(model),
 							_Utils_ap(
-								$author$project$Pages$Log$Drug$viewROA(model),
-								_Utils_ap(
-									_List_fromArray(
-										[
-											$mdgriffith$elm_ui$Element$text(''),
-											$mdgriffith$elm_ui$Element$text('')
-										]),
-									$author$project$Pages$Log$Drug$viewEnd(model)))))))),
+								_List_fromArray(
+									[
+										$mdgriffith$elm_ui$Element$text(''),
+										$mdgriffith$elm_ui$Element$text('')
+									]),
+								$author$project$Pages$Log$Drug$viewEnd(model))))))),
 		title: 'log: drug | lab rat'
 	};
 };
@@ -24660,19 +24572,6 @@ var $author$project$Pages$Play$PlayClick = {$: 'PlayClick'};
 var $author$project$Pages$Spil$Tid$burdeSeconds = 10;
 var $mdgriffith$elm_ui$Internal$Model$CenterY = {$: 'CenterY'};
 var $mdgriffith$elm_ui$Element$centerY = $mdgriffith$elm_ui$Internal$Model$AlignY($mdgriffith$elm_ui$Internal$Model$CenterY);
-var $author$project$UI$small = function (str) {
-	return A2(
-		$mdgriffith$elm_ui$Element$paragraph,
-		_List_fromArray(
-			[
-				$mdgriffith$elm_ui$Element$Font$size(
-				$author$project$UI$s(1))
-			]),
-		_List_fromArray(
-			[
-				$mdgriffith$elm_ui$Element$text(str)
-			]));
-};
 var $author$project$Dutter$dutBredde = 100;
 var $author$project$Dutter$dutBreddeStr = $elm$core$String$fromInt($author$project$Dutter$dutBredde);
 var $author$project$Dutter$dutHøjde = $author$project$Dutter$dutBredde;
@@ -25067,17 +24966,16 @@ var $author$project$Pages$Play$view = function (model) {
 	return {
 		body: _List_fromArray(
 			[
-				$author$project$UI$p('Play all games in random order and save the results:'),
+				$author$project$UI$p('Play all games in one minute:'),
 				A2(
 				$mdgriffith$elm_ui$Element$el,
 				_List_fromArray(
 					[$mdgriffith$elm_ui$Element$centerX]),
 				A2($author$project$UI$appButton, $author$project$Pages$Play$PlayClick, 'PLAY')),
-				$author$project$UI$small('About one minute in total.'),
 				$mdgriffith$elm_ui$Element$text(''),
 				$mdgriffith$elm_ui$Element$text(''),
 				$mdgriffith$elm_ui$Element$text(''),
-				$author$project$UI$p('Or casually try one of the three games:'),
+				$author$project$UI$p('Try one game without saving:'),
 				A2(
 				$mdgriffith$elm_ui$Element$row,
 				_List_fromArray(
@@ -25579,14 +25477,19 @@ var $author$project$Pages$Spil$Dut$dutterView = function (model) {
 var $author$project$UI$spilTitel = function (titel) {
 	return 'play: ' + (titel + ' | lab rat');
 };
-var $mdgriffith$elm_ui$Internal$Model$Max = F2(
-	function (a, b) {
-		return {$: 'Max', a: a, b: b};
-	});
-var $mdgriffith$elm_ui$Element$maximum = F2(
-	function (i, l) {
-		return A2($mdgriffith$elm_ui$Internal$Model$Max, i, l);
-	});
+var $author$project$UI$small = function (str) {
+	return A2(
+		$mdgriffith$elm_ui$Element$paragraph,
+		_List_fromArray(
+			[
+				$mdgriffith$elm_ui$Element$Font$size(
+				$author$project$UI$s(1))
+			]),
+		_List_fromArray(
+			[
+				$mdgriffith$elm_ui$Element$text(str)
+			]));
+};
 var $author$project$Pages$Spil$Dut$topView = function (model) {
 	return model.igang ? A2(
 		$mdgriffith$elm_ui$Element$el,
@@ -26373,12 +26276,15 @@ var $author$project$Gen$Pages$static = F2(
 	});
 var $author$project$Pages$Home_$vis = _List_fromArray(
 	[
-		A2($author$project$UI$h, 1, 'Welcome, lab rat.'),
+		A2($author$project$UI$h, 2, 'Welcome, lab rat.'),
 		A2(
 		$mdgriffith$elm_ui$Element$image,
 		_List_fromArray(
 			[
-				$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill),
+				$mdgriffith$elm_ui$Element$width(
+				$mdgriffith$elm_ui$Element$px(301)),
+				$mdgriffith$elm_ui$Element$height(
+				$mdgriffith$elm_ui$Element$px(363)),
 				A2(
 				$mdgriffith$elm_ui$Element$paddingXY,
 				0,
@@ -26386,8 +26292,59 @@ var $author$project$Pages$Home_$vis = _List_fromArray(
 			]),
 		{description: 'rottefyr', src: '/images/rottefyr.png'}),
 		$mdgriffith$elm_ui$Element$text(''),
-		$author$project$UI$small('lab rat'),
-		$author$project$UI$small('v 0.1')
+		$mdgriffith$elm_ui$Element$text(''),
+		$mdgriffith$elm_ui$Element$text(''),
+		A2(
+		$mdgriffith$elm_ui$Element$el,
+		_List_fromArray(
+			[
+				$mdgriffith$elm_ui$Element$Region$heading(1),
+				$mdgriffith$elm_ui$Element$Font$color($author$project$UIColor$orangeLight),
+				$mdgriffith$elm_ui$Element$Font$extraBold,
+				$mdgriffith$elm_ui$Element$Font$size(
+				$author$project$UI$s(7)),
+				A2(
+				$mdgriffith$elm_ui$Element$paddingXY,
+				0,
+				$author$project$UI$s(3)),
+				$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill),
+				$mdgriffith$elm_ui$Element$Border$widthEach(
+				A4($author$project$UI$bltr, 0, 0, 1, 0))
+			]),
+		A2(
+			$mdgriffith$elm_ui$Element$column,
+			_List_fromArray(
+				[
+					$mdgriffith$elm_ui$Element$spacing(
+					$author$project$UI$s(1))
+				]),
+			_List_fromArray(
+				[
+					$mdgriffith$elm_ui$Element$text('lab rat'),
+					$author$project$UI$small('the psychonaut tracker app')
+				]))),
+		A2(
+		$mdgriffith$elm_ui$Element$newTabLink,
+		_List_fromArray(
+			[
+				$mdgriffith$elm_ui$Element$Font$color($author$project$UIColor$blue)
+			]),
+		{
+			label: $mdgriffith$elm_ui$Element$text('got feedback? r/labratapp'),
+			url: 'https://github.com/norregaarden/labrat-elm'
+		}),
+		$author$project$UI$small('version 0.1.1'),
+		$author$project$UI$small('updated 22-01-27'),
+		A2(
+		$mdgriffith$elm_ui$Element$newTabLink,
+		_List_fromArray(
+			[
+				$mdgriffith$elm_ui$Element$Font$color($author$project$UIColor$blue)
+			]),
+		{
+			label: $mdgriffith$elm_ui$Element$text('view source on github'),
+			url: 'https://github.com/norregaarden/labrat-elm'
+		})
 	]);
 var $author$project$Pages$Home_$view = {body: $author$project$Pages$Home_$vis, title: 'lab rat'};
 var $author$project$Pages$NotFound$view = $author$project$View$placeholder('Page not found.');
@@ -27333,7 +27290,10 @@ var $author$project$UI$labratlogo = A2(
 			$mdgriffith$elm_ui$Element$image,
 			_List_fromArray(
 				[
-					$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill)
+					$mdgriffith$elm_ui$Element$width(
+					$mdgriffith$elm_ui$Element$px(50)),
+					$mdgriffith$elm_ui$Element$height(
+					$mdgriffith$elm_ui$Element$px(50))
 				]),
 			{description: 'lab rat logo', src: '/images/rotteHjerneLogo.svg'})
 		]));

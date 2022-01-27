@@ -2,8 +2,12 @@ module Pages.Home_ exposing (view)
 
 -- elm-spa server
 
-import Element exposing (Element, fill, image, paddingXY, text, width)
-import UI exposing (h, s, small)
+import UIColor exposing (blue, orangeLight)
+import Element exposing (Element, column, el, fill, height, image, link, newTabLink, paddingXY, px, spacing, text, width)
+import Element.Border as Border
+import Element.Font as Font
+import Element.Region exposing (heading)
+import UI exposing (bltr, h, s, small)
 import View exposing (View)
 
 
@@ -21,13 +25,20 @@ init =
 
 vis: List (Element msg)
 vis =
-  [ h 1 "Welcome, lab rat."
-  , image [width fill, paddingXY 0 (s 3) ]
+  [ h 2 "Welcome, lab rat."
+  , image [width (px 301), height (px 363), paddingXY 0 (s 3) ]
     { src = "/images/rottefyr.png"
     , description = "rottefyr" }
   , text ""
-  , small "lab rat"
-  , small "v 0.1"
+  , text ""
+  , text ""
+  , el
+      [heading 1, Font.color orangeLight, Font.extraBold, Font.size (s 7), paddingXY 0 (s 3), width fill, Border.widthEach (bltr 0 0 1 0)]
+      ( column [spacing (s 1)] [text "lab rat", small "the psychonaut tracker app"] )
+  , newTabLink [Font.color blue] { url = "https://github.com/norregaarden/labrat-elm", label = text "got feedback? r/labratapp" }
+  , small "version 0.1.1"
+  , small "updated 22-01-27"
+  , newTabLink [Font.color blue] { url = "https://github.com/norregaarden/labrat-elm", label = text "view source on github" }
   ]
 
 

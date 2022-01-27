@@ -547,10 +547,7 @@ view : Shared.Model -> Model -> View Msg
 view shared model =
   { title = "data | lab rat"
   , body =
-    [ row [width fill, Font.size (s 1)]
-      [ TimeStr.toFullDay model.zone model.now |> text |> el [alignLeft]
-      , TimeStr.toFullTime model.zone model.now |> text |> el [alignRight]
-      ]
+    [ text "Your data is only stored on this device."
     , smallAppButton DownloadData "Download data" |> el [centerX, padding (s 3)]
     , viewData shared model
     , text ""
