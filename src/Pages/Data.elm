@@ -5,7 +5,9 @@ import Element.Background as Background
 import Element.Border as Border
 import Element.Events exposing (onClick, onDoubleClick)
 import Element.Font as Font
+import File exposing (File)
 import File.Download as Download
+import File.Select as Select
 import Html
 import Html.Attributes
 import Husk
@@ -145,6 +147,9 @@ type Msg
     | Delete
     | ReallyDelete
     | DownloadData
+    | JsonRequested
+    | JsonSelected File
+    | JsonLoaded String
 
 
 update : Storage -> Msg -> Model -> ( Model, Cmd Msg )
@@ -225,6 +230,21 @@ update storage msg model =
         |> Download.string
           ("labratapp " ++ TimeStr.toDateTime model.zone model.now ++ ".json")
           "text/json"
+      )
+
+    JsonRequested ->
+      ( model
+      , Select.file ["text/json"] JsonSelected
+      )
+
+    JsonSelected file ->
+      ( model
+      , Task.perform JsonLoaded (File.toString file)
+      )
+
+    JsonLoaded content ->
+      ( model
+      , Storage.uploadJson content
       )
 
 
@@ -543,15 +563,30 @@ viewData shared model =
   column [width fill] <| List.foldl accumulator [] model.labelKeys
 
 
+dataMetaData shared =
+  "data ("
+    ++ (Dict.size shared.storage.log |> String.fromInt) ++ " log entries and "
+    ++ (Dict.size shared.storage.playlog |> String.fromInt) ++ " plays)"
+
+
 view : Shared.Model -> Model -> View Msg
 view shared model =
   { title = "data | lab rat"
-  , body =
-    [ text "Your data is only stored on this device."
-    , smallAppButton DownloadData "Download data" |> el [centerX, padding (s 3)]
-    , viewData shared model
-    , text ""
-    , text ""
-    --, p "Note: Height of colored bars are not linear."
-    ]
+  , body = List.singleton <|
+    column [width fill, spacing (s 3)]
+      [ p <| "Your " ++ dataMetaData shared ++ " is only stored on this device."
+      , p "You can download your data from this device as .json:"
+      , smallAppButton DownloadData "Download data" |> el [centerX]
+      , text ""
+      , viewData shared model
+      , text ""
+      , text ""
+      , p "If you have downloaded your data as .json from another device, you can upload to this device:"
+      , smallAppButton JsonRequested "Upload data" |> el [centerX]
+      , p <| "This will overwrite the " ++ dataMetaData shared ++ " you see above."
+      , p "None of your data is uploaded to a server."
+      , text ""
+      , text ""
+      --, p "Note: Height of colored bars are not linear."
+      ]
   }
