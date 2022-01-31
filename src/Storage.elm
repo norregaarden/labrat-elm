@@ -1,5 +1,6 @@
 port module Storage exposing (..)
 
+import Browser.Navigation
 import Dict exposing (Dict)
 import Json.Decode as D exposing (decodeString)
 import Json.Decode.Extra as Dextra
@@ -65,7 +66,7 @@ uploadJson jsonstr =
         -- make cmd in shared, general popup uses var error
 
   in
-  dothis
+  Cmd.batch [ dothis, Browser.Navigation.reload ]
 
 
 
