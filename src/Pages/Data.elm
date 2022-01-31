@@ -510,6 +510,7 @@ viewSpilMeta =
             Dut -> "Visual search"
             Tid -> "10 seconds"
             Husk -> "Short-term memory"
+            Blink -> "Minimal recognition time (blink)"
       in
       el [width (fillPortion 1), Font.size (s -3), Font.center] (text tekst)
       :: acc

@@ -9,7 +9,7 @@ import Json.Encode.Extra as Eextra
 import Log exposing (Data(..), ROA, Weight(..), WeightUnit(..))
 import Spil exposing (Score(..), Scores)
 
-port save : D.Value -> Cmd msg
+port save : E.Value -> Cmd msg
 port load : (D.Value -> msg) -> Sub msg
 
 
@@ -219,6 +219,12 @@ encodeScore score =
         , ("totalMistakes", E.int s.totalMistakes)
         ]
 
+    BlinkScore s ->
+      E.object
+        [ ("expectedDuration_ms", E.int s.expectedDuration_ms)
+        , ("realDuration_ms", E.int s.realDuration_ms)
+        ]
+
 
 -----------------------
 -- Converting from JSON
@@ -287,10 +293,11 @@ drugDecoder =
 
 dictScoresDecoder : D.Decoder Scores
 dictScoresDecoder =
-  D.map3 Scores
+  D.map4 Scores
     (D.field "dut" (D.nullable scoreDutDecoder))
     (D.field "tid" (D.nullable scoreTidDecoder))
     (D.field "husk" (D.nullable scoreHuskDecoder))
+    (D.field "blink" (D.nullable scoreBlinkDecoder))
 
 scoreDutDecoder : D.Decoder Spil.Score_Dut
 scoreDutDecoder =
@@ -311,3 +318,9 @@ scoreHuskDecoder =
   D.map2 Spil.Score_Husk
     (D.field "huskNumber" D.int)
     (D.field "totalMistakes" D.int)
+
+scoreBlinkDecoder : D.Decoder Spil.Score_Blink
+scoreBlinkDecoder =
+  D.map2 Spil.Score_Blink
+    (D.field "expectedDuration_ms" D.int)
+    (D.field "realDuration_ms" D.int)

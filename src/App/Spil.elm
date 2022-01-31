@@ -11,18 +11,21 @@ type Spil
     = Dut
     | Tid
     | Husk
+    | Blink
 
-alleSpil = [Dut, Tid, Husk] -- games
+alleSpil = [Dut, Tid, Husk, Blink] -- games
 
 type Score
     = DutScore Score_Dut
     | TidScore Score_Tid
     | HuskScore Score_Husk
+    | BlinkScore Score_Blink
 
 type alias Scores =
   { dut : Maybe Score_Dut
   , tid : Maybe Score_Tid
   , husk : Maybe Score_Husk
+  , blink : Maybe Score_Blink
   }
 
 
@@ -48,6 +51,11 @@ type alias Score_Husk =
   , totalMistakes : Int
   }
 
+type alias Score_Blink =
+  { expectedDuration_ms : Int
+  , realDuration_ms : Int
+  }
+
 
 -- Helpers
 
@@ -56,6 +64,7 @@ spilRoute spil =
     Dut -> Route.Spil__Dut
     Tid -> Route.Spil__Tid
     Husk -> Route.Spil__Husk
+    Blink -> Route.Spil__Blink
 
 updateScores scores new =
   case new of
@@ -65,6 +74,8 @@ updateScores scores new =
       { scores | tid = Just score }
     HuskScore score ->
       { scores | husk = Just score }
+    BlinkScore score ->
+      { scores | blink = Just score }
 
 updateGames games score =
   case score of
@@ -74,6 +85,8 @@ updateGames games score =
       List.filter (\g -> g /= Tid) games
     HuskScore _ ->
       List.filter (\g -> g /= Husk) games
+    BlinkScore _ ->
+      List.filter (\g -> g /= Blink) games
 
 videreButton playing videreMsg okMsg =
   case playing of

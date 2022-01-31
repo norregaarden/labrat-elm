@@ -45,7 +45,7 @@ init _ flags =
   }, Cmd.none )
 
 initPlaying =
-  { scores = Spil.Scores Nothing Nothing Nothing
+  { scores = Spil.Scores Nothing Nothing Nothing Nothing
   , games = []
   }
 
