@@ -37,8 +37,8 @@ vis =
       [heading 1, Font.color orangeLight, Font.extraBold, Font.size (s 7), paddingXY 0 (s 3), width fill, Border.widthEach (bltr 0 0 1 0)]
       ( column [spacing (s 1)] [text "lab rat", small "the psychonaut tracker app"] )
   , newTabLink [Font.color blue] { url = "https://reddit.com/r/labratapp", label = text "got feedback? r/labratapp" }
-  , small "version 0.1.2"
-  , small "updated 22-01-27"
+  , small "version 0.1.3"
+  , small "updated 22-01-31"
   , newTabLink [Font.color blue] { url = "https://github.com/norregaarden/labrat-elm", label = text "view source on github" }
   ]
 
