@@ -1,7 +1,8 @@
 port module Storage exposing (..)
 
+import Browser.Navigation
 import Dict exposing (Dict)
-import Json.Decode as D
+import Json.Decode as D exposing (decodeString)
 import Json.Decode.Extra as Dextra
 import Json.Encode as E
 import Json.Encode.Extra as Eextra
@@ -49,6 +50,24 @@ setIdentifier id storage =
       |> save
   else
     Cmd.none
+
+
+-- UPLOAD (from .json to localstorage)
+
+uploadJson jsonstr =
+  let
+    result = decodeString decoder jsonstr
+    dothis = case result of
+      Ok value ->
+        save (toJson value)
+
+      Err error ->
+        Cmd.none -- replace with popup saying wrong version data?
+        -- make cmd in shared, general popup uses var error
+
+  in
+  Cmd.batch [ dothis, Browser.Navigation.reload ]
+
 
 
 -- UPDATE
