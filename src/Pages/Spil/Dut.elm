@@ -7,11 +7,10 @@ import Element exposing (centerX, column, el, fill, fillPortion, height, html, m
 import Element.Border as Border
 import Element.Events exposing (onClick)
 import Element.Font as Font
-import Gen.Params.Dut exposing (Params)
 import Page
 import Random as R
 import Random.List exposing (choose, shuffle)
-import Request
+import Request exposing (Request)
 import Shared
 import String exposing (fromInt)
 import Task
@@ -59,7 +58,7 @@ init =
 
 -- PAGE
 
-page : Shared.Model -> Request.With Params -> Page.With Model Msg
+page : Shared.Model -> Request -> Page.With Model Msg
 page shared req =
   Page.advanced
     { init = init
