@@ -4,6 +4,8 @@ import Array exposing (fromList, get)
 import Dict exposing (Dict)
 import Effect exposing (Effect)
 import Element exposing (Element, alpha, centerX, column, el, fill, fillPortion, height, html, padding, row, spacing, text, width)
+import Element.Border as Border
+import Element.Events as Events
 import Gen.Params.Spil.Count exposing (Params)
 import Page
 import Random
@@ -15,6 +17,7 @@ import Shared
 import Svg exposing (circle, svg)
 import Svg.Attributes exposing (cx, cy, r, viewBox)
 import UI exposing (appButton, h, s, small, spilTitel)
+import UIColor exposing (green, red)
 import View exposing (View)
 import Page
 
@@ -45,11 +48,15 @@ init =
 
 type alias IgangModel =
     { blandet : List (Set Int)
-
+    , clicked : Int
+    , correct : Bool
     }
 
 igangInit =
-    { blandet = [] }
+    { blandet = []
+    , clicked = -1
+    , correct = False
+    }
 
 
 -- UPDATE
@@ -58,6 +65,7 @@ igangInit =
 type Msg
     = Begynd
     | Blandet (List (Set Int))
+    | Klik Int
 
 
 update : Msg -> Model -> ( Model, Effect Msg )
@@ -66,6 +74,7 @@ update msg model =
         bland n =
             Effect.fromCmd <|
             Random.generate (List.map (Tuple.first >> Set.fromList) >> Blandet) <|
+            Random.andThen Random.List.shuffle <|
             Random.Extra.combine <|
             List.map (\i -> Random.List.choices i (List.range 0 24)) (List.range n (n+3))
 
@@ -73,13 +82,36 @@ update msg model =
     case msg of
         Begynd ->
             ( model
-            , bland 4
+            , bland 3
             )
 
         Blandet blandet ->
             ( Igang { igangInit | blandet = blandet }
             , Effect.none
             )
+
+        Klik no ->
+            case model of
+                Igang igangModel ->
+                    let
+                        correctCount =
+                            List.map Set.size igangModel.blandet
+                            |> List.maximum
+                            |> Maybe.withDefault 0
+
+                        actualCount =
+                            Array.fromList igangModel.blandet
+                            |> get no
+                            |> Maybe.withDefault Set.empty
+                            |> Set.size
+                    in
+                    ( Igang { igangModel
+                        | clicked = no
+                        , correct = (correctCount == actualCount)
+                        }
+                    , Effect.none )
+
+                _ -> ( model, Effect.none )
 
 
 
@@ -124,15 +156,23 @@ visBoks numbers =
     <| List.map boksRow (List.range 0 4)
 
 
-fourSquares : List (Element msg) -> Element msg
-fourSquares list =
+fourSquares : List (Element Msg) -> Int -> Bool -> Element Msg
+fourSquares list pressed correct =
     let
+        greenBorder no =
+            if no == pressed then
+                [ if correct then Border.color green else Border.color red
+                ]
+            else []
+
         array = fromList list
-        square no = Maybe.withDefault Element.none (get no array)
+        square no =
+            Maybe.withDefault Element.none (get no array)
+            |> el (greenBorder no ++ [ Border.width 10, Border.rounded (s 3), Events.onClick (Klik no), width fill, height fill ])
     in
-    column []
-        [ row [] [ square 0, square 1 ]
-        , row [] [ square 2, square 3 ]
+    column [ spacing (s 3) ]
+        [ row [ spacing (s 3) ] [ square 0, square 1 ]
+        , row [ spacing (s 3) ] [ square 2, square 3 ]
         ]
 
 
@@ -156,7 +196,7 @@ vis sharedPlaying model =
 
     Igang igangModel ->
         [ overskrift
-        , fourSquares (List.map visBoks igangModel.blandet)
+        , fourSquares (List.map visBoks igangModel.blandet) igangModel.clicked igangModel.correct
         ]
 
 view : Shared.Model -> Model -> View Msg
