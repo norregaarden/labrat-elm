@@ -47,16 +47,36 @@ init =
     ( Intro, Effect.none )
 
 type alias IgangModel =
-    { blandet : List (Set Int)
-    , clicked : Int
+    { blandet : Board
+    , clicking : Int
     , correct : Bool
+    , history : List (Bool, Board)
     }
 
+type alias Board =
+    List (Set Int)
+
+igangInit : IgangModel
 igangInit =
     { blandet = []
-    , clicked = -1
+    , clicking = -1
+    , correct = False
+    , history = []
+    }
+
+newgame blandet igang =
+    { igang
+    | blandet = blandet
+    , clicking = -1
     , correct = False
     }
+
+correctCount igang =
+    List.map Set.size igang.blandet
+    --|> List.sort
+    --|> List.drop (List.length igang.clicked)
+    |> List.maximum
+    |> Maybe.withDefault 0
 
 
 -- UPDATE
@@ -65,7 +85,8 @@ igangInit =
 type Msg
     = Begynd
     | Blandet (List (Set Int))
-    | Klik Int
+    | Click Int
+    | Clicked
 
 
 update : Msg -> Model -> ( Model, Effect Msg )
@@ -81,8 +102,16 @@ update msg model =
     in
     case msg of
         Begynd ->
+            let
+                fra =
+                    case model of
+                        Intro ->
+                            3
+                        Igang igangModel ->
+                            3 + List.length igangModel.history
+            in
             ( model
-            , bland 3
+            , bland fra
             )
 
         Blandet blandet ->
@@ -90,15 +119,10 @@ update msg model =
             , Effect.none
             )
 
-        Klik no ->
+        Click no ->
             case model of
                 Igang igangModel ->
                     let
-                        correctCount =
-                            List.map Set.size igangModel.blandet
-                            |> List.maximum
-                            |> Maybe.withDefault 0
-
                         actualCount =
                             Array.fromList igangModel.blandet
                             |> get no
@@ -106,11 +130,24 @@ update msg model =
                             |> Set.size
                     in
                     ( Igang { igangModel
-                        | clicked = no
-                        , correct = (correctCount == actualCount)
+                        | clicking = no
+                        , correct = (actualCount == correctCount igangModel)
                         }
                     , Effect.none )
 
+                _ -> ( model, Effect.none )
+
+        Clicked ->
+            case model of
+                Igang igangModel ->
+                    if igangModel.correct then
+                        ( Igang { igangModel
+                            | clicking = -1
+                            --, clicked = igangModel.clicking :: igangModel.clicked
+                            , blandet = List.drop 1 igangModel.blandet
+                        }, Effect.none )
+                    else
+                        ( model, Effect.none )
                 _ -> ( model, Effect.none )
 
 
@@ -125,7 +162,17 @@ subscriptions model =
 
 
 -- VIEW
-svgCircle =
+svgCircle n =
+    let
+        colors =
+            Array.fromList ["#A65E2E", "#E55137", "#D36E70", "#57A639", "#F80000"
+            , "#B32821", "#3D642D", "#C93C20", "#8A6642", "#84C3BE", "#6A5F31"
+            , "#E4A010", "#9E9764", "#6D3F5B", "#424632", "#B8B799", "#35682D"]
+        fill =
+            colors
+            |> get (modBy (Array.length colors) n)
+            |> Maybe.withDefault "#112233"
+    in
     html <| svg
         [ viewBox "0 0 100 100"
         , Svg.Attributes.width "100%"
@@ -134,7 +181,7 @@ svgCircle =
         <| List.singleton <|
         Svg.circle
             [ cx "50", cy "50", r "50"
-            , Svg.Attributes.fill "#112233" ] []
+            , Svg.Attributes.fill fill ] []
 
 
 visBoks : Set Int -> Element msg
@@ -146,7 +193,7 @@ visBoks numbers =
                 , height fill
                 , alpha (if Set.member n numbers then 1 else 0)
                 ]
-                <| svgCircle
+                <| svgCircle (Set.size numbers + n)
         -- Element.explain Debug.todo
         boksRow r =
             row [ width fill ]
@@ -168,7 +215,11 @@ fourSquares list pressed correct =
         array = fromList list
         square no =
             Maybe.withDefault Element.none (get no array)
-            |> el (greenBorder no ++ [ Border.width 10, Border.rounded (s 3), Events.onClick (Klik no), width fill, height fill ])
+            |> el (greenBorder no ++
+            [ Border.width 10, Border.rounded (s 3)
+            , Events.onMouseDown (Click no)
+            , Events.onMouseUp (Clicked)
+            , width fill, height fill ])
     in
     column [ spacing (s 3) ]
         [ row [ spacing (s 3) ] [ square 0, square 1 ]
@@ -195,8 +246,11 @@ vis sharedPlaying model =
       ]
 
     Igang igangModel ->
-        [ overskrift
-        , fourSquares (List.map visBoks igangModel.blandet) igangModel.clicked igangModel.correct
+        let
+            im = Debug.log "hej" igangModel
+        in
+        [ h 2 <| "Click the largest set (" ++ String.fromInt (correctCount igangModel) ++ " items)"
+        , fourSquares (List.map visBoks igangModel.blandet) igangModel.clicking igangModel.correct
         ]
 
 view : Shared.Model -> Model -> View Msg
