@@ -14,7 +14,7 @@ import Request exposing (Request)
 import Round
 import Shared
 import Spil exposing (Score(..))
-import String exposing (fromFloat, fromInt)
+import String exposing (toInt)
 import Task
 import Time
 import UI exposing (appButton, h, p, s, showListWhen, showWhen, small, spilTitel)
@@ -22,41 +22,47 @@ import View exposing (View)
 
 
 blinkTimes =
-    3
-
+    2
 
 
 -- MODEL
 
 
-type Model
+type alias Model =
+    { status : ModelStatus
+    , targetDuration : Float --ms
+    , frames : List String
+    , frame : Frame
+    , frameFuture : List String
+    , frameHistory : List Frame
+    }
+
+type ModelStatus
     = Intro
-    | Igang IgangModel
-    | Død IgangModel
+    | Blinking
+    | Choose
+    | Done
     | Error String
 
-
-type alias IgangModel =
-    { duration : Int --ms
-    , image : Image
-    , jsImage : JSimage
-
-    --, frameFuture : List String
-    , frameHistory : List ( String, Time.Posix )
+type alias Frame =
+    { string : String
+    , deltas : List Float
     }
 
 
-igangModelPlaceholder =
-    { duration = 5
-    , image = placeholderImage
-    , jsImage = imageProperties placeholderImage
+modelPlaceholder status =
+    { status = status
+    , targetDuration = 480
+    , frames = []
+    , frame = Frame "" []
+    , frameFuture = []
     , frameHistory = []
     }
 
 
 init : ( Model, Effect Msg )
 init =
-    ( Intro
+    ( modelPlaceholder Intro
     , Effect.none
     )
 
@@ -66,21 +72,12 @@ init =
 
 
 page : Shared.Model -> Request -> Page.With Model Msg
-page shared req =
+page shared _ =
     Page.advanced
         { init = init
         , update = update
         , view = view shared
-        , subscriptions =
-            \model ->
-                case model of
-                    Igang _ ->
-                        onAnimationFrame Frame
-
-                    _ ->
-                        Sub.none
-
-        --\model -> onAnimationFrameDelta Frame
+        , subscriptions = \_ -> onAnimationFrameDelta OnFrame
         }
 
 
@@ -89,19 +86,14 @@ page shared req =
 
 
 type Msg
-    = Begynd
-    | Blandet ( Maybe Image, List Image )
-    | Frame Time.Posix
-      {- = Startklik
-         | Start Time.Posix
-         | Slutklik
-         | Slut Time.Posix
-      -}
+    = Begin
+    | Shuffled (List String)
+    | OnFrame Float
     | Videre
     | OK
 
 
-toJson : IgangModel -> E.Value
+{-toJson : IgangModel -> E.Value
 toJson igang =
     E.object
         [ ( "duration", E.int igang.duration )
@@ -111,20 +103,120 @@ toJson igang =
                 , ( "description", E.string igang.jsImage.description )
                 ]
           )
-        ]
+        ]-}
 
 
 update : Msg -> Model -> ( Model, Effect Msg )
 update msg model =
     let
-        randomImage =
+        random =
             Effect.fromCmd <|
-                Random.generate Blandet (Random.List.choose Blink.allImages)
+                Random.generate Shuffled (Random.List.shuffle ["A", "B", "C", "D"])
     in
-    case model of
+    case msg of
+        Begin ->
+            ( model
+            , random )
+
+        Shuffled list ->
+            let
+                frames =
+                    list ++ ["", ""] ++ list ++ [""]
+            in
+            ( { model
+            | status = Blinking
+            , frames = frames
+            , frameFuture = frames
+            }
+            , Effect.none )
+
+        OnFrame delta ->
+            case model.status of
+                Blinking ->
+                    let
+                        {-(status, frame, future) =
+                            case model.frameFuture of
+                                [] ->
+                                    (Done, "end", [])
+                                f :: fs ->
+                                    (Blinking, f, fs)
+
+                        fuck =
+                            List.range 0 1000000-}
+                        oldFrame =
+                            model.frame
+
+                        oldDeltas =
+                            oldFrame.deltas
+
+                        newDeltas =
+                            delta :: oldDeltas
+
+                        updatedFrame =
+                            { oldFrame
+                            | deltas = newDeltas
+                            }
+
+                        deltaSum =
+                            List.sum newDeltas
+
+                        changeFrame =
+                            deltaSum > model.targetDuration
+
+                        (newFrame, newFuture, newHistory) =
+                            if changeFrame then
+                                case model.frameFuture of
+                                    [] ->
+                                        (Frame "" []
+                                        , model.frameFuture
+                                        , model.frameHistory
+                                        )
+                                    f :: fs ->
+                                        (Frame f []
+                                        , fs
+                                        , updatedFrame :: model.frameHistory
+                                        )
+                            else
+                                ( updatedFrame
+                                , model.frameFuture
+                                , model.frameHistory )
+
+                        nextRound =
+                            changeFrame && List.length model.frameFuture == 0
+
+                        newTargetDuration =
+                            if nextRound then
+                                model.targetDuration / 2
+                            else model.targetDuration
+                    in
+                    ( { model
+                    | status = if nextRound then Choose else Blinking --if newTargetDuration < 15 then Done else Blinking
+                    , targetDuration = newTargetDuration
+                    , frame = newFrame
+                    , frameFuture = newFuture
+                    , frameHistory = newHistory
+                    }
+                    , Effect.none )
+                    --, if List.length model.frameFuture == 0 then random else Effect.none )
+
+                _ ->
+                    ( model, Effect.none )
+
+        Videre ->
+            ( model
+            , Effect.none
+            --, score model |> BlinkScore |> Shared.SpilScore |> Effect.fromShared
+            )
+
+        OK ->
+            ( model
+            , Shared.GoToPlay |> Effect.fromShared
+            )
+
+{-    case model of
         Intro ->
             case msg of
-                Begynd ->
+                Begin ->
                     ( Igang igangModelPlaceholder
                     , randomImage
                     )
@@ -134,7 +226,7 @@ update msg model =
 
         Igang igang ->
             case msg of
-                Blandet ( maybeImage, _ ) ->
+                Shuffled ( maybeImage, _ ) ->
                     ( Igang
                         { igang
                             | image = Maybe.withDefault placeholderImage maybeImage
@@ -193,10 +285,12 @@ update msg model =
                     ( Error "Død / ikke Videre eller OK", Effect.none )
 
         Error string ->
-            ( Error (string ++ " then Error"), Effect.none )
+            ( Error (string ++ " then Error"), Effect.none )-}
 
 
-score model =
+
+
+{-score model =
     case model of
         Igang igangModel ->
             { expectedDuration_ms = igangModel.duration
@@ -206,7 +300,7 @@ score model =
         _ ->
             { expectedDuration_ms = -1
             , realDuration_ms = -1
-            }
+            }-}
 
 
 
@@ -214,18 +308,20 @@ score model =
 -- VIEW
 
 
-visIgang : IgangModel -> List (Element msg)
-visIgang igang =
+viewBlinking : Model -> List (Element msg)
+viewBlinking model =
     let
         content =
-            Element.image
-                [ width fill
-                , paddingXY 0 (s 3)
+            text model.frame.string
+                |> el [ centerX, centerY, Font.size (s 11), paddingXY 0 (s 5), Font.extraBold ]
+    in
+    [ content ]
 
-                --, Html.Attributes.id "blinkImage" |> htmlAttribute
-                --, Html.Attributes.style "opacity" "0.001" |> htmlAttribute
-                ]
-                igang.jsImage
+viewChoose : Model -> List (Element msg)
+viewChoose model =
+    let
+        content =
+            h 1 "_"
                 |> el [ centerX, centerY ]
     in
     [ content ]
@@ -239,7 +335,7 @@ vis sharedPlaying model =
         overskrift =
             h 2 "Find your minimal recognition time"
     in
-    case model of
+    case model.status of
         Intro ->
             [ titelskrift
             , overskrift
@@ -250,34 +346,26 @@ vis sharedPlaying model =
             , small <|
                 "Afterwards, click the corresponding image."
             , text ""
-            , appButton Begynd "READY" |> el [ centerX ]
-
-            --, viewImages Husk.allImages False
+            , appButton Begin "READY" |> el [ centerX ]
             ]
 
-        Igang igang ->
-            visIgang igang
+        Blinking ->
+            viewBlinking model
 
-        Død igang ->
+        Choose ->
+            viewChoose model
+
+        Done ->
             let
-                --summary = score igang
-                hej =
-                    "hej"
-
-                frameHisStr ( imgStr, timePosix ) =
-                    (Time.posixToMillis timePosix |> String.fromInt)
-                        ++ ": "
-                        ++ imgStr
+                frameHisStr frame =
+                    frame.string ++ ": "
+                        ++ Debug.toString frame.deltas
             in
             [ overskrift
-
-            --, p <| "You can hold " ++ String.fromInt summary.huskNumber ++ " items in short-term memory."
-            --, small <| "You made " ++ String.fromInt summary.totalMistakes ++ " mistakes in total."
             , Spil.videreButton sharedPlaying Videre OK
             ]
-                ++ List.map (frameHisStr >> text) igang.frameHistory
+                ++ List.map (frameHisStr >> text) model.frameHistory
 
-        --|> text |> el [padding (s 6)] |> List.singleton
         Error string ->
             "ERROR from blink model "
                 ++ string
@@ -285,10 +373,6 @@ vis sharedPlaying model =
                 |> p
                 |> el [ padding (s 2) ]
                 |> List.singleton
-
-
-
---billede "noegenhat" |> el [padding 40] |> List.singleton
 
 
 view : Shared.Model -> Model -> View Msg
