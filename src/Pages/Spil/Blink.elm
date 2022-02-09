@@ -52,7 +52,7 @@ type alias Frame =
 
 modelPlaceholder status =
     { status = status
-    , targetDuration = 60
+    , targetDuration = 120
     , frames = []
     , frame = Frame "" []
     , frameFuture = []
@@ -111,7 +111,7 @@ update msg model =
     let
         random =
             Effect.fromCmd <|
-                Random.generate Shuffled (Random.List.shuffle ["A", "B", "C", "D"])
+                Random.generate (List.intersperse "" >> Shuffled) (Random.List.shuffle ["A", "B", "C", "D"])
     in
     case msg of
         Begin ->
@@ -121,7 +121,7 @@ update msg model =
         Shuffled list ->
             let
                 frames =
-                    list ++ ["", ""] ++ list ++ [""]
+                    list ++ ["", "", ""] ++ list ++ [""]
             in
             ( { model
             | status = Blinking
@@ -321,7 +321,7 @@ viewChoose : Model -> List (Element msg)
 viewChoose model =
     let
         content =
-            h 1 "_"
+            h 2 (Debug.toString model.frameHistory)
                 |> el [ centerX, centerY ]
     in
     [ content ]

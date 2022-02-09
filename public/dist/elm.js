@@ -25370,7 +25370,7 @@ var $author$project$Pages$Spil$Blink$modelPlaceholder = function (status) {
 		frameHistory: _List_Nil,
 		frames: _List_Nil,
 		status: status,
-		targetDuration: 60
+		targetDuration: 120
 	};
 };
 var $author$project$Pages$Spil$Blink$init = _Utils_Tuple2(
@@ -25512,7 +25512,10 @@ var $author$project$Pages$Spil$Blink$update = F2(
 		var random = $author$project$Effect$fromCmd(
 			A2(
 				$elm$random$Random$generate,
-				$author$project$Pages$Spil$Blink$Shuffled,
+				A2(
+					$elm$core$Basics$composeR,
+					$elm$core$List$intersperse(''),
+					$author$project$Pages$Spil$Blink$Shuffled),
 				$elm_community$random_extra$Random$List$shuffle(
 					_List_fromArray(
 						['A', 'B', 'C', 'D']))));
@@ -25525,7 +25528,7 @@ var $author$project$Pages$Spil$Blink$update = F2(
 					list,
 					_Utils_ap(
 						_List_fromArray(
-							['', '']),
+							['', '', '']),
 						_Utils_ap(
 							list,
 							_List_fromArray(
@@ -25679,7 +25682,10 @@ var $author$project$Pages$Spil$Blink$viewChoose = function (model) {
 		$mdgriffith$elm_ui$Element$el,
 		_List_fromArray(
 			[$mdgriffith$elm_ui$Element$centerX, $mdgriffith$elm_ui$Element$centerY]),
-		A2($author$project$UI$h, 1, '_'));
+		A2(
+			$author$project$UI$h,
+			2,
+			$elm$core$Debug$toString(model.frameHistory)));
 	return _List_fromArray(
 		[content]);
 };
