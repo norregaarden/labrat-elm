@@ -1,12 +1,12 @@
 module Pages.Spil.Count exposing (Model, Msg, page)
 
 import Array exposing (fromList, get)
-import Dict exposing (Dict)
 import Effect exposing (Effect)
-import Element exposing (Element, alpha, centerX, column, el, fill, fillPortion, height, html, padding, row, spacing, text, width)
+import Element exposing (Element, alpha, centerX, column, el, fill, height, html, htmlAttribute, padding, row, spacing, text, width)
 import Element.Border as Border
-import Element.Events as Events
+--import Element.Events as Events
 import Gen.Params.Spil.Count exposing (Params)
+import Html.Events.Extra.Pointer as Pointer
 import Page
 import Random
 import Random.Extra
@@ -14,7 +14,7 @@ import Random.List
 import Request
 import Set exposing (Set)
 import Shared
-import Svg exposing (circle, svg)
+import Svg exposing (svg)
 import Svg.Attributes exposing (cx, cy, r, viewBox)
 import UI exposing (appButton, h, s, small, spilTitel)
 import UIColor exposing (green, red)
@@ -24,7 +24,7 @@ import Page
 
 
 page : Shared.Model -> Request.With Params -> Page.With Model Msg
-page shared req =
+page shared _ =
     Page.advanced
         { init = init
         , update = update
@@ -213,12 +213,13 @@ fourSquares list pressed correct =
             else []
 
         array = fromList list
+
         square no =
             Maybe.withDefault Element.none (get no array)
             |> el (greenBorder no ++
             [ Border.width 10, Border.rounded (s 3)
-            , Events.onMouseDown (Click no)
-            , Events.onMouseUp (Clicked)
+            , Pointer.onDown (\_ -> Click no) |> htmlAttribute
+            , Pointer.onUp (\_ -> Clicked) |> htmlAttribute
             , width fill, height fill ])
     in
     column [ spacing (s 3) ]
