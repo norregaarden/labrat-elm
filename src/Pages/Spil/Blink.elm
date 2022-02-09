@@ -52,7 +52,7 @@ type alias Frame =
 
 modelPlaceholder status =
     { status = status
-    , targetDuration = 480
+    , targetDuration = 60
     , frames = []
     , frame = Frame "" []
     , frameFuture = []

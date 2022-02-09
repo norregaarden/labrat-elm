@@ -25370,7 +25370,7 @@ var $author$project$Pages$Spil$Blink$modelPlaceholder = function (status) {
 		frameHistory: _List_Nil,
 		frames: _List_Nil,
 		status: status,
-		targetDuration: 480
+		targetDuration: 60
 	};
 };
 var $author$project$Pages$Spil$Blink$init = _Utils_Tuple2(
