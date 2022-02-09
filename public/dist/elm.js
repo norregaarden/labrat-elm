@@ -25355,13 +25355,141 @@ var $author$project$Pages$Play$page = F2(
 				view: $author$project$Pages$Play$view
 			});
 	});
+var $author$project$Pages$Spil$Blink$Frame = function (a) {
+	return {$: 'Frame', a: a};
+};
 var $author$project$Pages$Spil$Blink$Intro = {$: 'Intro'};
 var $author$project$Pages$Spil$Blink$init = _Utils_Tuple2($author$project$Pages$Spil$Blink$Intro, $author$project$Effect$none);
+var $elm$browser$Browser$AnimationManager$Time = function (a) {
+	return {$: 'Time', a: a};
+};
+var $elm$browser$Browser$AnimationManager$State = F3(
+	function (subs, request, oldTime) {
+		return {oldTime: oldTime, request: request, subs: subs};
+	});
+var $elm$browser$Browser$AnimationManager$init = $elm$core$Task$succeed(
+	A3($elm$browser$Browser$AnimationManager$State, _List_Nil, $elm$core$Maybe$Nothing, 0));
+var $elm$browser$Browser$AnimationManager$now = _Browser_now(_Utils_Tuple0);
+var $elm$browser$Browser$AnimationManager$rAF = _Browser_rAF(_Utils_Tuple0);
+var $elm$browser$Browser$AnimationManager$onEffects = F3(
+	function (router, subs, _v0) {
+		var request = _v0.request;
+		var oldTime = _v0.oldTime;
+		var _v1 = _Utils_Tuple2(request, subs);
+		if (_v1.a.$ === 'Nothing') {
+			if (!_v1.b.b) {
+				var _v2 = _v1.a;
+				return $elm$browser$Browser$AnimationManager$init;
+			} else {
+				var _v4 = _v1.a;
+				return A2(
+					$elm$core$Task$andThen,
+					function (pid) {
+						return A2(
+							$elm$core$Task$andThen,
+							function (time) {
+								return $elm$core$Task$succeed(
+									A3(
+										$elm$browser$Browser$AnimationManager$State,
+										subs,
+										$elm$core$Maybe$Just(pid),
+										time));
+							},
+							$elm$browser$Browser$AnimationManager$now);
+					},
+					$elm$core$Process$spawn(
+						A2(
+							$elm$core$Task$andThen,
+							$elm$core$Platform$sendToSelf(router),
+							$elm$browser$Browser$AnimationManager$rAF)));
+			}
+		} else {
+			if (!_v1.b.b) {
+				var pid = _v1.a.a;
+				return A2(
+					$elm$core$Task$andThen,
+					function (_v3) {
+						return $elm$browser$Browser$AnimationManager$init;
+					},
+					$elm$core$Process$kill(pid));
+			} else {
+				return $elm$core$Task$succeed(
+					A3($elm$browser$Browser$AnimationManager$State, subs, request, oldTime));
+			}
+		}
+	});
+var $elm$browser$Browser$AnimationManager$onSelfMsg = F3(
+	function (router, newTime, _v0) {
+		var subs = _v0.subs;
+		var oldTime = _v0.oldTime;
+		var send = function (sub) {
+			if (sub.$ === 'Time') {
+				var tagger = sub.a;
+				return A2(
+					$elm$core$Platform$sendToApp,
+					router,
+					tagger(
+						$elm$time$Time$millisToPosix(newTime)));
+			} else {
+				var tagger = sub.a;
+				return A2(
+					$elm$core$Platform$sendToApp,
+					router,
+					tagger(newTime - oldTime));
+			}
+		};
+		return A2(
+			$elm$core$Task$andThen,
+			function (pid) {
+				return A2(
+					$elm$core$Task$andThen,
+					function (_v1) {
+						return $elm$core$Task$succeed(
+							A3(
+								$elm$browser$Browser$AnimationManager$State,
+								subs,
+								$elm$core$Maybe$Just(pid),
+								newTime));
+					},
+					$elm$core$Task$sequence(
+						A2($elm$core$List$map, send, subs)));
+			},
+			$elm$core$Process$spawn(
+				A2(
+					$elm$core$Task$andThen,
+					$elm$core$Platform$sendToSelf(router),
+					$elm$browser$Browser$AnimationManager$rAF)));
+	});
+var $elm$browser$Browser$AnimationManager$Delta = function (a) {
+	return {$: 'Delta', a: a};
+};
+var $elm$browser$Browser$AnimationManager$subMap = F2(
+	function (func, sub) {
+		if (sub.$ === 'Time') {
+			var tagger = sub.a;
+			return $elm$browser$Browser$AnimationManager$Time(
+				A2($elm$core$Basics$composeL, func, tagger));
+		} else {
+			var tagger = sub.a;
+			return $elm$browser$Browser$AnimationManager$Delta(
+				A2($elm$core$Basics$composeL, func, tagger));
+		}
+	});
+_Platform_effectManagers['Browser.AnimationManager'] = _Platform_createManager($elm$browser$Browser$AnimationManager$init, $elm$browser$Browser$AnimationManager$onEffects, $elm$browser$Browser$AnimationManager$onSelfMsg, 0, $elm$browser$Browser$AnimationManager$subMap);
+var $elm$browser$Browser$AnimationManager$subscription = _Platform_leaf('Browser.AnimationManager');
+var $elm$browser$Browser$AnimationManager$onAnimationFrame = function (tagger) {
+	return $elm$browser$Browser$AnimationManager$subscription(
+		$elm$browser$Browser$AnimationManager$Time(tagger));
+};
+var $elm$browser$Browser$Events$onAnimationFrame = $elm$browser$Browser$AnimationManager$onAnimationFrame;
 var $author$project$Pages$Spil$Blink$Blandet = function (a) {
 	return {$: 'Blandet', a: a};
 };
 var $author$project$Spil$BlinkScore = function (a) {
 	return {$: 'BlinkScore', a: a};
+};
+var $author$project$Pages$Spil$Blink$Død = function (a) {
+	return {$: 'Død', a: a};
 };
 var $author$project$Pages$Spil$Blink$Error = function (a) {
 	return {$: 'Error', a: a};
@@ -25453,6 +25581,7 @@ var $author$project$App$Blink$imageProperties = function (billede) {
 var $author$project$App$Blink$placeholderImage = $author$project$App$Blink$LibertyCap;
 var $author$project$Pages$Spil$Blink$igangModelPlaceholder = {
 	duration: 5,
+	frameHistory: _List_Nil,
 	image: $author$project$App$Blink$placeholderImage,
 	jsImage: $author$project$App$Blink$imageProperties($author$project$App$Blink$placeholderImage)
 };
@@ -25505,25 +25634,55 @@ var $author$project$Pages$Spil$Blink$update = F2(
 				}
 			case 'Igang':
 				var igang = model.a;
-				if (msg.$ === 'Blandet') {
-					var _v3 = msg.a;
-					var maybeImage = _v3.a;
-					return _Utils_Tuple2(
-						$author$project$Pages$Spil$Blink$Igang(
-							_Utils_update(
-								igang,
-								{
-									image: A2($elm$core$Maybe$withDefault, $author$project$App$Blink$placeholderImage, maybeImage),
-									jsImage: $author$project$App$Blink$imageProperties(
-										A2($elm$core$Maybe$withDefault, $author$project$App$Blink$placeholderImage, maybeImage))
-								})),
-						$author$project$Effect$fromCmd(
-							$author$project$App$Blink$blink(
-								$author$project$Pages$Spil$Blink$toJson(igang))));
-				} else {
-					return _Utils_Tuple2(
-						$author$project$Pages$Spil$Blink$Error('Igang / ikke Blandet'),
-						$author$project$Effect$none);
+				switch (msg.$) {
+					case 'Blandet':
+						var _v3 = msg.a;
+						var maybeImage = _v3.a;
+						return _Utils_Tuple2(
+							$author$project$Pages$Spil$Blink$Igang(
+								_Utils_update(
+									igang,
+									{
+										image: A2($elm$core$Maybe$withDefault, $author$project$App$Blink$placeholderImage, maybeImage),
+										jsImage: $author$project$App$Blink$imageProperties(
+											A2($elm$core$Maybe$withDefault, $author$project$App$Blink$placeholderImage, maybeImage))
+									})),
+							$author$project$Effect$fromCmd(
+								$author$project$App$Blink$blink(
+									$author$project$Pages$Spil$Blink$toJson(igang))));
+					case 'Frame':
+						var time = msg.a;
+						var newStr = igang.jsImage.description;
+						var newHistory = function () {
+							var _v4 = igang.frameHistory;
+							if (!_v4.b) {
+								return _List_fromArray(
+									[
+										_Utils_Tuple2('', time)
+									]);
+							} else {
+								var _v5 = _v4.a;
+								var oldStr = _v5.a;
+								var oldTime = _v5.b;
+								var fs = _v4.b;
+								return A2(
+									$elm$core$List$cons,
+									_Utils_Tuple2(newStr, time),
+									igang.frameHistory);
+							}
+						}();
+						var newIgang = _Utils_update(
+							igang,
+							{frameHistory: newHistory});
+						return ($elm$core$List$length(igang.frameHistory) < 2) ? _Utils_Tuple2(
+							$author$project$Pages$Spil$Blink$Igang(newIgang),
+							$author$project$Effect$none) : _Utils_Tuple2(
+							$author$project$Pages$Spil$Blink$Død(newIgang),
+							$author$project$Effect$none);
+					default:
+						return _Utils_Tuple2(
+							$author$project$Pages$Spil$Blink$Error('Igang / ikke Blandet'),
+							$author$project$Effect$none);
 				}
 			case 'Død':
 				var igang = model.a;
@@ -25624,11 +25783,7 @@ var $author$project$Pages$Spil$Blink$visIgang = function (igang) {
 					A2(
 					$mdgriffith$elm_ui$Element$paddingXY,
 					0,
-					$author$project$UI$s(3)),
-					$mdgriffith$elm_ui$Element$htmlAttribute(
-					$elm$html$Html$Attributes$id('blinkImage')),
-					$mdgriffith$elm_ui$Element$htmlAttribute(
-					A2($elm$html$Html$Attributes$style, 'opacity', '0.001'))
+					$author$project$UI$s(3))
 				]),
 			igang.jsImage));
 	return _List_fromArray(
@@ -25664,11 +25819,22 @@ var $author$project$Pages$Spil$Blink$vis = F2(
 			case 'Død':
 				var igang = model.a;
 				var hej = 'hej';
-				return _List_fromArray(
-					[
-						overskrift,
-						A3($author$project$Spil$videreButton, sharedPlaying, $author$project$Pages$Spil$Blink$Videre, $author$project$Pages$Spil$Blink$OK)
-					]);
+				var frameHisStr = function (_v1) {
+					var imgStr = _v1.a;
+					var timePosix = _v1.b;
+					return $elm$core$String$fromInt(
+						$elm$time$Time$posixToMillis(timePosix)) + (': ' + imgStr);
+				};
+				return _Utils_ap(
+					_List_fromArray(
+						[
+							overskrift,
+							A3($author$project$Spil$videreButton, sharedPlaying, $author$project$Pages$Spil$Blink$Videre, $author$project$Pages$Spil$Blink$OK)
+						]),
+					A2(
+						$elm$core$List$map,
+						A2($elm$core$Basics$composeR, frameHisStr, $mdgriffith$elm_ui$Element$text),
+						igang.frameHistory));
 			default:
 				var string = model.a;
 				return $elm$core$List$singleton(
@@ -25679,7 +25845,7 @@ var $author$project$Pages$Spil$Blink$vis = F2(
 								$mdgriffith$elm_ui$Element$padding(
 								$author$project$UI$s(2))
 							]),
-						$author$project$UI$p('ERROR from husk model ' + (string + ', msg not applicable'))));
+						$author$project$UI$p('ERROR from blink model ' + (string + ', msg not applicable'))));
 		}
 	});
 var $author$project$Pages$Spil$Blink$view = F2(
@@ -25694,8 +25860,12 @@ var $author$project$Pages$Spil$Blink$page = F2(
 		return $author$project$Page$advanced(
 			{
 				init: $author$project$Pages$Spil$Blink$init,
-				subscriptions: function (_v0) {
-					return $elm$core$Platform$Sub$none;
+				subscriptions: function (model) {
+					if (model.$ === 'Igang') {
+						return $elm$browser$Browser$Events$onAnimationFrame($author$project$Pages$Spil$Blink$Frame);
+					} else {
+						return $elm$core$Platform$Sub$none;
+					}
 				},
 				update: $author$project$Pages$Spil$Blink$update,
 				view: $author$project$Pages$Spil$Blink$view(shared)
@@ -28095,4 +28265,4 @@ var $author$project$Main$view = function (model) {
 };
 var $author$project$Main$main = $elm$browser$Browser$application(
 	{init: $author$project$Main$init, onUrlChange: $author$project$Main$ChangedUrl, onUrlRequest: $author$project$Main$ClickedLink, subscriptions: $author$project$Main$subscriptions, update: $author$project$Main$update, view: $author$project$Main$view});
-_Platform_export({'Main':{'init':$author$project$Main$main($elm$json$Json$Decode$value)({"versions":{"elm":"0.19.1"},"types":{"message":"Main.Msg","aliases":{"Gen.Pages.Msg":{"args":[],"type":"Gen.Msg.Msg"},"Url.Url":{"args":[],"type":"{ protocol : Url.Protocol, host : String.String, port_ : Maybe.Maybe Basics.Int, path : String.String, query : Maybe.Maybe String.String, fragment : Maybe.Maybe String.String }"},"Storage.DataLog":{"args":[],"type":"{ time : Basics.Int, data : Log.Data }"},"Storage.Person":{"args":[],"type":"{ years : Basics.Int, cm : Basics.Int, kg : Basics.Int }"},"Spil.Score_Blink":{"args":[],"type":"{ expectedDuration_ms : Basics.Int, realDuration_ms : Basics.Int }"},"Spil.Score_Dut":{"args":[],"type":"{ mean : Basics.Int, spread : Basics.Int, correct : Basics.Int, rounds : Basics.Int }"},"Spil.Score_Husk":{"args":[],"type":"{ huskNumber : Basics.Int, totalMistakes : Basics.Int }"},"Spil.Score_Tid":{"args":[],"type":"{ burde : Basics.Int, faktisk : Basics.Int }"},"Spil.Scores":{"args":[],"type":"{ dut : Maybe.Maybe Spil.Score_Dut, tid : Maybe.Maybe Spil.Score_Tid, husk : Maybe.Maybe Spil.Score_Husk, blink : Maybe.Maybe Spil.Score_Blink }"},"Storage.Storage":{"args":[],"type":"{ identifier : String.String, person : Storage.Person, log : Dict.Dict Basics.Int Storage.DataLog, playlog : Dict.Dict Basics.Int Spil.Scores }"},"Log.Drug":{"args":[],"type":"String.String"},"Dutter.Dut":{"args":[],"type":"( Dutter.Farve, Dutter.Form )"},"Graphql.Http.Error":{"args":["parsedData"],"type":"Graphql.Http.RawError parsedData Graphql.Http.HttpError"},"Pages.Log.Drug.GraphQLModel":{"args":[],"type":"RemoteData.RemoteData (Graphql.Http.Error Pages.Log.Drug.Response) Pages.Log.Drug.Response"},"Pages.LogChoose.LogRoute":{"args":[],"type":"( String.String, Gen.Route.Route )"},"Pages.Log.Drug.MaybeDrug":{"args":[],"type":"{ name : Maybe.Maybe String.String, url : Maybe.Maybe String.String, images : Maybe.Maybe (List.List (Maybe.Maybe (Maybe.Maybe String.String))) }"},"Pages.Log.Drug.Response":{"args":[],"type":"Maybe.Maybe (List.List (Maybe.Maybe Pages.Log.Drug.MaybeDrug))"},"Time.Era":{"args":[],"type":"{ start : Basics.Int, offset : Basics.Int }"},"Graphql.Http.GraphqlError.GraphqlError":{"args":[],"type":"{ message : String.String, locations : Maybe.Maybe (List.List Graphql.Http.GraphqlError.Location), details : Dict.Dict String.String Json.Decode.Value }"},"Graphql.Http.GraphqlError.Location":{"args":[],"type":"{ line : Basics.Int, column : Basics.Int }"},"Http.Metadata":{"args":[],"type":"{ url : String.String, statusCode : Basics.Int, statusText : String.String, headers : Dict.Dict String.String String.String }"},"Json.Decode.Value":{"args":[],"type":"Json.Encode.Value"}},"unions":{"Main.Msg":{"args":[],"tags":{"ChangedUrl":["Url.Url"],"ClickedLink":["Browser.UrlRequest"],"Shared":["Shared.Msg"],"Page":["Gen.Pages.Msg"]}},"Basics.Int":{"args":[],"tags":{"Int":[]}},"Maybe.Maybe":{"args":["a"],"tags":{"Just":["a"],"Nothing":[]}},"Gen.Msg.Msg":{"args":[],"tags":{"Data":["Pages.Data.Msg"],"LogChoose":["Pages.LogChoose.Msg"],"Play":["Pages.Play.Msg"],"Log__BP":["Pages.Log.BP.Msg"],"Log__Drug":["Pages.Log.Drug.Msg"],"Log__HR":["Pages.Log.HR.Msg"],"Log__Musing":["Pages.Log.Musing.Msg"],"Log__TempC":["Pages.Log.TempC.Msg"],"Spil__Blink":["Pages.Spil.Blink.Msg"],"Spil__Dut":["Pages.Spil.Dut.Msg"],"Spil__Husk":["Pages.Spil.Husk.Msg"],"Spil__Tid":["Pages.Spil.Tid.Msg"]}},"Shared.Msg":{"args":[],"tags":{"StorageUpdated":["Storage.Storage"],"Play":["List.List Spil.Spil"],"SpilScore":["Spil.Score"],"SaveScores":["Time.Posix"],"GoToPlay":[]}},"Url.Protocol":{"args":[],"tags":{"Http":[],"Https":[]}},"String.String":{"args":[],"tags":{"String":[]}},"Browser.UrlRequest":{"args":[],"tags":{"Internal":["Url.Url"],"External":["String.String"]}},"Log.Data":{"args":[],"tags":{"HR":["Basics.Int"],"TempC":["Basics.Float"],"BP":["Basics.Int","Basics.Int"],"Musing":["String.String"],"DrugAdmin":["Log.Drug","Log.ROA","Log.Weight"]}},"Dict.Dict":{"args":["k","v"],"tags":{"RBNode_elm_builtin":["Dict.NColor","k","v","Dict.Dict k v","Dict.Dict k v"],"RBEmpty_elm_builtin":[]}},"List.List":{"args":["a"],"tags":{}},"Pages.Data.Msg":{"args":[],"tags":{"FindTime":["( Time.Posix, Time.Zone )"],"SetStorageIdentifier":["Basics.Float"],"Click":["Basics.Int"],"EditClick":["( Basics.Int, Pages.Data.LogType )"],"ClosePopup":[],"Delete":[],"ReallyDelete":[],"DownloadData":[],"JsonRequested":[],"JsonSelected":["File.File"],"JsonLoaded":["String.String"]}},"Pages.Log.BP.Msg":{"args":[],"tags":{"ChangedHigh":["Basics.Int"],"ChangedLow":["Basics.Int"],"SavedInput":[],"LogDataTid":["Time.Posix"]}},"Pages.Log.Drug.Msg":{"args":[],"tags":{"GotResponse":["Pages.Log.Drug.GraphQLModel"],"ChangedInput":["String.String"],"Delayed":["String.String"],"ROA_DropdownMsg":["Dropdown.Msg String.String"],"ROA_Picked":["Maybe.Maybe String.String"],"WeightChoose":["Pages.Log.Drug.ChooseWeight"],"WU_DropdownMsg":["Dropdown.Msg String.String"],"WU_Picked":["Maybe.Maybe String.String"],"WeightQuanChanged":["String.String"],"DQ_DropdownMsg":["Dropdown.Msg String.String"],"DQ_Picked":["Maybe.Maybe String.String"],"MinutesAgoChanged":["String.String"],"Save":[],"LogDataTid":["Time.Posix"]}},"Pages.Log.HR.Msg":{"args":[],"tags":{"ChangedInput":["Basics.Int"],"SavedInput":[],"LogDataTid":["Time.Posix"]}},"Pages.Log.Musing.Msg":{"args":[],"tags":{"ChangedInput":["String.String"],"SavedInput":[],"LogDataTid":["Time.Posix"]}},"Pages.Log.TempC.Msg":{"args":[],"tags":{"ChangedInput":["String.String"],"SavedInput":[],"LogDataTid":["Time.Posix"]}},"Pages.LogChoose.Msg":{"args":[],"tags":{"ChosenDataType":["Pages.LogChoose.LogRoute"]}},"Pages.Play.Msg":{"args":[],"tags":{"RandomLists":["( List.List Dutter.Dut, List.List Husk.Image )"],"PlayClick":[],"PlayList":["List.List Spil.Spil"]}},"Pages.Spil.Blink.Msg":{"args":[],"tags":{"Begynd":[],"Blandet":["( Maybe.Maybe App.Blink.Image, List.List App.Blink.Image )"],"Videre":[],"OK":[]}},"Pages.Spil.Dut.Msg":{"args":[],"tags":{"Begynd":[],"Blandet":["List.List Dutter.Dut"],"Udvælg":["( Maybe.Maybe Dutter.Dut, List.List Dutter.Dut )"],"Start":["Time.Posix"],"Klik":["Dutter.Dut"],"Gem":["Basics.Bool","Time.Posix"],"Videre":[],"Nå":[]}},"Pages.Spil.Husk.Msg":{"args":[],"tags":{"Begynd":[],"Blandet":["List.List Husk.Image"],"Udvalgte":["List.List Husk.Image"],"Countdown":[],"Klik":["Husk.Image"],"Klog":[],"Dum":[],"Videre":[],"OK":[]}},"Pages.Spil.Tid.Msg":{"args":[],"tags":{"Startklik":[],"Start":["Time.Posix"],"Slutklik":[],"Slut":["Time.Posix"],"Videre":[],"Nå":[]}},"Time.Posix":{"args":[],"tags":{"Posix":["Basics.Int"]}},"Spil.Score":{"args":[],"tags":{"DutScore":["Spil.Score_Dut"],"TidScore":["Spil.Score_Tid"],"HuskScore":["Spil.Score_Husk"],"BlinkScore":["Spil.Score_Blink"]}},"Spil.Spil":{"args":[],"tags":{"Dut":[],"Tid":[],"Husk":[],"Blink":[]}},"Basics.Bool":{"args":[],"tags":{"True":[],"False":[]}},"Pages.Log.Drug.ChooseWeight":{"args":[],"tags":{"Quantitative":[],"Qualitative":[]}},"Dutter.Farve":{"args":[],"tags":{"Rød":[],"Gul":[],"Grøn":[],"Blå":[]}},"File.File":{"args":[],"tags":{"File":[]}},"Basics.Float":{"args":[],"tags":{"Float":[]}},"Dutter.Form":{"args":[],"tags":{"Trekant":[],"Firkant":[],"Sekskant":[],"Cirkel":[]}},"Graphql.Http.HttpError":{"args":[],"tags":{"BadUrl":["String.String"],"Timeout":[],"NetworkError":[],"BadStatus":["Http.Metadata","String.String"],"BadPayload":["Json.Decode.Error"]}},"App.Blink.Image":{"args":[],"tags":{"LibertyCap":[],"Coca":[],"GoldenTeacher":[],"HawaiianWoodrose":[],"Peyote":[],"Poppy":[],"SanPedro":[],"SonoranDesertToad":[],"Tobacco":[]}},"Husk.Image":{"args":[],"tags":{"LibertyCap":[],"Coca":[],"GoldenTeacher":[],"HawaiianWoodrose":[],"Peyote":[],"Poppy":[],"SanPedro":[],"SonoranDesertToad":[],"Tobacco":[]}},"Pages.Data.LogType":{"args":[],"tags":{"Log":[],"Play":[]}},"Dropdown.Msg":{"args":["item"],"tags":{"OnDomFocus":["Result.Result Browser.Dom.Error ()"],"OnBlur":[],"OnClickPrompt":[],"OnSelect":["item"],"OnFilterTyped":["String.String"],"OnKeyDown":["Dropdown.Key"],"OnClickOutside":[]}},"Dict.NColor":{"args":[],"tags":{"Red":[],"Black":[]}},"Log.ROA":{"args":[],"tags":{"Insufflated":[],"Intravenous":[],"Oral":[],"Rectal":[],"Smoked":[],"Sublingual":[]}},"Graphql.Http.RawError":{"args":["parsedData","httpError"],"tags":{"GraphqlError":["Graphql.Http.GraphqlError.PossiblyParsedData parsedData","List.List Graphql.Http.GraphqlError.GraphqlError"],"HttpError":["httpError"]}},"RemoteData.RemoteData":{"args":["e","a"],"tags":{"NotAsked":[],"Loading":[],"Failure":["e"],"Success":["a"]}},"Gen.Route.Route":{"args":[],"tags":{"Data":[],"Home_":[],"LogChoose":[],"Play":[],"Log__BP":[],"Log__Drug":[],"Log__HR":[],"Log__Musing":[],"Log__TempC":[],"Spil__Blink":[],"Spil__Dut":[],"Spil__Husk":[],"Spil__Tid":[],"NotFound":[]}},"Log.Weight":{"args":[],"tags":{"Quan":["Log.WeightUnit","Basics.Int"],"Qual":["Log.DosageQualifier"]}},"Time.Zone":{"args":[],"tags":{"Zone":["Basics.Int","List.List Time.Era"]}},"Log.DosageQualifier":{"args":[],"tags":{"Threshold":[],"Light":[],"Common":[],"Strong":[],"Heavy":[]}},"Browser.Dom.Error":{"args":[],"tags":{"NotFound":["String.String"]}},"Json.Decode.Error":{"args":[],"tags":{"Field":["String.String","Json.Decode.Error"],"Index":["Basics.Int","Json.Decode.Error"],"OneOf":["List.List Json.Decode.Error"],"Failure":["String.String","Json.Decode.Value"]}},"Dropdown.Key":{"args":[],"tags":{"ArrowDown":[],"ArrowUp":[],"Enter":[],"Esc":[]}},"Graphql.Http.GraphqlError.PossiblyParsedData":{"args":["parsed"],"tags":{"ParsedData":["parsed"],"UnparsedData":["Json.Decode.Value"]}},"Result.Result":{"args":["error","value"],"tags":{"Ok":["value"],"Err":["error"]}},"Json.Encode.Value":{"args":[],"tags":{"Value":[]}},"Log.WeightUnit":{"args":[],"tags":{"Microgram":[],"Milligram":[]}}}}})}});}(this));
+_Platform_export({'Main':{'init':$author$project$Main$main($elm$json$Json$Decode$value)({"versions":{"elm":"0.19.1"},"types":{"message":"Main.Msg","aliases":{"Gen.Pages.Msg":{"args":[],"type":"Gen.Msg.Msg"},"Url.Url":{"args":[],"type":"{ protocol : Url.Protocol, host : String.String, port_ : Maybe.Maybe Basics.Int, path : String.String, query : Maybe.Maybe String.String, fragment : Maybe.Maybe String.String }"},"Storage.DataLog":{"args":[],"type":"{ time : Basics.Int, data : Log.Data }"},"Storage.Person":{"args":[],"type":"{ years : Basics.Int, cm : Basics.Int, kg : Basics.Int }"},"Spil.Score_Blink":{"args":[],"type":"{ expectedDuration_ms : Basics.Int, realDuration_ms : Basics.Int }"},"Spil.Score_Dut":{"args":[],"type":"{ mean : Basics.Int, spread : Basics.Int, correct : Basics.Int, rounds : Basics.Int }"},"Spil.Score_Husk":{"args":[],"type":"{ huskNumber : Basics.Int, totalMistakes : Basics.Int }"},"Spil.Score_Tid":{"args":[],"type":"{ burde : Basics.Int, faktisk : Basics.Int }"},"Spil.Scores":{"args":[],"type":"{ dut : Maybe.Maybe Spil.Score_Dut, tid : Maybe.Maybe Spil.Score_Tid, husk : Maybe.Maybe Spil.Score_Husk, blink : Maybe.Maybe Spil.Score_Blink }"},"Storage.Storage":{"args":[],"type":"{ identifier : String.String, person : Storage.Person, log : Dict.Dict Basics.Int Storage.DataLog, playlog : Dict.Dict Basics.Int Spil.Scores }"},"Log.Drug":{"args":[],"type":"String.String"},"Dutter.Dut":{"args":[],"type":"( Dutter.Farve, Dutter.Form )"},"Graphql.Http.Error":{"args":["parsedData"],"type":"Graphql.Http.RawError parsedData Graphql.Http.HttpError"},"Pages.Log.Drug.GraphQLModel":{"args":[],"type":"RemoteData.RemoteData (Graphql.Http.Error Pages.Log.Drug.Response) Pages.Log.Drug.Response"},"Pages.LogChoose.LogRoute":{"args":[],"type":"( String.String, Gen.Route.Route )"},"Pages.Log.Drug.MaybeDrug":{"args":[],"type":"{ name : Maybe.Maybe String.String, url : Maybe.Maybe String.String, images : Maybe.Maybe (List.List (Maybe.Maybe (Maybe.Maybe String.String))) }"},"Pages.Log.Drug.Response":{"args":[],"type":"Maybe.Maybe (List.List (Maybe.Maybe Pages.Log.Drug.MaybeDrug))"},"Time.Era":{"args":[],"type":"{ start : Basics.Int, offset : Basics.Int }"},"Graphql.Http.GraphqlError.GraphqlError":{"args":[],"type":"{ message : String.String, locations : Maybe.Maybe (List.List Graphql.Http.GraphqlError.Location), details : Dict.Dict String.String Json.Decode.Value }"},"Graphql.Http.GraphqlError.Location":{"args":[],"type":"{ line : Basics.Int, column : Basics.Int }"},"Http.Metadata":{"args":[],"type":"{ url : String.String, statusCode : Basics.Int, statusText : String.String, headers : Dict.Dict String.String String.String }"},"Json.Decode.Value":{"args":[],"type":"Json.Encode.Value"}},"unions":{"Main.Msg":{"args":[],"tags":{"ChangedUrl":["Url.Url"],"ClickedLink":["Browser.UrlRequest"],"Shared":["Shared.Msg"],"Page":["Gen.Pages.Msg"]}},"Basics.Int":{"args":[],"tags":{"Int":[]}},"Maybe.Maybe":{"args":["a"],"tags":{"Just":["a"],"Nothing":[]}},"Gen.Msg.Msg":{"args":[],"tags":{"Data":["Pages.Data.Msg"],"LogChoose":["Pages.LogChoose.Msg"],"Play":["Pages.Play.Msg"],"Log__BP":["Pages.Log.BP.Msg"],"Log__Drug":["Pages.Log.Drug.Msg"],"Log__HR":["Pages.Log.HR.Msg"],"Log__Musing":["Pages.Log.Musing.Msg"],"Log__TempC":["Pages.Log.TempC.Msg"],"Spil__Blink":["Pages.Spil.Blink.Msg"],"Spil__Dut":["Pages.Spil.Dut.Msg"],"Spil__Husk":["Pages.Spil.Husk.Msg"],"Spil__Tid":["Pages.Spil.Tid.Msg"]}},"Shared.Msg":{"args":[],"tags":{"StorageUpdated":["Storage.Storage"],"Play":["List.List Spil.Spil"],"SpilScore":["Spil.Score"],"SaveScores":["Time.Posix"],"GoToPlay":[]}},"Url.Protocol":{"args":[],"tags":{"Http":[],"Https":[]}},"String.String":{"args":[],"tags":{"String":[]}},"Browser.UrlRequest":{"args":[],"tags":{"Internal":["Url.Url"],"External":["String.String"]}},"Log.Data":{"args":[],"tags":{"HR":["Basics.Int"],"TempC":["Basics.Float"],"BP":["Basics.Int","Basics.Int"],"Musing":["String.String"],"DrugAdmin":["Log.Drug","Log.ROA","Log.Weight"]}},"Dict.Dict":{"args":["k","v"],"tags":{"RBNode_elm_builtin":["Dict.NColor","k","v","Dict.Dict k v","Dict.Dict k v"],"RBEmpty_elm_builtin":[]}},"List.List":{"args":["a"],"tags":{}},"Pages.Data.Msg":{"args":[],"tags":{"FindTime":["( Time.Posix, Time.Zone )"],"SetStorageIdentifier":["Basics.Float"],"Click":["Basics.Int"],"EditClick":["( Basics.Int, Pages.Data.LogType )"],"ClosePopup":[],"Delete":[],"ReallyDelete":[],"DownloadData":[],"JsonRequested":[],"JsonSelected":["File.File"],"JsonLoaded":["String.String"]}},"Pages.Log.BP.Msg":{"args":[],"tags":{"ChangedHigh":["Basics.Int"],"ChangedLow":["Basics.Int"],"SavedInput":[],"LogDataTid":["Time.Posix"]}},"Pages.Log.Drug.Msg":{"args":[],"tags":{"GotResponse":["Pages.Log.Drug.GraphQLModel"],"ChangedInput":["String.String"],"Delayed":["String.String"],"ROA_DropdownMsg":["Dropdown.Msg String.String"],"ROA_Picked":["Maybe.Maybe String.String"],"WeightChoose":["Pages.Log.Drug.ChooseWeight"],"WU_DropdownMsg":["Dropdown.Msg String.String"],"WU_Picked":["Maybe.Maybe String.String"],"WeightQuanChanged":["String.String"],"DQ_DropdownMsg":["Dropdown.Msg String.String"],"DQ_Picked":["Maybe.Maybe String.String"],"MinutesAgoChanged":["String.String"],"Save":[],"LogDataTid":["Time.Posix"]}},"Pages.Log.HR.Msg":{"args":[],"tags":{"ChangedInput":["Basics.Int"],"SavedInput":[],"LogDataTid":["Time.Posix"]}},"Pages.Log.Musing.Msg":{"args":[],"tags":{"ChangedInput":["String.String"],"SavedInput":[],"LogDataTid":["Time.Posix"]}},"Pages.Log.TempC.Msg":{"args":[],"tags":{"ChangedInput":["String.String"],"SavedInput":[],"LogDataTid":["Time.Posix"]}},"Pages.LogChoose.Msg":{"args":[],"tags":{"ChosenDataType":["Pages.LogChoose.LogRoute"]}},"Pages.Play.Msg":{"args":[],"tags":{"RandomLists":["( List.List Dutter.Dut, List.List Husk.Image )"],"PlayClick":[],"PlayList":["List.List Spil.Spil"]}},"Pages.Spil.Blink.Msg":{"args":[],"tags":{"Begynd":[],"Blandet":["( Maybe.Maybe App.Blink.Image, List.List App.Blink.Image )"],"Frame":["Time.Posix"],"Videre":[],"OK":[]}},"Pages.Spil.Dut.Msg":{"args":[],"tags":{"Begynd":[],"Blandet":["List.List Dutter.Dut"],"Udvælg":["( Maybe.Maybe Dutter.Dut, List.List Dutter.Dut )"],"Start":["Time.Posix"],"Klik":["Dutter.Dut"],"Gem":["Basics.Bool","Time.Posix"],"Videre":[],"Nå":[]}},"Pages.Spil.Husk.Msg":{"args":[],"tags":{"Begynd":[],"Blandet":["List.List Husk.Image"],"Udvalgte":["List.List Husk.Image"],"Countdown":[],"Klik":["Husk.Image"],"Klog":[],"Dum":[],"Videre":[],"OK":[]}},"Pages.Spil.Tid.Msg":{"args":[],"tags":{"Startklik":[],"Start":["Time.Posix"],"Slutklik":[],"Slut":["Time.Posix"],"Videre":[],"Nå":[]}},"Time.Posix":{"args":[],"tags":{"Posix":["Basics.Int"]}},"Spil.Score":{"args":[],"tags":{"DutScore":["Spil.Score_Dut"],"TidScore":["Spil.Score_Tid"],"HuskScore":["Spil.Score_Husk"],"BlinkScore":["Spil.Score_Blink"]}},"Spil.Spil":{"args":[],"tags":{"Dut":[],"Tid":[],"Husk":[],"Blink":[]}},"Basics.Bool":{"args":[],"tags":{"True":[],"False":[]}},"Pages.Log.Drug.ChooseWeight":{"args":[],"tags":{"Quantitative":[],"Qualitative":[]}},"Dutter.Farve":{"args":[],"tags":{"Rød":[],"Gul":[],"Grøn":[],"Blå":[]}},"File.File":{"args":[],"tags":{"File":[]}},"Basics.Float":{"args":[],"tags":{"Float":[]}},"Dutter.Form":{"args":[],"tags":{"Trekant":[],"Firkant":[],"Sekskant":[],"Cirkel":[]}},"Graphql.Http.HttpError":{"args":[],"tags":{"BadUrl":["String.String"],"Timeout":[],"NetworkError":[],"BadStatus":["Http.Metadata","String.String"],"BadPayload":["Json.Decode.Error"]}},"App.Blink.Image":{"args":[],"tags":{"LibertyCap":[],"Coca":[],"GoldenTeacher":[],"HawaiianWoodrose":[],"Peyote":[],"Poppy":[],"SanPedro":[],"SonoranDesertToad":[],"Tobacco":[]}},"Husk.Image":{"args":[],"tags":{"LibertyCap":[],"Coca":[],"GoldenTeacher":[],"HawaiianWoodrose":[],"Peyote":[],"Poppy":[],"SanPedro":[],"SonoranDesertToad":[],"Tobacco":[]}},"Pages.Data.LogType":{"args":[],"tags":{"Log":[],"Play":[]}},"Dropdown.Msg":{"args":["item"],"tags":{"OnDomFocus":["Result.Result Browser.Dom.Error ()"],"OnBlur":[],"OnClickPrompt":[],"OnSelect":["item"],"OnFilterTyped":["String.String"],"OnKeyDown":["Dropdown.Key"],"OnClickOutside":[]}},"Dict.NColor":{"args":[],"tags":{"Red":[],"Black":[]}},"Log.ROA":{"args":[],"tags":{"Insufflated":[],"Intravenous":[],"Oral":[],"Rectal":[],"Smoked":[],"Sublingual":[]}},"Graphql.Http.RawError":{"args":["parsedData","httpError"],"tags":{"GraphqlError":["Graphql.Http.GraphqlError.PossiblyParsedData parsedData","List.List Graphql.Http.GraphqlError.GraphqlError"],"HttpError":["httpError"]}},"RemoteData.RemoteData":{"args":["e","a"],"tags":{"NotAsked":[],"Loading":[],"Failure":["e"],"Success":["a"]}},"Gen.Route.Route":{"args":[],"tags":{"Data":[],"Home_":[],"LogChoose":[],"Play":[],"Log__BP":[],"Log__Drug":[],"Log__HR":[],"Log__Musing":[],"Log__TempC":[],"Spil__Blink":[],"Spil__Dut":[],"Spil__Husk":[],"Spil__Tid":[],"NotFound":[]}},"Log.Weight":{"args":[],"tags":{"Quan":["Log.WeightUnit","Basics.Int"],"Qual":["Log.DosageQualifier"]}},"Time.Zone":{"args":[],"tags":{"Zone":["Basics.Int","List.List Time.Era"]}},"Log.DosageQualifier":{"args":[],"tags":{"Threshold":[],"Light":[],"Common":[],"Strong":[],"Heavy":[]}},"Browser.Dom.Error":{"args":[],"tags":{"NotFound":["String.String"]}},"Json.Decode.Error":{"args":[],"tags":{"Field":["String.String","Json.Decode.Error"],"Index":["Basics.Int","Json.Decode.Error"],"OneOf":["List.List Json.Decode.Error"],"Failure":["String.String","Json.Decode.Value"]}},"Dropdown.Key":{"args":[],"tags":{"ArrowDown":[],"ArrowUp":[],"Enter":[],"Esc":[]}},"Graphql.Http.GraphqlError.PossiblyParsedData":{"args":["parsed"],"tags":{"ParsedData":["parsed"],"UnparsedData":["Json.Decode.Value"]}},"Result.Result":{"args":["error","value"],"tags":{"Ok":["value"],"Err":["error"]}},"Json.Encode.Value":{"args":[],"tags":{"Value":[]}},"Log.WeightUnit":{"args":[],"tags":{"Microgram":[],"Milligram":[]}}}}})}});}(this));

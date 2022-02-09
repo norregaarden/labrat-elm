@@ -1,6 +1,7 @@
 module Pages.Spil.Blink exposing (Model, Msg, page)
 
 import App.Blink as Blink exposing (Image, JSimage, blink, imageProperties, placeholderImage)
+import Browser.Events exposing (onAnimationFrame, onAnimationFrameDelta)
 import Effect exposing (Effect)
 import Element exposing (Element, centerX, centerY, column, el, fill, htmlAttribute, padding, paddingXY, spacing, text, width)
 import Element.Font as Font
@@ -35,6 +36,8 @@ type alias IgangModel =
   { duration : Int --ms
   , image : Image
   , jsImage : JSimage
+  --, frameFuture : List String
+  , frameHistory : List (String, Time.Posix)
   }
 
 
@@ -42,6 +45,7 @@ igangModelPlaceholder =
   { duration = 5
   , image = placeholderImage
   , jsImage = imageProperties placeholderImage
+  , frameHistory = []
   }
 
 
@@ -59,7 +63,14 @@ page shared req =
     { init = init
     , update = update
     , view = view shared
-    , subscriptions = \_ -> Sub.none
+    , subscriptions =
+        \model ->
+            case model of
+                Igang _ ->
+                    onAnimationFrame Frame
+                _ ->
+                    Sub.none
+        --\model -> onAnimationFrameDelta Frame
     }
 
 
@@ -68,6 +79,7 @@ page shared req =
 type Msg
     = Begynd
     | Blandet (Maybe Image, List Image)
+    | Frame Time.Posix
 {-    = Startklik
     | Start Time.Posix
     | Slutklik
@@ -114,6 +126,34 @@ update msg model =
           , Effect.fromCmd <| blink (toJson igang)
           --, Effect.fromCmd <| Random.generate Udvalgte (Random.List.shuffle Husk.allImages)
           )
+
+        Frame time ->
+          let
+            newStr =
+              igang.jsImage.description
+
+            newHistory =
+              case igang.frameHistory of
+                  [] ->
+                      [ ("", time) ]
+                  (oldStr, oldTime) :: fs ->
+                      (newStr, time) :: igang.frameHistory
+{-                    if newStr /= oldStr then
+                      (newStr, time) :: igang.frameHistory
+                    else
+                      igang.frameHistory-}
+
+            newIgang =
+              { igang
+              | frameHistory = newHistory
+              }
+
+          in
+            if List.length igang.frameHistory < 2 then
+              --( Igang newIgang, randomImage )
+              ( Igang newIgang, Effect.none )
+            else
+              ( Død newIgang, Effect.none )
 
         _ ->
           ( Error "Igang / ikke Blandet", Effect.none )
@@ -165,8 +205,8 @@ visIgang igang =
       Element.image
         [ width fill
         , paddingXY 0 (s 3)
-        , Html.Attributes.id "blinkImage" |> htmlAttribute
-        , Html.Attributes.style "opacity" "0.001" |> htmlAttribute
+        --, Html.Attributes.id "blinkImage" |> htmlAttribute
+        --, Html.Attributes.style "opacity" "0.001" |> htmlAttribute
         ]
         (igang.jsImage)
       |> el [centerX, centerY]
@@ -199,16 +239,20 @@ vis sharedPlaying model =
       let
         --summary = score igang
         hej = "hej"
+
+        frameHisStr (imgStr, timePosix) =
+            (Time.posixToMillis timePosix |> String.fromInt)
+            ++ ": " ++ imgStr
       in
       [ overskrift
       --, p <| "You can hold " ++ String.fromInt summary.huskNumber ++ " items in short-term memory."
       --, small <| "You made " ++ String.fromInt summary.totalMistakes ++ " mistakes in total."
       , Spil.videreButton sharedPlaying Videre OK
-      ]
+      ] ++ List.map (frameHisStr >> text) igang.frameHistory
       --|> text |> el [padding (s 6)] |> List.singleton
 
     Error string ->
-      "ERROR from husk model " ++ string ++ ", msg not applicable"
+      "ERROR from blink model " ++ string ++ ", msg not applicable"
       |> p |> el [padding (s 2)] |> List.singleton
 
   --billede "noegenhat" |> el [padding 40] |> List.singleton
