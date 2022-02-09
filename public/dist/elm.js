@@ -25335,6 +25335,9 @@ var $author$project$Pages$Spil$Count$subscriptions = function (model) {
 var $author$project$Pages$Spil$Count$Blandet = function (a) {
 	return {$: 'Blandet', a: a};
 };
+var $author$project$Pages$Spil$Count$Done = function (a) {
+	return {$: 'Done', a: a};
+};
 var $author$project$Pages$Spil$Count$Igang = function (a) {
 	return {$: 'Igang', a: a};
 };
@@ -25446,21 +25449,52 @@ var $elm$core$Set$size = function (_v0) {
 	var dict = _v0.a;
 	return $elm$core$Dict$size(dict);
 };
-var $author$project$Pages$Spil$Count$correctCount = function (igang) {
+var $author$project$Pages$Spil$Count$correctCount = function (board) {
 	return A2(
 		$elm$core$Maybe$withDefault,
 		0,
 		$elm$core$List$maximum(
-			A2($elm$core$List$map, $elm$core$Set$size, igang.blandet)));
+			A2($elm$core$List$map, $elm$core$Set$size, board)));
 };
 var $elm$core$Set$fromList = function (list) {
 	return A3($elm$core$List$foldl, $elm$core$Set$insert, $elm$core$Set$empty, list);
 };
-var $author$project$Pages$Spil$Count$igangInit = {blandet: _List_Nil, clicking: -1, correct: false, history: _List_Nil};
+var $author$project$Pages$Spil$Count$igangInit = {board: _List_Nil, clicking: -1, correct: false, history: _List_Nil, mistakes: 0};
+var $author$project$Pages$Spil$Count$minNFrom = 2;
+var $author$project$Pages$Spil$Count$numberOfRounds = 5;
+var $author$project$Pages$Spil$Count$resetGameAndSaveHistory = F2(
+	function (board, igangModel) {
+		var newHistory = function () {
+			var _v0 = igangModel.correct;
+			if (!_v0) {
+				return igangModel.history;
+			} else {
+				return A2(
+					$elm$core$List$cons,
+					_Utils_Tuple2(igangModel.mistakes, igangModel.board),
+					igangModel.history);
+			}
+		}();
+		return _Utils_update(
+			igangModel,
+			{board: board, clicking: -1, correct: false, history: newHistory, mistakes: 0});
+	});
+var $author$project$Pages$Spil$Count$numberOfBoards = 4;
+var $author$project$Pages$Spil$Count$toN = function (fromN) {
+	return (fromN + $author$project$Pages$Spil$Count$numberOfBoards) - 1;
+};
 var $author$project$Pages$Spil$Count$update = F2(
 	function (msg, model) {
-		var bland = function (n) {
-			return $author$project$Effect$fromCmd(
+		var nextBoardOrFinish = function () {
+			var fromN = function () {
+				if (model.$ === 'Igang') {
+					var igangModel = model.a;
+					return ($author$project$Pages$Spil$Count$minNFrom + $elm$core$List$length(igangModel.history)) + 1;
+				} else {
+					return $author$project$Pages$Spil$Count$minNFrom;
+				}
+			}();
+			var generate = $author$project$Effect$fromCmd(
 				A2(
 					$elm$random$Random$generate,
 					A2(
@@ -25480,31 +25514,44 @@ var $author$project$Pages$Spil$Count$update = F2(
 										i,
 										A2($elm$core$List$range, 0, 24));
 								},
-								A2($elm$core$List$range, n, n + 3))))));
-		};
+								A2(
+									$elm$core$List$range,
+									fromN,
+									$author$project$Pages$Spil$Count$toN(fromN)))))));
+			var historyLength = fromN - $author$project$Pages$Spil$Count$minNFrom;
+			if (_Utils_cmp(historyLength, $author$project$Pages$Spil$Count$numberOfRounds) < 0) {
+				return _Utils_Tuple2(model, generate);
+			} else {
+				if (model.$ === 'Igang') {
+					var igangModel = model.a;
+					return _Utils_Tuple2(
+						$author$project$Pages$Spil$Count$Done(
+							A2($author$project$Pages$Spil$Count$resetGameAndSaveHistory, _List_Nil, igangModel)),
+						$author$project$Effect$none);
+				} else {
+					return _Utils_Tuple2(model, $author$project$Effect$none);
+				}
+			}
+		}();
 		switch (msg.$) {
 			case 'Begynd':
-				var fra = function () {
-					if (model.$ === 'Intro') {
-						return 3;
-					} else {
+				return nextBoardOrFinish;
+			case 'Blandet':
+				var blandet = msg.a;
+				var oldIgang = function () {
+					if (model.$ === 'Igang') {
 						var igangModel = model.a;
-						return 3 + $elm$core$List$length(igangModel.history);
+						return igangModel;
+					} else {
+						return $author$project$Pages$Spil$Count$igangInit;
 					}
 				}();
 				return _Utils_Tuple2(
-					model,
-					bland(fra));
-			case 'Blandet':
-				var blandet = msg.a;
-				return _Utils_Tuple2(
 					$author$project$Pages$Spil$Count$Igang(
-						_Utils_update(
-							$author$project$Pages$Spil$Count$igangInit,
-							{blandet: blandet})),
+						A2($author$project$Pages$Spil$Count$resetGameAndSaveHistory, blandet, oldIgang)),
 					$author$project$Effect$none);
 			case 'Click':
-				var no = msg.a;
+				var i = msg.a;
 				if (model.$ === 'Igang') {
 					var igangModel = model.a;
 					var actualCount = $elm$core$Set$size(
@@ -25513,18 +25560,17 @@ var $author$project$Pages$Spil$Count$update = F2(
 							$elm$core$Set$empty,
 							A2(
 								$elm$core$Array$get,
-								no,
-								$elm$core$Array$fromList(igangModel.blandet))));
+								i,
+								$elm$core$Array$fromList(igangModel.board))));
+					var correct = _Utils_eq(
+						actualCount,
+						$author$project$Pages$Spil$Count$correctCount(igangModel.board));
+					var misInt = correct ? 0 : 1;
 					return _Utils_Tuple2(
 						$author$project$Pages$Spil$Count$Igang(
 							_Utils_update(
 								igangModel,
-								{
-									clicking: no,
-									correct: _Utils_eq(
-										actualCount,
-										$author$project$Pages$Spil$Count$correctCount(igangModel))
-								})),
+								{clicking: i, correct: correct, mistakes: igangModel.mistakes + misInt})),
 						$author$project$Effect$none);
 				} else {
 					return _Utils_Tuple2(model, $author$project$Effect$none);
@@ -25532,15 +25578,7 @@ var $author$project$Pages$Spil$Count$update = F2(
 			default:
 				if (model.$ === 'Igang') {
 					var igangModel = model.a;
-					return igangModel.correct ? _Utils_Tuple2(
-						$author$project$Pages$Spil$Count$Igang(
-							_Utils_update(
-								igangModel,
-								{
-									blandet: A2($elm$core$List$drop, 1, igangModel.blandet),
-									clicking: -1
-								})),
-						$author$project$Effect$none) : _Utils_Tuple2(model, $author$project$Effect$none);
+					return igangModel.correct ? nextBoardOrFinish : _Utils_Tuple2(model, $author$project$Effect$none);
 				} else {
 					return _Utils_Tuple2(model, $author$project$Effect$none);
 				}
@@ -25769,6 +25807,10 @@ var $author$project$Pages$Spil$Count$fourSquares = F3(
 						]))
 				]));
 	});
+var $author$project$Pages$Spil$Count$boardPlaceholder = $elm$core$List$singleton(
+	$elm$core$Set$fromList(
+		$elm$core$List$singleton(-1)));
+var $author$project$Pages$Spil$Count$hisPlaceholder = _Utils_Tuple2(-1, $author$project$Pages$Spil$Count$boardPlaceholder);
 var $elm$core$Debug$log = _Debug_log;
 var $author$project$UI$small = function (str) {
 	return A2(
@@ -25861,34 +25903,74 @@ var $author$project$Pages$Spil$Count$visBoks = function (numbers) {
 var $author$project$Pages$Spil$Count$vis = F2(
 	function (sharedPlaying, model) {
 		var overskrift = A2($author$project$UI$h, 2, 'Can you count?');
-		if (model.$ === 'Intro') {
-			return _List_fromArray(
-				[
-					overskrift,
-					$author$project$UI$small('Click the largest set.'),
-					$mdgriffith$elm_ui$Element$text(''),
-					A2(
-					$mdgriffith$elm_ui$Element$el,
-					_List_fromArray(
-						[$mdgriffith$elm_ui$Element$centerX]),
-					A2($author$project$UI$appButton, $author$project$Pages$Spil$Count$Begynd, 'READY'))
-				]);
-		} else {
-			var igangModel = model.a;
-			var im = A2($elm$core$Debug$log, 'hej', igangModel);
-			return _List_fromArray(
-				[
-					A2(
-					$author$project$UI$h,
-					2,
-					'Click the largest set (' + ($elm$core$String$fromInt(
-						$author$project$Pages$Spil$Count$correctCount(igangModel)) + ' items)')),
+		switch (model.$) {
+			case 'Intro':
+				return _List_fromArray(
+					[
+						overskrift,
+						$author$project$UI$small('Click the largest set.'),
+						$mdgriffith$elm_ui$Element$text(''),
+						A2(
+						$mdgriffith$elm_ui$Element$el,
+						_List_fromArray(
+							[$mdgriffith$elm_ui$Element$centerX]),
+						A2($author$project$UI$appButton, $author$project$Pages$Spil$Count$Begynd, 'READY'))
+					]);
+			case 'Igang':
+				var igangModel = model.a;
+				return _List_fromArray(
+					[
+						A2(
+						$author$project$UI$h,
+						2,
+						'Click the largest set (' + ($elm$core$String$fromInt(
+							$author$project$Pages$Spil$Count$correctCount(igangModel.board)) + ' items)')),
+						A3(
+						$author$project$Pages$Spil$Count$fourSquares,
+						A2($elm$core$List$map, $author$project$Pages$Spil$Count$visBoks, igangModel.board),
+						igangModel.clicking,
+						igangModel.correct)
+					]);
+			case 'Done':
+				var igangModel = model.a;
+				var historyArray = A2(
+					$elm$core$Debug$log,
+					'historyArray',
+					$elm$core$Array$fromList(igangModel.history));
+				var viewHistory = F2(
+					function (i, acc) {
+						var _v1 = A2(
+							$elm$core$Maybe$withDefault,
+							$author$project$Pages$Spil$Count$hisPlaceholder,
+							A2($elm$core$Array$get, i, historyArray));
+						var mis = _v1.a;
+						var board = _v1.b;
+						var itemsStr = $elm$core$String$fromInt(
+							$author$project$Pages$Spil$Count$correctCount(board)) + ' items: ';
+						var misStr = $elm$core$String$fromInt(mis) + ' mistakes.';
+						return A2(
+							$elm$core$List$cons,
+							$mdgriffith$elm_ui$Element$text(
+								_Utils_ap(itemsStr, misStr)),
+							acc);
+					});
+				return A2(
+					$elm$core$List$cons,
+					A2($author$project$UI$h, 2, 'play > count > stats'),
 					A3(
-					$author$project$Pages$Spil$Count$fourSquares,
-					A2($elm$core$List$map, $author$project$Pages$Spil$Count$visBoks, igangModel.blandet),
-					igangModel.clicking,
-					igangModel.correct)
-				]);
+						$elm$core$List$foldl,
+						viewHistory,
+						_List_Nil,
+						A2($elm$core$List$range, 0, $author$project$Pages$Spil$Count$numberOfRounds - 1)));
+			default:
+				var error = model.a;
+				return A2(
+					$elm$core$List$cons,
+					A2($author$project$UI$h, 2, 'play > count > error'),
+					A2(
+						$elm$core$List$cons,
+						A2($author$project$UI$h, 3, error),
+						_List_Nil));
 		}
 	});
 var $author$project$Pages$Spil$Count$view = F2(
@@ -28329,4 +28411,4 @@ var $author$project$Main$view = function (model) {
 };
 var $author$project$Main$main = $elm$browser$Browser$application(
 	{init: $author$project$Main$init, onUrlChange: $author$project$Main$ChangedUrl, onUrlRequest: $author$project$Main$ClickedLink, subscriptions: $author$project$Main$subscriptions, update: $author$project$Main$update, view: $author$project$Main$view});
-_Platform_export({'Main':{'init':$author$project$Main$main($elm$json$Json$Decode$value)({"versions":{"elm":"0.19.1"},"types":{"message":"Main.Msg","aliases":{"Gen.Pages.Msg":{"args":[],"type":"Gen.Msg.Msg"},"Url.Url":{"args":[],"type":"{ protocol : Url.Protocol, host : String.String, port_ : Maybe.Maybe Basics.Int, path : String.String, query : Maybe.Maybe String.String, fragment : Maybe.Maybe String.String }"},"Storage.DataLog":{"args":[],"type":"{ time : Basics.Int, data : Log.Data }"},"Storage.Person":{"args":[],"type":"{ years : Basics.Int, cm : Basics.Int, kg : Basics.Int }"},"Spil.Score_Dut":{"args":[],"type":"{ mean : Basics.Int, spread : Basics.Int, correct : Basics.Int, rounds : Basics.Int }"},"Spil.Score_Husk":{"args":[],"type":"{ huskNumber : Basics.Int, totalMistakes : Basics.Int }"},"Spil.Score_Tid":{"args":[],"type":"{ burde : Basics.Int, faktisk : Basics.Int }"},"Spil.Scores":{"args":[],"type":"{ dut : Maybe.Maybe Spil.Score_Dut, tid : Maybe.Maybe Spil.Score_Tid, husk : Maybe.Maybe Spil.Score_Husk }"},"Storage.Storage":{"args":[],"type":"{ identifier : String.String, person : Storage.Person, log : Dict.Dict Basics.Int Storage.DataLog, playlog : Dict.Dict Basics.Int Spil.Scores }"},"Log.Drug":{"args":[],"type":"String.String"},"Dutter.Dut":{"args":[],"type":"( Dutter.Farve, Dutter.Form )"},"Graphql.Http.Error":{"args":["parsedData"],"type":"Graphql.Http.RawError parsedData Graphql.Http.HttpError"},"Pages.Log.Drug.GraphQLModel":{"args":[],"type":"RemoteData.RemoteData (Graphql.Http.Error Pages.Log.Drug.Response) Pages.Log.Drug.Response"},"Pages.LogChoose.LogRoute":{"args":[],"type":"( String.String, Gen.Route.Route )"},"Pages.Log.Drug.MaybeDrug":{"args":[],"type":"{ name : Maybe.Maybe String.String, url : Maybe.Maybe String.String, images : Maybe.Maybe (List.List (Maybe.Maybe (Maybe.Maybe String.String))) }"},"Pages.Log.Drug.Response":{"args":[],"type":"Maybe.Maybe (List.List (Maybe.Maybe Pages.Log.Drug.MaybeDrug))"},"Time.Era":{"args":[],"type":"{ start : Basics.Int, offset : Basics.Int }"},"Graphql.Http.GraphqlError.GraphqlError":{"args":[],"type":"{ message : String.String, locations : Maybe.Maybe (List.List Graphql.Http.GraphqlError.Location), details : Dict.Dict String.String Json.Decode.Value }"},"Graphql.Http.GraphqlError.Location":{"args":[],"type":"{ line : Basics.Int, column : Basics.Int }"},"Http.Metadata":{"args":[],"type":"{ url : String.String, statusCode : Basics.Int, statusText : String.String, headers : Dict.Dict String.String String.String }"},"Json.Decode.Value":{"args":[],"type":"Json.Encode.Value"}},"unions":{"Main.Msg":{"args":[],"tags":{"ChangedUrl":["Url.Url"],"ClickedLink":["Browser.UrlRequest"],"Shared":["Shared.Msg"],"Page":["Gen.Pages.Msg"]}},"Basics.Int":{"args":[],"tags":{"Int":[]}},"Maybe.Maybe":{"args":["a"],"tags":{"Just":["a"],"Nothing":[]}},"Gen.Msg.Msg":{"args":[],"tags":{"Data":["Pages.Data.Msg"],"LogChoose":["Pages.LogChoose.Msg"],"Play":["Pages.Play.Msg"],"Log__BP":["Pages.Log.BP.Msg"],"Log__Drug":["Pages.Log.Drug.Msg"],"Log__HR":["Pages.Log.HR.Msg"],"Log__Musing":["Pages.Log.Musing.Msg"],"Log__TempC":["Pages.Log.TempC.Msg"],"Spil__Count":["Pages.Spil.Count.Msg"],"Spil__Dut":["Pages.Spil.Dut.Msg"],"Spil__Husk":["Pages.Spil.Husk.Msg"],"Spil__Tid":["Pages.Spil.Tid.Msg"]}},"Shared.Msg":{"args":[],"tags":{"StorageUpdated":["Storage.Storage"],"Play":["List.List Spil.Spil"],"SpilScore":["Spil.Score"],"SaveScores":["Time.Posix"],"GoToPlay":[]}},"Url.Protocol":{"args":[],"tags":{"Http":[],"Https":[]}},"String.String":{"args":[],"tags":{"String":[]}},"Browser.UrlRequest":{"args":[],"tags":{"Internal":["Url.Url"],"External":["String.String"]}},"Log.Data":{"args":[],"tags":{"HR":["Basics.Int"],"TempC":["Basics.Float"],"BP":["Basics.Int","Basics.Int"],"Musing":["String.String"],"DrugAdmin":["Log.Drug","Log.ROA","Log.Weight"]}},"Dict.Dict":{"args":["k","v"],"tags":{"RBNode_elm_builtin":["Dict.NColor","k","v","Dict.Dict k v","Dict.Dict k v"],"RBEmpty_elm_builtin":[]}},"List.List":{"args":["a"],"tags":{}},"Pages.Data.Msg":{"args":[],"tags":{"FindTime":["( Time.Posix, Time.Zone )"],"SetStorageIdentifier":["Basics.Float"],"Click":["Basics.Int"],"EditClick":["( Basics.Int, Pages.Data.LogType )"],"ClosePopup":[],"Delete":[],"ReallyDelete":[],"DownloadData":[],"JsonRequested":[],"JsonSelected":["File.File"],"JsonLoaded":["String.String"]}},"Pages.Log.BP.Msg":{"args":[],"tags":{"ChangedHigh":["Basics.Int"],"ChangedLow":["Basics.Int"],"SavedInput":[],"LogDataTid":["Time.Posix"]}},"Pages.Log.Drug.Msg":{"args":[],"tags":{"GotResponse":["Pages.Log.Drug.GraphQLModel"],"ChangedInput":["String.String"],"Delayed":["String.String"],"ROA_DropdownMsg":["Dropdown.Msg String.String"],"ROA_Picked":["Maybe.Maybe String.String"],"WeightChoose":["Pages.Log.Drug.ChooseWeight"],"WU_DropdownMsg":["Dropdown.Msg String.String"],"WU_Picked":["Maybe.Maybe String.String"],"WeightQuanChanged":["String.String"],"DQ_DropdownMsg":["Dropdown.Msg String.String"],"DQ_Picked":["Maybe.Maybe String.String"],"MinutesAgoChanged":["String.String"],"Save":[],"LogDataTid":["Time.Posix"]}},"Pages.Log.HR.Msg":{"args":[],"tags":{"ChangedInput":["Basics.Int"],"SavedInput":[],"LogDataTid":["Time.Posix"]}},"Pages.Log.Musing.Msg":{"args":[],"tags":{"ChangedInput":["String.String"],"SavedInput":[],"LogDataTid":["Time.Posix"]}},"Pages.Log.TempC.Msg":{"args":[],"tags":{"ChangedInput":["String.String"],"SavedInput":[],"LogDataTid":["Time.Posix"]}},"Pages.LogChoose.Msg":{"args":[],"tags":{"ChosenDataType":["Pages.LogChoose.LogRoute"]}},"Pages.Play.Msg":{"args":[],"tags":{"RandomLists":["( List.List Dutter.Dut, List.List Husk.Image )"],"PlayClick":[],"PlayList":["List.List Spil.Spil"]}},"Pages.Spil.Count.Msg":{"args":[],"tags":{"Begynd":[],"Blandet":["List.List (Set.Set Basics.Int)"],"Click":["Basics.Int"],"Clicked":[]}},"Pages.Spil.Dut.Msg":{"args":[],"tags":{"Begynd":[],"Blandet":["List.List Dutter.Dut"],"Udvælg":["( Maybe.Maybe Dutter.Dut, List.List Dutter.Dut )"],"Start":["Time.Posix"],"Klik":["Dutter.Dut"],"Gem":["Basics.Bool","Time.Posix"],"Videre":[],"Nå":[]}},"Pages.Spil.Husk.Msg":{"args":[],"tags":{"Begynd":[],"Blandet":["List.List Husk.Image"],"Udvalgte":["List.List Husk.Image"],"Countdown":[],"Klik":["Husk.Image"],"Klog":[],"Dum":[],"Videre":[],"OK":[]}},"Pages.Spil.Tid.Msg":{"args":[],"tags":{"Startklik":[],"Start":["Time.Posix"],"Slutklik":[],"Slut":["Time.Posix"],"Videre":[],"Nå":[]}},"Time.Posix":{"args":[],"tags":{"Posix":["Basics.Int"]}},"Spil.Score":{"args":[],"tags":{"DutScore":["Spil.Score_Dut"],"TidScore":["Spil.Score_Tid"],"HuskScore":["Spil.Score_Husk"]}},"Spil.Spil":{"args":[],"tags":{"Dut":[],"Tid":[],"Husk":[]}},"Basics.Bool":{"args":[],"tags":{"True":[],"False":[]}},"Pages.Log.Drug.ChooseWeight":{"args":[],"tags":{"Quantitative":[],"Qualitative":[]}},"Dutter.Farve":{"args":[],"tags":{"Rød":[],"Gul":[],"Grøn":[],"Blå":[]}},"File.File":{"args":[],"tags":{"File":[]}},"Basics.Float":{"args":[],"tags":{"Float":[]}},"Dutter.Form":{"args":[],"tags":{"Trekant":[],"Firkant":[],"Sekskant":[],"Cirkel":[]}},"Graphql.Http.HttpError":{"args":[],"tags":{"BadUrl":["String.String"],"Timeout":[],"NetworkError":[],"BadStatus":["Http.Metadata","String.String"],"BadPayload":["Json.Decode.Error"]}},"Husk.Image":{"args":[],"tags":{"LibertyCap":[],"Coca":[],"GoldenTeacher":[],"HawaiianWoodrose":[],"Peyote":[],"Poppy":[],"SanPedro":[],"SonoranDesertToad":[],"Tobacco":[]}},"Pages.Data.LogType":{"args":[],"tags":{"Log":[],"Play":[]}},"Dropdown.Msg":{"args":["item"],"tags":{"OnDomFocus":["Result.Result Browser.Dom.Error ()"],"OnBlur":[],"OnClickPrompt":[],"OnSelect":["item"],"OnFilterTyped":["String.String"],"OnKeyDown":["Dropdown.Key"],"OnClickOutside":[]}},"Dict.NColor":{"args":[],"tags":{"Red":[],"Black":[]}},"Log.ROA":{"args":[],"tags":{"Insufflated":[],"Intravenous":[],"Oral":[],"Rectal":[],"Smoked":[],"Sublingual":[]}},"Graphql.Http.RawError":{"args":["parsedData","httpError"],"tags":{"GraphqlError":["Graphql.Http.GraphqlError.PossiblyParsedData parsedData","List.List Graphql.Http.GraphqlError.GraphqlError"],"HttpError":["httpError"]}},"RemoteData.RemoteData":{"args":["e","a"],"tags":{"NotAsked":[],"Loading":[],"Failure":["e"],"Success":["a"]}},"Gen.Route.Route":{"args":[],"tags":{"Data":[],"Home_":[],"LogChoose":[],"Play":[],"Log__BP":[],"Log__Drug":[],"Log__HR":[],"Log__Musing":[],"Log__TempC":[],"Spil__Count":[],"Spil__Dut":[],"Spil__Husk":[],"Spil__Tid":[],"NotFound":[]}},"Set.Set":{"args":["t"],"tags":{"Set_elm_builtin":["Dict.Dict t ()"]}},"Log.Weight":{"args":[],"tags":{"Quan":["Log.WeightUnit","Basics.Int"],"Qual":["Log.DosageQualifier"]}},"Time.Zone":{"args":[],"tags":{"Zone":["Basics.Int","List.List Time.Era"]}},"Log.DosageQualifier":{"args":[],"tags":{"Threshold":[],"Light":[],"Common":[],"Strong":[],"Heavy":[]}},"Browser.Dom.Error":{"args":[],"tags":{"NotFound":["String.String"]}},"Json.Decode.Error":{"args":[],"tags":{"Field":["String.String","Json.Decode.Error"],"Index":["Basics.Int","Json.Decode.Error"],"OneOf":["List.List Json.Decode.Error"],"Failure":["String.String","Json.Decode.Value"]}},"Dropdown.Key":{"args":[],"tags":{"ArrowDown":[],"ArrowUp":[],"Enter":[],"Esc":[]}},"Graphql.Http.GraphqlError.PossiblyParsedData":{"args":["parsed"],"tags":{"ParsedData":["parsed"],"UnparsedData":["Json.Decode.Value"]}},"Result.Result":{"args":["error","value"],"tags":{"Ok":["value"],"Err":["error"]}},"Json.Encode.Value":{"args":[],"tags":{"Value":[]}},"Log.WeightUnit":{"args":[],"tags":{"Microgram":[],"Milligram":[]}}}}})}});}(this));
+_Platform_export({'Main':{'init':$author$project$Main$main($elm$json$Json$Decode$value)({"versions":{"elm":"0.19.1"},"types":{"message":"Main.Msg","aliases":{"Gen.Pages.Msg":{"args":[],"type":"Gen.Msg.Msg"},"Url.Url":{"args":[],"type":"{ protocol : Url.Protocol, host : String.String, port_ : Maybe.Maybe Basics.Int, path : String.String, query : Maybe.Maybe String.String, fragment : Maybe.Maybe String.String }"},"Storage.DataLog":{"args":[],"type":"{ time : Basics.Int, data : Log.Data }"},"Storage.Person":{"args":[],"type":"{ years : Basics.Int, cm : Basics.Int, kg : Basics.Int }"},"Spil.Score_Dut":{"args":[],"type":"{ mean : Basics.Int, spread : Basics.Int, correct : Basics.Int, rounds : Basics.Int }"},"Spil.Score_Husk":{"args":[],"type":"{ huskNumber : Basics.Int, totalMistakes : Basics.Int }"},"Spil.Score_Tid":{"args":[],"type":"{ burde : Basics.Int, faktisk : Basics.Int }"},"Spil.Scores":{"args":[],"type":"{ dut : Maybe.Maybe Spil.Score_Dut, tid : Maybe.Maybe Spil.Score_Tid, husk : Maybe.Maybe Spil.Score_Husk }"},"Storage.Storage":{"args":[],"type":"{ identifier : String.String, person : Storage.Person, log : Dict.Dict Basics.Int Storage.DataLog, playlog : Dict.Dict Basics.Int Spil.Scores }"},"Pages.Spil.Count.Board":{"args":[],"type":"List.List (Set.Set Basics.Int)"},"Log.Drug":{"args":[],"type":"String.String"},"Dutter.Dut":{"args":[],"type":"( Dutter.Farve, Dutter.Form )"},"Graphql.Http.Error":{"args":["parsedData"],"type":"Graphql.Http.RawError parsedData Graphql.Http.HttpError"},"Pages.Log.Drug.GraphQLModel":{"args":[],"type":"RemoteData.RemoteData (Graphql.Http.Error Pages.Log.Drug.Response) Pages.Log.Drug.Response"},"Pages.LogChoose.LogRoute":{"args":[],"type":"( String.String, Gen.Route.Route )"},"Pages.Log.Drug.MaybeDrug":{"args":[],"type":"{ name : Maybe.Maybe String.String, url : Maybe.Maybe String.String, images : Maybe.Maybe (List.List (Maybe.Maybe (Maybe.Maybe String.String))) }"},"Pages.Log.Drug.Response":{"args":[],"type":"Maybe.Maybe (List.List (Maybe.Maybe Pages.Log.Drug.MaybeDrug))"},"Time.Era":{"args":[],"type":"{ start : Basics.Int, offset : Basics.Int }"},"Graphql.Http.GraphqlError.GraphqlError":{"args":[],"type":"{ message : String.String, locations : Maybe.Maybe (List.List Graphql.Http.GraphqlError.Location), details : Dict.Dict String.String Json.Decode.Value }"},"Graphql.Http.GraphqlError.Location":{"args":[],"type":"{ line : Basics.Int, column : Basics.Int }"},"Http.Metadata":{"args":[],"type":"{ url : String.String, statusCode : Basics.Int, statusText : String.String, headers : Dict.Dict String.String String.String }"},"Json.Decode.Value":{"args":[],"type":"Json.Encode.Value"}},"unions":{"Main.Msg":{"args":[],"tags":{"ChangedUrl":["Url.Url"],"ClickedLink":["Browser.UrlRequest"],"Shared":["Shared.Msg"],"Page":["Gen.Pages.Msg"]}},"Basics.Int":{"args":[],"tags":{"Int":[]}},"Maybe.Maybe":{"args":["a"],"tags":{"Just":["a"],"Nothing":[]}},"Gen.Msg.Msg":{"args":[],"tags":{"Data":["Pages.Data.Msg"],"LogChoose":["Pages.LogChoose.Msg"],"Play":["Pages.Play.Msg"],"Log__BP":["Pages.Log.BP.Msg"],"Log__Drug":["Pages.Log.Drug.Msg"],"Log__HR":["Pages.Log.HR.Msg"],"Log__Musing":["Pages.Log.Musing.Msg"],"Log__TempC":["Pages.Log.TempC.Msg"],"Spil__Count":["Pages.Spil.Count.Msg"],"Spil__Dut":["Pages.Spil.Dut.Msg"],"Spil__Husk":["Pages.Spil.Husk.Msg"],"Spil__Tid":["Pages.Spil.Tid.Msg"]}},"Shared.Msg":{"args":[],"tags":{"StorageUpdated":["Storage.Storage"],"Play":["List.List Spil.Spil"],"SpilScore":["Spil.Score"],"SaveScores":["Time.Posix"],"GoToPlay":[]}},"Url.Protocol":{"args":[],"tags":{"Http":[],"Https":[]}},"String.String":{"args":[],"tags":{"String":[]}},"Browser.UrlRequest":{"args":[],"tags":{"Internal":["Url.Url"],"External":["String.String"]}},"Log.Data":{"args":[],"tags":{"HR":["Basics.Int"],"TempC":["Basics.Float"],"BP":["Basics.Int","Basics.Int"],"Musing":["String.String"],"DrugAdmin":["Log.Drug","Log.ROA","Log.Weight"]}},"Dict.Dict":{"args":["k","v"],"tags":{"RBNode_elm_builtin":["Dict.NColor","k","v","Dict.Dict k v","Dict.Dict k v"],"RBEmpty_elm_builtin":[]}},"List.List":{"args":["a"],"tags":{}},"Pages.Data.Msg":{"args":[],"tags":{"FindTime":["( Time.Posix, Time.Zone )"],"SetStorageIdentifier":["Basics.Float"],"Click":["Basics.Int"],"EditClick":["( Basics.Int, Pages.Data.LogType )"],"ClosePopup":[],"Delete":[],"ReallyDelete":[],"DownloadData":[],"JsonRequested":[],"JsonSelected":["File.File"],"JsonLoaded":["String.String"]}},"Pages.Log.BP.Msg":{"args":[],"tags":{"ChangedHigh":["Basics.Int"],"ChangedLow":["Basics.Int"],"SavedInput":[],"LogDataTid":["Time.Posix"]}},"Pages.Log.Drug.Msg":{"args":[],"tags":{"GotResponse":["Pages.Log.Drug.GraphQLModel"],"ChangedInput":["String.String"],"Delayed":["String.String"],"ROA_DropdownMsg":["Dropdown.Msg String.String"],"ROA_Picked":["Maybe.Maybe String.String"],"WeightChoose":["Pages.Log.Drug.ChooseWeight"],"WU_DropdownMsg":["Dropdown.Msg String.String"],"WU_Picked":["Maybe.Maybe String.String"],"WeightQuanChanged":["String.String"],"DQ_DropdownMsg":["Dropdown.Msg String.String"],"DQ_Picked":["Maybe.Maybe String.String"],"MinutesAgoChanged":["String.String"],"Save":[],"LogDataTid":["Time.Posix"]}},"Pages.Log.HR.Msg":{"args":[],"tags":{"ChangedInput":["Basics.Int"],"SavedInput":[],"LogDataTid":["Time.Posix"]}},"Pages.Log.Musing.Msg":{"args":[],"tags":{"ChangedInput":["String.String"],"SavedInput":[],"LogDataTid":["Time.Posix"]}},"Pages.Log.TempC.Msg":{"args":[],"tags":{"ChangedInput":["String.String"],"SavedInput":[],"LogDataTid":["Time.Posix"]}},"Pages.LogChoose.Msg":{"args":[],"tags":{"ChosenDataType":["Pages.LogChoose.LogRoute"]}},"Pages.Play.Msg":{"args":[],"tags":{"RandomLists":["( List.List Dutter.Dut, List.List Husk.Image )"],"PlayClick":[],"PlayList":["List.List Spil.Spil"]}},"Pages.Spil.Count.Msg":{"args":[],"tags":{"Begynd":[],"Blandet":["Pages.Spil.Count.Board"],"Click":["Basics.Int"],"Clicked":[]}},"Pages.Spil.Dut.Msg":{"args":[],"tags":{"Begynd":[],"Blandet":["List.List Dutter.Dut"],"Udvælg":["( Maybe.Maybe Dutter.Dut, List.List Dutter.Dut )"],"Start":["Time.Posix"],"Klik":["Dutter.Dut"],"Gem":["Basics.Bool","Time.Posix"],"Videre":[],"Nå":[]}},"Pages.Spil.Husk.Msg":{"args":[],"tags":{"Begynd":[],"Blandet":["List.List Husk.Image"],"Udvalgte":["List.List Husk.Image"],"Countdown":[],"Klik":["Husk.Image"],"Klog":[],"Dum":[],"Videre":[],"OK":[]}},"Pages.Spil.Tid.Msg":{"args":[],"tags":{"Startklik":[],"Start":["Time.Posix"],"Slutklik":[],"Slut":["Time.Posix"],"Videre":[],"Nå":[]}},"Time.Posix":{"args":[],"tags":{"Posix":["Basics.Int"]}},"Spil.Score":{"args":[],"tags":{"DutScore":["Spil.Score_Dut"],"TidScore":["Spil.Score_Tid"],"HuskScore":["Spil.Score_Husk"]}},"Spil.Spil":{"args":[],"tags":{"Dut":[],"Tid":[],"Husk":[]}},"Basics.Bool":{"args":[],"tags":{"True":[],"False":[]}},"Pages.Log.Drug.ChooseWeight":{"args":[],"tags":{"Quantitative":[],"Qualitative":[]}},"Dutter.Farve":{"args":[],"tags":{"Rød":[],"Gul":[],"Grøn":[],"Blå":[]}},"File.File":{"args":[],"tags":{"File":[]}},"Basics.Float":{"args":[],"tags":{"Float":[]}},"Dutter.Form":{"args":[],"tags":{"Trekant":[],"Firkant":[],"Sekskant":[],"Cirkel":[]}},"Graphql.Http.HttpError":{"args":[],"tags":{"BadUrl":["String.String"],"Timeout":[],"NetworkError":[],"BadStatus":["Http.Metadata","String.String"],"BadPayload":["Json.Decode.Error"]}},"Husk.Image":{"args":[],"tags":{"LibertyCap":[],"Coca":[],"GoldenTeacher":[],"HawaiianWoodrose":[],"Peyote":[],"Poppy":[],"SanPedro":[],"SonoranDesertToad":[],"Tobacco":[]}},"Pages.Data.LogType":{"args":[],"tags":{"Log":[],"Play":[]}},"Dropdown.Msg":{"args":["item"],"tags":{"OnDomFocus":["Result.Result Browser.Dom.Error ()"],"OnBlur":[],"OnClickPrompt":[],"OnSelect":["item"],"OnFilterTyped":["String.String"],"OnKeyDown":["Dropdown.Key"],"OnClickOutside":[]}},"Dict.NColor":{"args":[],"tags":{"Red":[],"Black":[]}},"Log.ROA":{"args":[],"tags":{"Insufflated":[],"Intravenous":[],"Oral":[],"Rectal":[],"Smoked":[],"Sublingual":[]}},"Graphql.Http.RawError":{"args":["parsedData","httpError"],"tags":{"GraphqlError":["Graphql.Http.GraphqlError.PossiblyParsedData parsedData","List.List Graphql.Http.GraphqlError.GraphqlError"],"HttpError":["httpError"]}},"RemoteData.RemoteData":{"args":["e","a"],"tags":{"NotAsked":[],"Loading":[],"Failure":["e"],"Success":["a"]}},"Gen.Route.Route":{"args":[],"tags":{"Data":[],"Home_":[],"LogChoose":[],"Play":[],"Log__BP":[],"Log__Drug":[],"Log__HR":[],"Log__Musing":[],"Log__TempC":[],"Spil__Count":[],"Spil__Dut":[],"Spil__Husk":[],"Spil__Tid":[],"NotFound":[]}},"Set.Set":{"args":["t"],"tags":{"Set_elm_builtin":["Dict.Dict t ()"]}},"Log.Weight":{"args":[],"tags":{"Quan":["Log.WeightUnit","Basics.Int"],"Qual":["Log.DosageQualifier"]}},"Time.Zone":{"args":[],"tags":{"Zone":["Basics.Int","List.List Time.Era"]}},"Log.DosageQualifier":{"args":[],"tags":{"Threshold":[],"Light":[],"Common":[],"Strong":[],"Heavy":[]}},"Browser.Dom.Error":{"args":[],"tags":{"NotFound":["String.String"]}},"Json.Decode.Error":{"args":[],"tags":{"Field":["String.String","Json.Decode.Error"],"Index":["Basics.Int","Json.Decode.Error"],"OneOf":["List.List Json.Decode.Error"],"Failure":["String.String","Json.Decode.Value"]}},"Dropdown.Key":{"args":[],"tags":{"ArrowDown":[],"ArrowUp":[],"Enter":[],"Esc":[]}},"Graphql.Http.GraphqlError.PossiblyParsedData":{"args":["parsed"],"tags":{"ParsedData":["parsed"],"UnparsedData":["Json.Decode.Value"]}},"Result.Result":{"args":["error","value"],"tags":{"Ok":["value"],"Err":["error"]}},"Json.Encode.Value":{"args":[],"tags":{"Value":[]}},"Log.WeightUnit":{"args":[],"tags":{"Microgram":[],"Milligram":[]}}}}})}});}(this));

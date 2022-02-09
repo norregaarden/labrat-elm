@@ -4,7 +4,6 @@ import Array exposing (fromList, get)
 import Effect exposing (Effect)
 import Element exposing (Element, alpha, centerX, column, el, fill, height, html, htmlAttribute, padding, row, spacing, text, width)
 import Element.Border as Border
---import Element.Events as Events
 import Gen.Params.Spil.Count exposing (Params)
 import Html.Events.Extra.Pointer as Pointer
 import Page
@@ -21,7 +20,24 @@ import UIColor exposing (green, red)
 import View exposing (View)
 import Page
 
+-- SETTINGS
 
+minNFrom = 2
+
+numberOfBoards = 4
+
+numberOfRounds = 5
+
+-- Derived Settings
+
+toN fromN = fromN + numberOfBoards - 1
+
+minNTo = toN minNFrom
+
+maxNTo = toN minNTo
+
+
+-- PAGE
 
 page : Shared.Model -> Request.With Params -> Page.With Model Msg
 page shared _ =
@@ -33,13 +49,14 @@ page shared _ =
         }
 
 
-
--- INIT
+-- MODEL / INIT
 
 
 type Model
     = Intro
     | Igang IgangModel
+    | Done  IgangModel
+    | Error String
 
 
 init : ( Model, Effect Msg )
@@ -47,34 +64,58 @@ init =
     ( Intro, Effect.none )
 
 type alias IgangModel =
-    { blandet : Board
+    { board : Board
     , clicking : Int
     , correct : Bool
-    , history : List (Bool, Board)
+    , mistakes : Mis
+    , history : List His
     }
 
 type alias Board =
     List (Set Int)
 
+type alias Mis = Int
+
+type alias His = (Mis, Board)
+
+boardPlaceholder : Board
+boardPlaceholder =
+    -1
+    |> List.singleton
+    |> Set.fromList
+    |> List.singleton
+
+hisPlaceholder : His
+hisPlaceholder = (-1, boardPlaceholder)
+
 igangInit : IgangModel
 igangInit =
-    { blandet = []
+    { board = []
     , clicking = -1
     , correct = False
+    , mistakes = 0
     , history = []
     }
 
-newgame blandet igang =
-    { igang
-    | blandet = blandet
+resetGameAndSaveHistory board igangModel =
+    let
+        newHistory =
+            case igangModel.correct of
+                False ->
+                    igangModel.history
+                True ->
+                    (igangModel.mistakes, igangModel.board) :: igangModel.history
+    in
+    { igangModel
+    | board = board
     , clicking = -1
     , correct = False
+    , mistakes = 0
+    , history = newHistory
     }
 
-correctCount igang =
-    List.map Set.size igang.blandet
-    --|> List.sort
-    --|> List.drop (List.length igang.clicked)
+correctCount board =
+    List.map Set.size board
     |> List.maximum
     |> Maybe.withDefault 0
 
@@ -84,7 +125,7 @@ correctCount igang =
 
 type Msg
     = Begynd
-    | Blandet (List (Set Int))
+    | Blandet Board
     | Click Int
     | Clicked
 
@@ -92,46 +133,81 @@ type Msg
 update : Msg -> Model -> ( Model, Effect Msg )
 update msg model =
     let
-        bland n =
-            Effect.fromCmd <|
-            Random.generate (List.map (Tuple.first >> Set.fromList) >> Blandet) <|
-            Random.andThen Random.List.shuffle <|
-            Random.Extra.combine <|
-            List.map (\i -> Random.List.choices i (List.range 0 24)) (List.range n (n+3))
+        nextBoardOrFinish =
+            let
+                fromN =
+                    case model of
+                        Igang igangModel ->
+                            minNFrom + List.length igangModel.history + 1
+                        _ ->
+                            minNFrom
+
+                generate =
+                    Effect.fromCmd <|
+                    Random.generate (List.map (Tuple.first >> Set.fromList) >> Blandet) <|
+                    Random.andThen Random.List.shuffle <|
+                    Random.Extra.combine <|
+                    List.map (\i -> Random.List.choices i (List.range 0 24)) (List.range fromN (toN fromN))
+
+                historyLength =
+                    fromN - minNFrom
+            in
+            -- nextBoard
+            if historyLength < numberOfRounds then
+                ( model
+                , generate
+                )
+            -- OrFinish
+            else
+                case model of
+                    Igang igangModel ->
+                        ( Done (resetGameAndSaveHistory [] igangModel)
+                        , Effect.none
+                        )
+                    _ ->
+                        ( model, Effect.none )
+
+
+
 
     in
     case msg of
         Begynd ->
-            let
-                fra =
-                    case model of
-                        Intro ->
-                            3
-                        Igang igangModel ->
-                            3 + List.length igangModel.history
-            in
-            ( model
-            , bland fra
-            )
+            nextBoardOrFinish
 
         Blandet blandet ->
-            ( Igang { igangInit | blandet = blandet }
+            let
+                oldIgang =
+                    case model of
+                        Igang igangModel ->
+                            igangModel
+                        _ ->
+                            igangInit
+            in
+            ( Igang (resetGameAndSaveHistory blandet oldIgang)
             , Effect.none
             )
 
-        Click no ->
+        Click i ->
             case model of
                 Igang igangModel ->
                     let
                         actualCount =
-                            Array.fromList igangModel.blandet
-                            |> get no
+                            Array.fromList igangModel.board
+                            |> get i
                             |> Maybe.withDefault Set.empty
                             |> Set.size
+
+                        correct =
+                            (actualCount == correctCount igangModel.board)
+
+                        misInt =
+                            if correct then 0 else 1
                     in
                     ( Igang { igangModel
-                        | clicking = no
-                        , correct = (actualCount == correctCount igangModel)
+                        | clicking = i
+                        , correct = correct
+                        , mistakes = igangModel.mistakes + misInt
                         }
                     , Effect.none )
 
@@ -141,11 +217,8 @@ update msg model =
             case model of
                 Igang igangModel ->
                     if igangModel.correct then
-                        ( Igang { igangModel
-                            | clicking = -1
-                            --, clicked = igangModel.clicking :: igangModel.clicked
-                            , blandet = List.drop 1 igangModel.blandet
-                        }, Effect.none )
+                        ( nextBoardOrFinish
+                        )
                     else
                         ( model, Effect.none )
                 _ -> ( model, Effect.none )
@@ -194,7 +267,7 @@ visBoks numbers =
                 , alpha (if Set.member n numbers then 1 else 0)
                 ]
                 <| svgCircle (Set.size numbers + n)
-        -- Element.explain Debug.todo
+
         boksRow r =
             row [ width fill ]
             <| List.map visDims (List.range (r*5) (r*5+4))
@@ -240,19 +313,41 @@ vis sharedPlaying model =
       [ overskrift
       , small <|
           "Click the largest set."
-      --, small <| String.fromInt startHuskNumber ++ " images in the first round."
       , text ""
       , appButton Begynd "READY" |> el [centerX]
-      --, viewImages Husk.allImages False
       ]
 
     Igang igangModel ->
-        let
-            im = Debug.log "hej" igangModel
-        in
-        [ h 2 <| "Click the largest set (" ++ String.fromInt (correctCount igangModel) ++ " items)"
-        , fourSquares (List.map visBoks igangModel.blandet) igangModel.clicking igangModel.correct
+        [ h 2 <| "Click the largest set (" ++ String.fromInt (correctCount igangModel.board) ++ " items)"
+        , fourSquares (List.map visBoks igangModel.board) igangModel.clicking igangModel.correct
         ]
+
+    Done igangModel ->
+        let
+            historyArray =
+                Array.fromList igangModel.history
+                |> Debug.log "historyArray"
+
+            viewHistory i acc =
+                let
+                    (mis, board) =
+                        get i historyArray
+                        |> Maybe.withDefault hisPlaceholder
+
+                    misStr =
+                        String.fromInt mis ++ " mistakes."
+
+                    itemsStr =
+                        (correctCount board |> String.fromInt) ++ " items: "
+                in
+                (itemsStr ++ misStr |> text) :: acc
+
+            --(\thisMany -> text <| String.fromInt thisMany ++ " items: ")
+        in
+        h 2 "play > count > stats" :: List.foldl viewHistory [] (List.range 0 (numberOfRounds - 1))
+
+    Error error ->
+        h 2 "play > count > error" :: h 3 error :: []
 
 view : Shared.Model -> Model -> View Msg
 view shared model =
