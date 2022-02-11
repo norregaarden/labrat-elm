@@ -10,7 +10,7 @@ import Shared
 import Storage exposing (Storage)
 import Task
 import Time
-import UI exposing (h, s, smallAppButton, smallAppButtonDisabled)
+import UI exposing (h, s, smallAppButton)
 import UIColor exposing (orangeLight)
 import View exposing (View)
 import Log exposing (Data(..))

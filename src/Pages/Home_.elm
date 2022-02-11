@@ -3,7 +3,7 @@ module Pages.Home_ exposing (view)
 -- elm-spa server
 
 import UIColor exposing (blue, orangeLight)
-import Element exposing (Element, column, el, fill, height, image, link, newTabLink, paddingXY, px, spacing, text, width)
+import Element exposing (Element, column, el, fill, height, image, newTabLink, paddingXY, px, spacing, text, width)
 import Element.Border as Border
 import Element.Font as Font
 import Element.Region exposing (heading)

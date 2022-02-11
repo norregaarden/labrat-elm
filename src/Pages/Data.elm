@@ -3,7 +3,7 @@ module Pages.Data exposing (Model, Msg, page)
 import Dict
 import Element.Background as Background
 import Element.Border as Border
-import Element.Events exposing (onClick, onDoubleClick)
+import Element.Events exposing (onClick)
 import Element.Font as Font
 import File exposing (File)
 import File.Download as Download
@@ -24,7 +24,7 @@ import Request
 import Shared
 import Task
 import Time
-import UI exposing (appButton, bltr, p, s, small, smallAppButton)
+import UI exposing (bltr, p, s, smallAppButton)
 import UIColor exposing (gray, greenToRed, orangeDark, red, scaleRatio, white)
 import View exposing (View)
 

@@ -1,4 +1,4 @@
-module Pages.Spil.Tid exposing (burdeSeconds, Model, Msg, page)
+module Pages.Spil.Tid exposing (oughtSeconds, Model, Msg, page)
 
 import Effect exposing (Effect)
 import Element exposing (Element, centerX, column, el, fill, padding, paddingXY, spacing, text, width)
@@ -14,14 +14,15 @@ import Time
 import UI exposing (appButton, h, p, s, showListWhen, showWhen, spilTitel)
 import View exposing (View)
 
+
 -- SETTINGS
 
-burdeSeconds
+oughtSeconds
   = 10
 
 burde : Int
 burde =
-  burdeSeconds * 1000 -- ms
+  oughtSeconds * 1000 -- ms
 
 
 -- MODEL
@@ -151,6 +152,6 @@ vis sharedPlaying model =
 
 view : Shared.Model -> Model -> View Msg
 view shared model =
-  { title = spilTitel (fromInt burdeSeconds ++ " seconds")
+  { title = spilTitel (fromInt oughtSeconds ++ " seconds")
   , body = vis shared.playing model
   }

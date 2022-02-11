@@ -1,7 +1,7 @@
 module Pages.Log.Musing exposing (Model, Msg, page)
 
 import Effect exposing (Effect)
-import Element exposing (alignTop, centerX, column, el, fill, height, minimum, paddingEach, paddingXY, px, text, width)
+import Element exposing (centerX, el, paddingXY, text)
 import Element.Input as Input
 import Gen.Params.Log.Musing exposing (Params)
 import Log exposing (Data(..))
